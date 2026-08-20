@@ -4,7 +4,7 @@ import { useSessionContext } from '../lib/session-context'
 import { apiUbahPin } from '../lib/normalizers'
 import { clearSession, updateSession } from '../lib/session'
 import { waLink } from '../lib/format'
-import { Button, Card, Field, PageHeader } from '../components/Ui'
+import { AlertBanner, Button, Card, Field, PageHeader, SectionHeader } from '../components/Ui'
 import { Icon } from '../components/Icon'
 import type { ThemeMode } from '../lib/session'
 
@@ -17,7 +17,7 @@ const themes: { value: ThemeMode; label: string; icon: 'sun' | 'moon' | 'monitor
 export default function Profil() {
   const nav = useNavigate()
   const { session, setSession, theme, setTheme } = useSessionContext()
-
+  const [imageBroken, setImageBroken] = useState(false)
   const [pinLama, setPinLama] = useState('')
   const [pinBaru, setPinBaru] = useState('')
   const [pinErr, setPinErr] = useState('')
@@ -25,7 +25,7 @@ export default function Profil() {
   const [savingPin, setSavingPin] = useState(false)
 
   if (!session) return null
-  const p = session.profile
+  const profile = session.profile
 
   function logout() {
     clearSession()
@@ -39,7 +39,7 @@ export default function Profil() {
     setPinErr('')
     setPinOk('')
     if (pinLama.length !== 6 || pinBaru.length !== 6) {
-      setPinErr('PIN lama dan baru harus 6 digit.')
+      setPinErr('PIN lama dan baru harus tepat 6 digit.')
       return
     }
     if (pinLama === pinBaru) {
@@ -47,151 +47,112 @@ export default function Profil() {
       return
     }
     setSavingPin(true)
-    const r = await apiUbahPin(session.kode, pinLama, pinBaru)
+    const result = await apiUbahPin(session.kode, pinLama, pinBaru)
     setSavingPin(false)
-    if (!r.ok) {
-      setPinErr(r.error)
+    if (!result.ok) {
+      setPinErr(result.error)
       return
     }
     const next = updateSession({ pin: pinBaru })
     if (next) setSession(next)
-    setPinOk('PIN berhasil diubah.')
+    setPinOk('PIN berhasil diperbarui.')
     setPinLama('')
     setPinBaru('')
   }
 
   const rows: Array<[string, string]> = [
-    ['Kode', p.kode],
-    ['Kamar', p.nomorkamar],
-    ['No. HP', p.nomorhp],
-    ['Email', p.email],
-    ['Periode bayar', p.periodebayar],
-    ['Tempat kuliah/kerja', p.tempatkuliahkerja],
-    ['Jurusan', p.jurusankuliah],
-    ['Alamat rumah', p.alamatrumah],
-    ['Kost', p.namakost],
-    ['Alamat kost', p.alamatkost],
-  ].filter((row): row is [string, string] => {
-    const v = row[1]
-    return Boolean(v) && v !== '0'
-  })
+    ['Kode penyewa', profile.kode], ['Nomor kamar', profile.nomorkamar],
+    ['Nomor HP', profile.nomorhp], ['Email', profile.email],
+    ['Periode bayar', profile.periodebayar], ['Tempat kuliah/kerja', profile.tempatkuliahkerja],
+    ['Jurusan', profile.jurusankuliah], ['Alamat rumah', profile.alamatrumah],
+    ['Nama kost', profile.namakost], ['Alamat kost', profile.alamatkost],
+  ].filter((row): row is [string, string] => Boolean(row[1]) && row[1] !== '0')
 
   return (
     <div>
-      <PageHeader title="Profil" sub={p.namakost} />
-      <div className="flex flex-col gap-4 px-4 pt-2">
-        {/* identitas */}
-        <Card className="flex items-center gap-4 !rounded-xl">
-          {p.urlfoto ? (
-            <img
-              src={p.urlfoto}
-              alt={p.nama}
-              className="size-16 rounded-full bg-surface-variant object-cover"
-              onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')}
-            />
-          ) : (
-            <span className="flex size-16 items-center justify-center rounded-full bg-primary-container text-on-primary-container">
-              <Icon name="person" size={32} />
-            </span>
-          )}
-          <div className="min-w-0">
-            <h2 className="truncate text-lg font-bold text-on-surface">{p.nama}</h2>
-            <p className="text-sm text-on-surface-variant">
-              {p.kode} · Kamar {p.nomorkamar}
-            </p>
-            {p.email && (
-              <a href={`mailto:${p.email}`} className="text-xs text-primary">
-                {p.email}
-              </a>
+      <PageHeader title="Profil" sub="Akun dan preferensi" />
+      <div className="page-gutter content-stack">
+        <section className="relative overflow-hidden rounded-[1.65rem] bg-primary px-5 py-5 text-on-primary shadow-[0_18px_45px_color-mix(in_srgb,var(--ph-primary)_28%,transparent)]">
+          <div className="absolute -right-16 -top-20 size-56 rounded-full border-[36px] border-white/8" />
+          <div className="relative flex items-center gap-4">
+            {profile.urlfoto && !imageBroken ? (
+              <img src={profile.urlfoto} alt={`Foto ${profile.nama}`} className="size-20 rounded-[1.35rem] border-2 border-white/35 bg-white/10 object-cover shadow-xl" onError={() => setImageBroken(true)} />
+            ) : (
+              <span className="flex size-20 items-center justify-center rounded-[1.35rem] border border-white/20 bg-white/12">
+                <Icon name="person" size={38} />
+              </span>
             )}
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-on-primary/65">Penghuni kamar {profile.nomorkamar}</p>
+              <h2 className="mt-1 truncate text-xl font-black tracking-[-.035em]">{profile.nama}</h2>
+              <p className="mt-1 truncate text-xs text-on-primary/75">{profile.kode} · {profile.namakost}</p>
+            </div>
           </div>
-        </Card>
+        </section>
 
-        <Card className="!rounded-xl">
-          <h3 className="mb-1 text-sm font-semibold text-on-surface">Mode tampilan</h3>
-          <div className="grid grid-cols-3 gap-2">
-            {themes.map((t) => (
-              <button
-                key={t.value}
-                onClick={() => setTheme(t.value)}
-                className={`flex flex-col items-center gap-1 rounded-lg py-2.5 text-sm font-medium transition-colors ${
-                  theme === t.value
-                    ? 'bg-primary-container text-on-primary-container'
-                    : 'bg-surface-variant text-on-surface-variant'
-                }`}
-              >
-                <Icon name={t.icon} size={20} />
-                {t.label}
-              </button>
-            ))}
-          </div>
-        </Card>
+        <SectionHeader title="Tampilan" sub="Pilih tema yang nyaman untuk mata" />
+        <div className="grid grid-cols-3 gap-2 rounded-[1.25rem] bg-surface-low p-1.5">
+          {themes.map((item) => (
+            <button
+              key={item.value}
+              type="button"
+              aria-pressed={theme === item.value}
+              onClick={() => setTheme(item.value)}
+              className={`flex min-h-16 flex-col items-center justify-center gap-1 rounded-[1rem] text-xs font-bold transition focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/25 ${theme === item.value ? 'bg-surface-lowest text-primary shadow-md' : 'text-on-surface-variant'}`}
+            >
+              <Icon name={item.icon} size={20} /> {item.label}
+            </button>
+          ))}
+        </div>
 
-        {/* ganti pin */}
-        <Card className="!rounded-xl">
-          <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-on-surface">
-            <Icon name="lock" size={16} /> Ganti PIN
-          </h3>
-          <form onSubmit={changePin} className="flex flex-col gap-3">
-            <Field
-              label="PIN lama"
-              type="password"
-              inputMode="numeric"
-              value={pinLama}
-              onChange={(e) => setPinLama(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              placeholder="6 digit"
-            />
-            <Field
-              label="PIN baru"
-              type="password"
-              inputMode="numeric"
-              value={pinBaru}
-              onChange={(e) => setPinBaru(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              placeholder="6 digit"
-            />
-            {pinErr && <p className="text-sm text-error">{pinErr}</p>}
-            {pinOk && <p className="text-sm text-primary">{pinOk}</p>}
-            <Button type="submit" variant="tonal" loading={savingPin}>
-              Simpan PIN Baru
-            </Button>
+        <SectionHeader title="Keamanan akun" sub="Perbarui PIN secara berkala" />
+        <Card variant="elevated">
+          <form onSubmit={changePin} className="flex flex-col gap-4">
+            <Field label="PIN lama" leadingIcon="lock" type="password" inputMode="numeric" autoComplete="current-password" value={pinLama} onChange={(e) => setPinLama(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder="••••••" minLength={6} maxLength={6} />
+            <Field label="PIN baru" leadingIcon="lock" type="password" inputMode="numeric" autoComplete="new-password" value={pinBaru} onChange={(e) => setPinBaru(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder="••••••" minLength={6} maxLength={6} />
+            {pinErr && <AlertBanner>{pinErr}</AlertBanner>}
+            {pinOk && <AlertBanner tone="success">{pinOk}</AlertBanner>}
+            <Button type="submit" variant="tonal" loading={savingPin}>Simpan PIN baru</Button>
           </form>
         </Card>
 
-        {/* data diri */}
-        <Card className="!rounded-xl">
-          <h3 className="mb-2 text-sm font-semibold text-on-surface">Data Diri</h3>
-          <dl className="flex flex-col gap-1.5">
-            {rows.map(([k, v]) => (
-              <div key={k} className="flex justify-between gap-4 text-sm">
-                <dt className="shrink-0 text-on-surface-variant">{k}</dt>
-                <dd className="text-right font-medium text-on-surface">{v}</dd>
+        <SectionHeader title="Data diri" />
+        <Card variant="outlined" className="!p-1.5">
+          <dl className="divide-y divide-outline-variant/40">
+            {rows.map(([label, value]) => (
+              <div key={label} className="px-3 py-3">
+                <dt className="text-[10px] font-bold uppercase tracking-[.07em] text-on-surface-variant">{label}</dt>
+                <dd className="mt-1 break-words text-sm font-semibold leading-relaxed text-on-surface">{value}</dd>
               </div>
             ))}
           </dl>
-          {p.nomorhportu && (
-            <a
-              href={waLink(p.nomorhportu, `Halo orang tua/wali ${p.nama}, saya dari kost ${p.namakost}`)}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-3 flex items-center gap-2 rounded-lg bg-surface-variant px-3 py-2.5 text-sm font-medium text-on-surface"
-            >
-              <Icon name="phone" size={16} /> Hubungi orang tua/wali ({p.namaortu ?? 'wali'})
-            </a>
-          )}
         </Card>
 
-        <Card className="!rounded-xl">
-          <button
-            onClick={logout}
-            className="flex w-full items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold text-error hover:bg-error-container"
+        {profile.nomorhportu && (
+          <a
+            href={waLink(profile.nomorhportu, `Halo orang tua/wali ${profile.nama}, saya dari kost ${profile.namakost}`)}
+            target="_blank"
+            rel="noreferrer"
+            className="flex min-h-16 items-center gap-3 rounded-[1.25rem] border border-outline-variant bg-surface-lowest px-4 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/25"
           >
-            <Icon name="logout" size={18} /> Keluar
-          </button>
-        </Card>
+            <span className="flex size-10 items-center justify-center rounded-full bg-[#d8f4de] text-[#155d2a]"><Icon name="phone" size={19} /></span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-bold text-on-surface">Hubungi orang tua / wali</span>
+              <span className="block truncate text-xs text-on-surface-variant">{profile.namaortu || profile.nomorhportu}</span>
+            </span>
+            <Icon name="chevronRight" size={18} className="text-outline" />
+          </a>
+        )}
 
-        <p className="pb-4 text-center text-xs text-on-surface-variant">
-          PondokHuda — aplikasi penghuni · v0.1.0
-        </p>
+        <button
+          type="button"
+          onClick={logout}
+          className="flex min-h-14 w-full items-center justify-center gap-2 rounded-[1.15rem] border border-error/25 bg-error-container/60 text-sm font-extrabold text-on-error-container transition active:scale-[.98] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-error/25"
+        >
+          <Icon name="logout" size={18} /> Keluar dari akun
+        </button>
+
+        <p className="pb-3 text-center text-[10px] font-semibold uppercase tracking-[.12em] text-on-surface-variant/65">PondokHuda · aplikasi penghuni</p>
       </div>
     </div>
   )

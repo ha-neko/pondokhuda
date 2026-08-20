@@ -2,133 +2,115 @@ import { useEffect, useState } from 'react'
 import { useSessionContext } from '../lib/session-context'
 import { apiPembayaran } from '../lib/normalizers'
 import { updateSession } from '../lib/session'
-import { money } from '../lib/format'
-import { Badge, Card, Empty, PageHeader, Spinner, statusTone } from '../components/Ui'
-import { Icon } from '../components/Icon'
+import { money, stripRupiah } from '../lib/format'
+import { AlertBanner, Badge, Card, Empty, LoadingState, PageHeader, SectionHeader, statusTone } from '../components/Ui'
 
 export default function Pembayaran() {
   const { session, setSession } = useSessionContext()
   const [loading, setLoading] = useState(!session?.bayar)
   const [err, setErr] = useState('')
 
+  async function load() {
+    if (!session) return
+    setLoading(true)
+    setErr('')
+    const result = await apiPembayaran(session.kode, session.pin)
+    setLoading(false)
+    if (!result.ok) {
+      setErr(result.error)
+      return
+    }
+    const next = updateSession({ bayar: result.data.bayar, resume: result.data.resume })
+    if (next) setSession(next)
+  }
+
   useEffect(() => {
-    let alive = true
-    async function run() {
-      if (!session) return
-      if (session.bayar) return
-      setLoading(true)
-      const r = await apiPembayaran(session.kode, session.pin)
-      if (!alive) return
-      setLoading(false)
-      if (!r.ok) {
-        setErr(r.error)
-        return
-      }
-      const next = updateSession({ bayar: r.data.bayar, resume: r.data.resume })
-      if (next) setSession(next)
-    }
-    run()
-    return () => {
-      alive = false
-    }
+    if (!session?.bayar) load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.kode])
 
   if (!session) return null
-  const b = session.bayar
-  const history = b?.historibayar ?? []
-  const len = history.length
+  const bayar = session.bayar
+  const history = bayar?.historibayar ?? []
+  const remaining = stripRupiah(bayar?.sisabayarsebelumnya)
 
   return (
     <div>
       <PageHeader title="Pembayaran" sub={session.profile.namakost} />
-      <div className="flex flex-col gap-3 px-4 pt-2">
+      <div className="page-gutter content-stack">
         {loading ? (
-          <div className="flex items-center justify-center gap-2 py-16 text-sm text-on-surface-variant">
-            <Spinner className="size-5" /> memuat riwayat…
-          </div>
+          <LoadingState label="Memuat riwayat pembayaran" />
         ) : err ? (
-          <div className="py-10 text-center text-sm text-error">{err}</div>
-        ) : !b ? (
-          <Empty text="Data pembayaran belum tersedia. Tarik untuk memuat ulang." />
+          <AlertBanner action={<button onClick={load} className="font-bold underline">Coba lagi</button>}>{err}</AlertBanner>
+        ) : !bayar ? (
+          <Empty title="Pembayaran belum tersedia" text="Hubungi admin kost jika data belum muncul." icon="wallet" />
         ) : (
           <>
-            {/* summary header */}
-            <Card className="!rounded-xl">
-              <div className="flex items-center justify-between">
+            <section className="relative overflow-hidden rounded-[1.65rem] bg-on-surface px-5 py-5 text-surface shadow-[0_18px_45px_rgba(8,25,24,.2)]">
+              <div className="absolute -right-12 -top-14 size-44 rounded-full bg-primary/25 blur-2xl" />
+              <div className="relative flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs text-on-surface-variant">Status saat ini</p>
-                  <p className="text-lg font-bold text-on-surface">{b.statusbayar}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[.13em] text-surface/55">Status periode ini</p>
+                  <h2 className="mt-1 text-2xl font-black tracking-[-.045em]">{bayar.statusbayar}</h2>
                 </div>
-                <Badge tone={statusTone(b.statusbayar)}>{b.statusbayar}</Badge>
+                <Badge tone={statusTone(bayar.statusbayar)}>{bayar.statusbayar}</Badge>
               </div>
-              <div className="mt-3 grid grid-cols-2 gap-3 border-t border-outline-variant/50 pt-3 text-sm">
-                <div>
-                  <p className="text-xs text-on-surface-variant">Tagihan</p>
-                  <p className="font-semibold text-on-surface">{money(b.tagihantotal)}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-on-surface-variant">Total bayar</p>
-                  <p className="font-semibold text-on-surface">{money(b.bayarsebelumnya)}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-on-surface-variant">Sisa bayar</p>
-                  <p className="font-semibold text-error">{money(b.sisabayarsebelumnya)}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-on-surface-variant">Periode</p>
-                  <p className="font-medium text-on-surface">{b.periodebayarbulan}</p>
-                </div>
+              <div className="relative mt-6 grid grid-cols-2 gap-x-4 gap-y-5 border-t border-surface/15 pt-5">
+                <Metric label="Tagihan" value={money(bayar.tagihantotal)} />
+                <Metric label="Sudah dibayar" value={money(bayar.bayarsebelumnya)} />
+                <Metric label="Sisa pembayaran" value={money(bayar.sisabayarsebelumnya)} danger={remaining > 0} />
+                <Metric label="Jatuh tempo" value={bayar.nexttglbayar || '-'} small />
               </div>
-            </Card>
+            </section>
 
-            {/* history */}
-            <h2 className="mt-1 px-1 text-sm font-semibold text-on-surface-variant">
-              Riwayat <span className="font-normal">({len || '—'})</span>
-            </h2>
-            {len === 0 ? (
-              <Empty text="Belum ada histori pembayaran." />
+            <SectionHeader title="Riwayat pembayaran" sub={`${history.length} transaksi tercatat`} />
+            {history.length === 0 ? (
+              <Empty text="Belum ada transaksi yang tercatat pada akun ini." icon="wallet" />
             ) : (
-              <ul className="flex flex-col gap-2.5">
-                {history.map((h, i) => {
-                  const idxLabel = h.bayarke ? `#${h.bayarke}` : `#${len - i}`
-                  return (
-                    <li key={h.kode_bayar ?? i}>
-                      <Card className="!rounded-xl">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0">
-                            <p className="flex items-center gap-1.5 font-semibold text-on-surface">
-                              <span className="text-on-surface-variant">{idxLabel}</span> · {h.periode_bayar}
-                            </p>
-                            <p className="mt-0.5 text-xs text-on-surface-variant">
-                              Dibayar {h.tanggal_bayar || h.tanggal_pembayaran}
-                              {h.metode ? ` · ${h.metode}` : ''}
-                            </p>
-                          </div>
-                          <Badge tone={statusTone(h.statusbayar)}>{h.statusbayar}</Badge>
+              <ul className="relative flex flex-col gap-3 before:absolute before:bottom-7 before:left-[1.1rem] before:top-7 before:w-px before:bg-outline-variant/70">
+                {history.map((item, index) => (
+                  <li key={item.kode_bayar ?? index} className="relative pl-11">
+                    <span className={`absolute left-2.5 top-6 z-10 size-[1.05rem] rounded-full border-[3px] border-surface ${statusTone(item.statusbayar) === 'success' ? 'bg-[#31a852]' : 'bg-error'}`} />
+                    <Card variant="elevated" className="!p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="text-[10px] font-bold uppercase tracking-[.08em] text-primary">
+                            Pembayaran {item.bayarke ? `#${item.bayarke}` : `#${history.length - index}`}
+                          </p>
+                          <h3 className="mt-1 truncate text-sm font-extrabold text-on-surface">{item.periode_bayar || item.periodesewa}</h3>
+                          <p className="mt-1 text-xs text-on-surface-variant">
+                            {item.tanggal_bayar || item.tanggal_pembayaran}{item.metode ? ` · ${item.metode}` : ''}
+                          </p>
                         </div>
-                        <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-outline-variant/50 pt-2.5 text-sm">
-                          <span className="text-on-surface-variant">
-                            Total <b className="text-on-surface">{money(h.total_bayar)}</b>
-                          </span>
-                          {Number(h.denda) > 0 && (
-                            <span className="flex items-center gap-1 text-error">
-                              <Icon name="alert" size={14} /> denda {money(h.denda)}
-                            </span>
-                          )}
-                          {(Number(h.diskon) || 0) > 0 && (
-                            <span className="text-on-surface-variant">diskon {money(h.diskon)}</span>
-                          )}
+                        <Badge tone={statusTone(item.statusbayar)}>{item.statusbayar}</Badge>
+                      </div>
+                      <div className="mt-4 flex items-end justify-between border-t border-outline-variant/45 pt-3">
+                        <div>
+                          <p className="text-[10px] font-semibold text-on-surface-variant">Total dibayar</p>
+                          <p className="money-value text-lg font-black text-on-surface">{money(item.total_bayar)}</p>
                         </div>
-                      </Card>
-                    </li>
-                  )
-                })}
+                        <div className="flex flex-col items-end gap-1 text-[11px]">
+                          {Number(item.denda) > 0 && <span className="text-error">Denda {money(item.denda)}</span>}
+                          {Number(item.diskon) > 0 && <span className="text-[#15803d]">Diskon {money(item.diskon)}</span>}
+                        </div>
+                      </div>
+                    </Card>
+                  </li>
+                ))}
               </ul>
             )}
           </>
         )}
       </div>
+    </div>
+  )
+}
+
+function Metric({ label, value, danger, small }: { label: string; value: string; danger?: boolean; small?: boolean }) {
+  return (
+    <div>
+      <p className="text-[10px] font-semibold text-surface/55">{label}</p>
+      <p className={`money-value mt-1 font-extrabold ${small ? 'text-sm leading-snug' : 'text-base'} ${danger ? 'text-[#ffb4ab]' : 'text-surface'}`}>{value}</p>
     </div>
   )
 }

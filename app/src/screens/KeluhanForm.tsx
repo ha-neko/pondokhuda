@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router'
 import { useSessionContext } from '../lib/session-context'
 import { apiKeluhanKategori, apiKeluhanTambah } from '../lib/normalizers'
 import { fileToBase64Jpeg } from '../lib/format'
-import { Button, Field, PageHeader, TextFieldArea } from '../components/Ui'
+import { AlertBanner, Button, Card, Field, IconButton, PageHeader, SectionHeader, TextFieldArea } from '../components/Ui'
 import { Icon } from '../components/Icon'
 
 const FALLBACK_KATEGORI = ['Fasilitas', 'Kebersihan', 'Keamanan', 'Lainnya']
@@ -18,18 +18,17 @@ export default function KeluhanForm() {
   const [foto, setFoto] = useState<string | null>(null)
   const [fotoName, setFotoName] = useState('')
   const [err, setErr] = useState('')
+  const [fieldErr, setFieldErr] = useState<{ judul?: string; uraian?: string }>({})
   const [sending, setSending] = useState(false)
+  const [processingPhoto, setProcessingPhoto] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!session) return
-    apiKeluhanKategori(session.kode, session.pin).then((r) => {
-      if (r.ok && r.data.length > 0) {
-        setKategoriList(r.data)
-        setKategori((prev) => (prev && r.data.includes(prev) ? prev : r.data[0]))
-      } else {
-        setKategori(FALLBACK_KATEGORI[0])
-      }
+    apiKeluhanKategori(session.kode, session.pin).then((result) => {
+      const categories = result.ok && result.data.length ? result.data : FALLBACK_KATEGORI
+      setKategoriList(categories)
+      setKategori((current) => current && categories.includes(current) ? current : categories[0])
     })
   }, [session?.kode, session?.pin])
 
@@ -38,128 +37,120 @@ export default function KeluhanForm() {
   async function onPick(file: File | undefined) {
     if (!file) return
     setErr('')
+    setProcessingPhoto(true)
     try {
-      const b64 = await fileToBase64Jpeg(file)
-      if (!b64) {
-        setErr('Gagal memproses foto.')
-        return
-      }
-      setFoto(b64)
+      const value = await fileToBase64Jpeg(file)
+      if (!value) throw new Error('empty')
+      setFoto(value)
       setFotoName(file.name)
     } catch {
-      setErr('Gagal membaca foto.')
+      setErr('Foto tidak dapat diproses. Coba gambar lain.')
+    } finally {
+      setProcessingPhoto(false)
     }
   }
 
   async function submit(e: FormEvent) {
     e.preventDefault()
     if (!session) return
-    setErr('')
-    if (!judul.trim() || !uraian.trim()) {
-      setErr('Judul dan uraian wajib diisi.')
-      return
+    const errors = {
+      judul: judul.trim() ? undefined : 'Judul keluhan wajib diisi.',
+      uraian: uraian.trim() ? undefined : 'Ceritakan kendala yang Anda alami.',
     }
+    setFieldErr(errors)
+    setErr('')
+    if (errors.judul || errors.uraian) return
     if (!kategori) {
       setErr('Pilih kategori keluhan.')
       return
     }
     setSending(true)
-    const r = await apiKeluhanTambah(session.kode, judul.trim(), kategori, uraian.trim(), foto)
+    const result = await apiKeluhanTambah(session.kode, judul.trim(), kategori, uraian.trim(), foto)
     setSending(false)
-    if (!r.ok) {
-      setErr(r.error)
+    if (!result.ok) {
+      setErr(result.error)
       return
     }
     nav('/keluhan', { replace: true })
   }
 
+  function removePhoto() {
+    setFoto(null)
+    setFotoName('')
+    if (fileRef.current) fileRef.current.value = ''
+  }
+
   return (
     <div>
-      <PageHeader title="Keluhan Baru" onBack={() => nav(-1)} />
-      <form onSubmit={submit} className="flex flex-col gap-4 px-4 pt-2">
-        <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-on-surface-variant">Kategori</label>
-          <div className="flex flex-wrap gap-2">
-            {kategoriList.map((k) => (
+      <PageHeader title="Keluhan baru" sub={`Kamar ${session.profile.nomorkamar}`} onBack={() => nav(-1)} />
+      <form onSubmit={submit} className="page-gutter content-stack">
+        <Card variant="elevated">
+          <SectionHeader title="Apa yang terjadi?" sub="Pilih kategori yang paling sesuai" />
+          <div className="mt-4 flex flex-wrap gap-2">
+            {kategoriList.map((item) => (
               <button
-                key={k}
+                key={item}
                 type="button"
-                onClick={() => setKategori(k)}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                  kategori === k
-                    ? 'bg-primary text-on-primary'
-                    : 'bg-surface-variant text-on-surface-variant hover:bg-surface-high'
-                }`}
+                aria-pressed={kategori === item}
+                onClick={() => setKategori(item)}
+                className={`min-h-11 rounded-full px-4 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/25 ${kategori === item ? 'bg-primary text-on-primary shadow-md' : 'border border-outline-variant bg-surface-lowest text-on-surface-variant'}`}
               >
-                {k}
+                {item}
               </button>
             ))}
           </div>
-        </div>
+        </Card>
 
-        <Field
-          label="Judul"
-          value={judul}
-          onChange={(e) => setJudul(e.target.value)}
-          placeholder="contoh: Air kamar mandi macet"
-        />
-        <TextFieldArea
-          label="Uraian"
-          value={uraian}
-          onChange={(e) => setUraian(e.target.value)}
-          placeholder="Jelaskan masalahnya secara singkat…"
-          rows={4}
-        />
-
-        <div className="flex flex-col gap-1.5">
-          <span className="text-sm font-medium text-on-surface-variant">Foto (opsional)</span>
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            className="hidden"
-            onChange={(e) => onPick(e.target.files?.[0])}
+        <Card variant="outlined" className="flex flex-col gap-4">
+          <Field
+            label="Judul keluhan"
+            value={judul}
+            onChange={(e) => { setJudul(e.target.value); setFieldErr((v) => ({ ...v, judul: undefined })) }}
+            placeholder="Contoh: Air kamar mandi macet"
+            error={fieldErr.judul}
           />
+          <TextFieldArea
+            label="Ceritakan kendalanya"
+            value={uraian}
+            onChange={(e) => { setUraian(e.target.value); setFieldErr((v) => ({ ...v, uraian: undefined })) }}
+            placeholder="Jelaskan lokasi, waktu, dan kondisi kendala…"
+            rows={5}
+            error={fieldErr.uraian}
+            hint="Semakin jelas informasinya, semakin cepat admin membantu."
+          />
+        </Card>
+
+        <Card variant="outlined">
+          <SectionHeader title="Foto pendukung" sub="Opsional · gambar akan dikompres otomatis" />
+          <input ref={fileRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => onPick(e.target.files?.[0])} />
           {foto ? (
-            <div className="flex items-center gap-3 rounded-md border border-outline-variant bg-surface-lowest p-2.5">
-              <img
-                src={`data:image/jpeg;base64,${foto}`}
-                alt="lampiran"
-                className="size-14 rounded-sm object-cover"
-              />
+            <div className="mt-4 flex items-center gap-3 rounded-[1rem] bg-surface-low p-2.5">
+              <img src={`data:image/jpeg;base64,${foto}`} alt="Pratinjau foto keluhan" className="size-16 rounded-[.8rem] object-cover" />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm text-on-surface">{fotoName || 'foto terlampir'}</p>
-                <p className="text-xs text-on-surface-variant">{Math.round(foto.length / 1333)} KB</p>
+                <p className="truncate text-sm font-bold text-on-surface">{fotoName || 'Foto keluhan'}</p>
+                <p className="mt-0.5 text-xs text-on-surface-variant">{Math.round(foto.length / 1333)} KB · siap dikirim</p>
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setFoto(null)
-                  setFotoName('')
-                  if (fileRef.current) fileRef.current.value = ''
-                }}
-                className="flex size-9 items-center justify-center rounded-full text-error hover:bg-error-container"
-              >
-                <Icon name="close" size={18} />
-              </button>
+              <IconButton type="button" icon="close" label="Hapus foto" onClick={removePhoto} className="text-error hover:bg-error-container" />
             </div>
           ) : (
             <button
               type="button"
+              disabled={processingPhoto}
               onClick={() => fileRef.current?.click()}
-              className="flex h-14 items-center justify-center gap-2 rounded-md border border-dashed border-outline text-sm font-medium text-on-surface-variant hover:border-primary hover:text-primary"
+              className="mt-4 flex min-h-24 w-full flex-col items-center justify-center gap-1.5 rounded-[1rem] border border-dashed border-outline bg-surface-low/45 text-sm font-bold text-on-surface-variant transition hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/25"
             >
-              <Icon name="camera" size={20} /> Ambil foto / unggah
+              <span className="flex size-10 items-center justify-center rounded-full bg-primary-container text-on-primary-container">
+                <Icon name="camera" size={20} />
+              </span>
+              {processingPhoto ? 'Memproses foto…' : 'Ambil atau pilih foto'}
             </button>
           )}
+        </Card>
+
+        {err && <AlertBanner>{err}</AlertBanner>}
+        <div className="sticky bottom-2 z-10 rounded-[1.4rem] bg-surface/92 p-2 backdrop-blur-xl">
+          <Button type="submit" size="lg" loading={sending} className="w-full">Kirim keluhan</Button>
         </div>
-
-        {err && <p className="text-sm text-error">{err}</p>}
-
-        <Button type="submit" size="lg" loading={sending} className="mt-2 w-full">
-          Kirim Keluhan
-        </Button>
       </form>
     </div>
   )

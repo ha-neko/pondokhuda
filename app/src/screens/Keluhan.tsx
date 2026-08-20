@@ -2,37 +2,37 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { useSessionContext } from '../lib/session-context'
 import { apiKeluhanList } from '../lib/normalizers'
-import { Badge, Card, Empty, PageHeader, Spinner, statusTone } from '../components/Ui'
+import { AlertBanner, Badge, Empty, LoadingState, PageHeader, SectionHeader, statusTone } from '../components/Ui'
 import { Icon } from '../components/Icon'
-import type { Keluhan } from '../lib/types'
+import type { Keluhan as KeluhanType } from '../lib/types'
 
 export default function Keluhan() {
   const { session } = useSessionContext()
-  const [list, setList] = useState<Keluhan[] | null>(null)
+  const [list, setList] = useState<KeluhanType[] | null>(null)
   const [err, setErr] = useState('')
 
-  useEffect(() => {
+  async function load() {
     if (!session) return
-    let alive = true
-    apiKeluhanList(session.kode, session.pin).then((r) => {
-      if (!alive) return
-      if (!r.ok) {
-        setErr(r.error)
-        return
-      }
-      setList(r.data)
-    })
-    return () => {
-      alive = false
+    setList(null)
+    setErr('')
+    const result = await apiKeluhanList(session.kode, session.pin)
+    if (!result.ok) {
+      setErr(result.error)
+      return
     }
+    setList(result.data)
+  }
+
+  useEffect(() => {
+    load()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.kode, session?.pin])
 
   if (!session) return null
 
-  const latestStatus = (k: Keluhan): string | undefined => {
-    const arr = k.status ?? []
-    const last = arr[arr.length - 1]
-    return last?.status
+  function latestStatus(item: KeluhanType): string {
+    const states = item.status ?? []
+    return states[states.length - 1]?.status || 'Diajukan'
   }
 
   return (
@@ -41,52 +41,55 @@ export default function Keluhan() {
         title="Keluhan"
         sub={session.profile.namakost}
         right={
-          <Link
-            to="/keluhan/baru"
-            className="flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
-          >
-            <Icon name="edit" size={16} /> Baru
+          <Link to="/keluhan/baru" className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-primary px-4 text-xs font-bold text-on-primary shadow-md focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/30">
+            <Icon name="edit" size={15} /> Baru
           </Link>
         }
       />
-      <div className="flex flex-col gap-3 px-4 pt-2">
-        {!list && !err && (
-          <div className="flex items-center justify-center gap-2 py-16 text-sm text-on-surface-variant">
-            <Spinner className="size-5" /> memuat keluhan…
-          </div>
-        )}
-        {err && <div className="py-10 text-center text-sm text-error">{err}</div>}
+      <div className="page-gutter content-stack">
+        <SectionHeader title="Laporan Anda" sub="Pantau progres kendala yang sudah disampaikan" />
+        {!list && !err && <LoadingState label="Memuat keluhan" />}
+        {err && <AlertBanner action={<button onClick={load} className="font-bold underline">Coba lagi</button>}>{err}</AlertBanner>}
         {list && list.length === 0 && (
-          <Empty text="Belum ada keluhan. Sampaikan jika ada yang perlu diperbaiki." />
+          <Empty
+            title="Semua baik-baik saja"
+            text="Belum ada keluhan. Jika menemukan kendala, admin siap membantu."
+            icon="comment"
+            action={<Link to="/keluhan/baru" className="text-sm font-bold text-primary">Buat keluhan</Link>}
+          />
         )}
-        {list &&
-          list.map((k) => {
-            const st = latestStatus(k)
-            return (
-              <Card key={k.kode} className="!rounded-xl">
-                <div className="flex items-center justify-between gap-2">
-                  <Badge tone="primary">{k.kategori}</Badge>
-                  <span className="text-xs text-on-surface-variant">{k.tgl}</span>
-                </div>
-                <h3 className="mt-2 font-semibold text-on-surface">{k.judul}</h3>
-                <p className="mt-1 line-clamp-2 text-sm text-on-surface-variant">{k.uraian}</p>
-                <div className="mt-2.5 flex items-center justify-between border-t border-outline-variant/50 pt-2.5">
-                  {st ? (
-                    <Badge tone={statusTone(String(st).toLowerCase().includes('selesai') ? 'success' : st)}>
-                      {st}
-                    </Badge>
-                  ) : (
-                    <Badge tone="neutral">Diajukan</Badge>
-                  )}
-                  {(k.chat?.length ?? 0) > 0 && (
-                    <span className="flex items-center gap-1 text-xs text-on-surface-variant">
-                      <Icon name="comment" size={14} /> {k.chat!.length} tanggapan
+        {list && (
+          <ul className="flex flex-col gap-3">
+            {list.map((item) => {
+              const state = latestStatus(item)
+              const tone = statusTone(state)
+              return (
+                <li key={item.kode} className="relative overflow-hidden rounded-[1.35rem] bg-surface-lowest p-4 shadow-[0_9px_28px_rgba(15,45,42,.07)]">
+                  <span className={`absolute inset-y-0 left-0 w-1 ${tone === 'success' ? 'bg-[#31a852]' : tone === 'error' ? 'bg-error' : 'bg-primary'}`} />
+                  <div className="flex items-start justify-between gap-3 pl-1">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge tone="primary">{item.kategori}</Badge>
+                        <time className="text-[10px] text-on-surface-variant">{item.tgl}</time>
+                      </div>
+                      <h3 className="mt-2.5 text-[15px] font-extrabold leading-snug text-on-surface">{item.judul}</h3>
+                      <p className="mt-1 line-clamp-2 text-[13px] leading-relaxed text-on-surface-variant">{item.uraian}</p>
+                    </div>
+                    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-surface-low text-on-surface-variant">
+                      <Icon name="comment" size={18} />
                     </span>
-                  )}
-                </div>
-              </Card>
-            )
-          })}
+                  </div>
+                  <div className="mt-4 flex items-center justify-between border-t border-outline-variant/40 pl-1 pt-3">
+                    <Badge tone={tone}>{state}</Badge>
+                    <span className="flex items-center gap-1 text-[11px] text-on-surface-variant">
+                      <Icon name="comment" size={13} /> {(item.chat?.length ?? 0)} tanggapan
+                    </span>
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
+        )}
       </div>
     </div>
   )

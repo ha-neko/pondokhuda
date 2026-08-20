@@ -2,13 +2,11 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { useSessionContext } from '../lib/session-context'
 import { apiPengumuman, apiPengumumanChat } from '../lib/normalizers'
-import { Button, Card, Empty, PageHeader, Spinner } from '../components/Ui'
+import { AlertBanner, Empty, IconButton, LoadingState, PageHeader, SectionHeader } from '../components/Ui'
 import { Icon } from '../components/Icon'
 import type { ChatRow, Pengumuman } from '../lib/types'
 
-interface LocalChat extends ChatRow {
-  _pending?: boolean
-}
+interface LocalChat extends ChatRow { _pending?: boolean }
 
 export default function PengumumanDetail() {
   const { kode } = useParams<{ kode: string }>()
@@ -17,26 +15,25 @@ export default function PengumumanDetail() {
   const [item, setItem] = useState<Pengumuman | null>(null)
   const [chats, setChats] = useState<LocalChat[]>([])
   const [err, setErr] = useState('')
+  const [sendErr, setSendErr] = useState('')
   const [msg, setMsg] = useState('')
   const [sending, setSending] = useState(false)
 
   useEffect(() => {
     if (!session || !kode) return
     let alive = true
-    apiPengumuman(session.kode).then((r) => {
+    apiPengumuman(session.kode).then((result) => {
       if (!alive) return
-      if (!r.ok) {
-        setErr(r.error)
+      if (!result.ok) {
+        setErr(result.error)
         return
       }
-      const found = r.data.find((p) => p.kode === kode)
+      const found = result.data.find((announcement) => announcement.kode === kode)
       setItem(found ?? null)
       setChats((found?.chat ?? []) as LocalChat[])
       if (!found) setErr('Pengumuman tidak ditemukan.')
     })
-    return () => {
-      alive = false
-    }
+    return () => { alive = false }
   }, [session?.kode, kode])
 
   async function send(e: FormEvent) {
@@ -44,25 +41,18 @@ export default function PengumumanDetail() {
     if (!session || !item || !msg.trim() || sending) return
     const text = msg.trim()
     setSending(true)
+    setSendErr('')
     setMsg('')
-    setChats((c) => [
-      ...c,
-      {
-        kodchat: 'local',
-        kodberita: item.kode,
-        koduser: session.kode,
-        keyuser: session.pin,
-        dttime: new Date().toISOString(),
-        msg: text,
-        _pending: true,
-      },
-    ])
-    const r = await apiPengumumanChat(item.kode, session.kode, session.pin, text)
+    setChats((current) => [...current, {
+      kodchat: 'local', kodberita: item.kode, koduser: session.kode,
+      keyuser: session.pin, dttime: new Date().toISOString(), msg: text, _pending: true,
+    }])
+    const result = await apiPengumumanChat(item.kode, session.kode, session.pin, text)
     setSending(false)
-    if (!r.ok) {
-      // roll back optimistic row
-      setChats((c) => c.filter((x) => !x._pending))
+    if (!result.ok) {
+      setChats((current) => current.filter((chat) => !chat._pending))
       setMsg(text)
+      setSendErr(result.error)
     }
   }
 
@@ -70,96 +60,76 @@ export default function PengumumanDetail() {
 
   return (
     <div>
-      <PageHeader title="Pengumuman" onBack={() => nav(-1)} />
-      <div className="flex flex-col gap-3 px-4 pt-2">
-        {err && !item && <div className="py-10 text-center text-sm text-error">{err}</div>}
+      <PageHeader title="Detail pengumuman" onBack={() => nav(-1)} />
+      <div className="page-gutter content-stack pb-3">
+        {!item && !err && <LoadingState label="Memuat pengumuman" />}
+        {err && !item && <AlertBanner>{err}</AlertBanner>}
         {item && (
           <>
-            <Card className="!rounded-xl">
-              <div className="mb-1 flex items-center gap-2">
-                <p className="text-xs font-medium text-primary">{item.tglpublish}</p>
-                {(item.chat?.length ?? 0) > 0 && (
-                  <span className="text-xs text-on-surface-variant">
-                    {item.chat!.length} komentar
-                  </span>
-                )}
+            <article className="rounded-[1.6rem] bg-surface-lowest p-5 shadow-[0_12px_38px_rgba(15,45,42,.08)]">
+              <div className="flex items-center gap-3">
+                <span className="flex size-11 items-center justify-center rounded-[1rem] bg-primary text-on-primary">
+                  <Icon name="megaphone" size={21} />
+                </span>
+                <div>
+                  <p className="text-xs font-extrabold text-on-surface">Admin kost</p>
+                  <time className="text-[11px] text-on-surface-variant">{item.tglpublish}</time>
+                </div>
               </div>
-              <h2 className="text-lg font-bold text-on-surface">{item.judul}</h2>
-              <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-on-surface-variant">
-                {item.berita}
-              </p>
-            </Card>
+              <h1 className="mt-5 text-[1.65rem] font-black leading-tight tracking-[-.04em] text-on-surface">{item.judul}</h1>
+              <p className="mt-4 whitespace-pre-line text-[15px] leading-[1.8] text-on-surface-variant">{item.berita}</p>
+            </article>
 
-            <div className="flex flex-col gap-2">
-              <h3 className="px-1 text-sm font-semibold text-on-surface-variant">Diskusi</h3>
-              {chats.length === 0 ? (
-                <Empty text="Belum ada komentar. Jadilah yang pertama." />
-              ) : (
-                <ul className="flex flex-col gap-2">
-                  {chats.map((c, i) => {
-                    const mine = c.koduser === session.kode
-                    return (
-                      <li key={`${c.kodchat}-${i}`} className={mine ? 'flex justify-end' : 'flex justify-start'}>
-                        <div
-                          className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-sm ${
-                            mine
-                              ? `rounded-br-sm bg-primary text-on-primary ${c._pending ? 'opacity-60' : ''}`
-                              : 'rounded-bl-sm bg-surface-variant text-on-surface'
-                          }`}
-                        >
-                          {!mine && (
-                            <p className="text-[11px] font-semibold text-on-surface-variant">{c.koduser}</p>
-                          )}
-                          <p>{c.msg}</p>
-                          <p className={`mt-0.5 text-right text-[10px] ${mine ? 'opacity-70' : 'text-on-surface-variant'}`}>
-                            {fmt(dttime(c.dttime))}
-                            {c._pending ? ' · mengirim…' : ''}
-                          </p>
-                        </div>
-                      </li>
-                    )
-                  })}
-                </ul>
-              )}
+            <SectionHeader title="Diskusi" sub={`${chats.length} komentar`} />
+            {chats.length === 0 ? (
+              <Empty title="Belum ada komentar" text="Mulai diskusi jika ada hal yang ingin ditanyakan." icon="comment" />
+            ) : (
+              <ul className="flex flex-col gap-2.5">
+                {chats.map((chat, index) => {
+                  const mine = chat.koduser === session.kode
+                  return (
+                    <li key={`${chat.kodchat}-${index}`} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-[82%] rounded-[1.15rem] px-3.5 py-2.5 text-[13px] leading-relaxed ${mine ? `rounded-br-sm bg-primary text-on-primary ${chat._pending ? 'opacity-60' : ''}` : 'rounded-bl-sm border border-outline-variant/50 bg-surface-lowest text-on-surface'}`}>
+                        {!mine && <p className="mb-0.5 text-[10px] font-bold text-primary">Admin kost</p>}
+                        <p>{chat.msg}</p>
+                        <p className={`mt-1 text-right text-[9px] ${mine ? 'text-on-primary/65' : 'text-on-surface-variant'}`}>
+                          {fmt(chat.dttime)}{chat._pending ? ' · mengirim…' : ''}
+                        </p>
+                      </div>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
 
-              <form onSubmit={send} className="mt-1 flex items-center gap-2 rounded-full bg-surface-low p-1.5 pl-4">
-                <input
-                  value={msg}
-                  onChange={(e) => setMsg(e.target.value)}
-                  placeholder="Tulis komentar…"
-                  className="min-w-0 flex-1 bg-transparent text-sm text-on-surface outline-none placeholder:text-on-surface-variant/70"
-                />
-                <Button type="submit" size="sm" loading={sending} disabled={!msg.trim()}>
-                  <Icon name="send" size={16} />
-                </Button>
-              </form>
-            </div>
+            {sendErr && <AlertBanner>{sendErr}</AlertBanner>}
+
+            <form onSubmit={send} className="sticky bottom-2 z-10 mt-1 flex items-center gap-2 rounded-[1.4rem] border border-outline-variant/60 bg-surface-lowest/94 p-2 pl-4 shadow-[0_12px_36px_rgba(8,39,37,.16)] backdrop-blur-xl">
+              <label htmlFor="announcement-comment" className="sr-only">Tulis komentar</label>
+              <input
+                id="announcement-comment"
+                value={msg}
+                onChange={(e) => setMsg(e.target.value)}
+                placeholder="Tulis komentar…"
+                className="min-h-11 min-w-0 flex-1 bg-transparent text-sm text-on-surface outline-none placeholder:text-on-surface-variant/60"
+              />
+              <IconButton
+                type="submit"
+                icon="send"
+                label="Kirim komentar"
+                disabled={!msg.trim() || sending}
+                className="bg-primary text-on-primary hover:bg-primary"
+              />
+            </form>
           </>
-        )}
-        {!item && !err && (
-          <div className="flex items-center justify-center gap-2 py-16 text-sm text-on-surface-variant">
-            <Spinner className="size-5" /> memuat…
-          </div>
         )}
       </div>
     </div>
   )
 }
 
-function dttime(s: string): string {
-  const d = new Date(s)
-  return Number.isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString()
-}
-
-function fmt(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('id-ID', {
-      day: '2-digit',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  } catch {
-    return ''
-  }
+function fmt(value: string): string {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return value
+  return date.toLocaleString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
 }

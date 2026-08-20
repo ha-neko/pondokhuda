@@ -2,29 +2,30 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { useSessionContext } from '../lib/session-context'
 import { apiPengumuman } from '../lib/normalizers'
-import { Badge, Card, Empty, PageHeader, Spinner } from '../components/Ui'
+import { AlertBanner, Badge, Empty, LoadingState, PageHeader, SectionHeader } from '../components/Ui'
 import { Icon } from '../components/Icon'
-import type { Pengumuman } from '../lib/types'
+import type { Pengumuman as PengumumanType } from '../lib/types'
 
 export default function Pengumuman() {
   const { session } = useSessionContext()
-  const [list, setList] = useState<Pengumuman[] | null>(null)
+  const [list, setList] = useState<PengumumanType[] | null>(null)
   const [err, setErr] = useState('')
 
-  useEffect(() => {
+  async function load() {
     if (!session) return
-    let alive = true
-    apiPengumuman(session.kode).then((r) => {
-      if (!alive) return
-      if (!r.ok) {
-        setErr(r.error)
-        return
-      }
-      setList(r.data)
-    })
-    return () => {
-      alive = false
+    setErr('')
+    setList(null)
+    const result = await apiPengumuman(session.kode)
+    if (!result.ok) {
+      setErr(result.error)
+      return
     }
+    setList(result.data)
+  }
+
+  useEffect(() => {
+    load()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.kode])
 
   if (!session) return null
@@ -32,32 +33,41 @@ export default function Pengumuman() {
   return (
     <div>
       <PageHeader title="Pengumuman" sub={session.profile.namakost} />
-      <div className="flex flex-col gap-3 px-4 pt-2">
-        {!list && !err && (
-          <div className="flex items-center justify-center gap-2 py-16 text-sm text-on-surface-variant">
-            <Spinner className="size-5" /> memuat pengumuman…
-          </div>
+      <div className="page-gutter content-stack">
+        <SectionHeader title="Kabar dari kost" sub="Informasi terbaru untuk seluruh penghuni" />
+        {!list && !err && <LoadingState label="Memuat pengumuman" />}
+        {err && <AlertBanner action={<button onClick={load} className="font-bold underline">Coba lagi</button>}>{err}</AlertBanner>}
+        {list && list.length === 0 && <Empty title="Belum ada pengumuman" text="Kabar baru dari admin akan tampil di sini." icon="megaphone" />}
+        {list && (
+          <ul className="flex flex-col gap-3">
+            {list.map((item, index) => (
+              <li key={item.kode}>
+                <Link
+                  to={`/info/${item.kode}`}
+                  className="group block rounded-[1.35rem] bg-surface-lowest p-4 shadow-[0_9px_28px_rgba(15,45,42,.07)] transition duration-200 hover:-translate-y-0.5 active:scale-[.99] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/25"
+                >
+                  <div className="flex gap-3.5">
+                    <span className={`flex size-11 shrink-0 items-center justify-center rounded-[1rem] ${index === 0 ? 'bg-primary text-on-primary' : 'bg-primary-container text-on-primary-container'}`}>
+                      <Icon name="megaphone" size={21} />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <time className="text-[10px] font-bold uppercase tracking-[.06em] text-primary">{item.tglpublish}</time>
+                        {(item.chat?.length ?? 0) > 0 && <Badge tone="neutral">{item.chat!.length} komentar</Badge>}
+                      </div>
+                      <h3 className="mt-1.5 text-[15px] font-extrabold leading-snug tracking-[-.015em] text-on-surface">{item.judul}</h3>
+                      <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-on-surface-variant">{item.berita}</p>
+                      <div className="mt-3 flex items-center justify-between border-t border-outline-variant/40 pt-2.5 text-xs font-bold text-primary">
+                        <span>Buka pengumuman</span>
+                        <Icon name="chevronRight" size={17} className="transition-transform group-hover:translate-x-0.5" />
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
         )}
-        {err && <div className="py-10 text-center text-sm text-error">{err}</div>}
-        {list && list.length === 0 && <Empty text="Belum ada pengumuman dari admin." />}
-        {list &&
-          list.map((p) => (
-            <Link key={p.kode} to={`/info/${p.kode}`}>
-              <Card className="!rounded-xl">
-                <div className="mb-1 flex items-center justify-between gap-2">
-                  <p className="text-xs font-medium text-primary">{p.tglpublish}</p>
-                  {p.chat && p.chat.length > 0 && (
-                    <Badge tone="neutral">{p.chat.length} komen</Badge>
-                  )}
-                </div>
-                <h3 className="font-semibold text-on-surface">{p.judul}</h3>
-                <p className="mt-1 line-clamp-2 text-sm text-on-surface-variant">{p.berita}</p>
-                <div className="mt-2 flex items-center gap-1 text-xs font-medium text-primary">
-                  Baca selengkapnya <Icon name="chevronRight" size={14} />
-                </div>
-              </Card>
-            </Link>
-          ))}
       </div>
     </div>
   )
