@@ -1,0 +1,150 @@
+@import "tailwindcss";
+
+/* ============================================================
+   M3 design tokens — seed #00696D (teal) + dynamic per-kost
+   ============================================================ */
+
+:root {
+  --ph-primary: #00696d;
+  --ph-on-primary: #ffffff;
+  --ph-primary-container: #9cf1f4;
+  --ph-on-primary-container: #002021;
+  --ph-secondary: #4a6363;
+  --ph-on-secondary: #ffffff;
+  --ph-secondary-container: #cce8e8;
+  --ph-on-secondary-container: #051f20;
+  --ph-tertiary: #4b607c;
+  --ph-on-tertiary: #ffffff;
+  --ph-tertiary-container: #d0e4ff;
+  --ph-on-tertiary-container: #041c35;
+  --ph-error: #ba1a1a;
+  --ph-on-error: #ffffff;
+  --ph-error-container: #ffdad6;
+  --ph-on-error-container: #410002;
+  --ph-surface: #f4fbf9;
+  --ph-on-surface: #151d1c;
+  --ph-surface-variant: #dae5e3;
+  --ph-on-surface-variant: #3f4948;
+  --ph-surface-container-lowest: #ffffff;
+  --ph-surface-container-low: #eef5f3;
+  --ph-surface-container: #e8efed;
+  --ph-surface-container-high: #e2eae8;
+  --ph-surface-container-highest: #dce4e2;
+  --ph-outline: #6f7978;
+  --ph-outline-variant: #bec9c7;
+  --ph-scrim: #000000;
+  --ph-inverse-surface: #2a3130;
+  --ph-inverse-on-surface: #eef5f3;
+  --ph-inverse-primary: #4cd9de;
+
+  --ph-scheme: light;
+}
+
+.dark {
+  --ph-primary: #4cd9de;
+  --ph-on-primary: #003739;
+  --ph-primary-container: #004f53;
+  --ph-on-primary-container: #9cf1f4;
+  --ph-secondary: #acc9c9;
+  --ph-on-secondary: #173233;
+  --ph-secondary-container: #2e4b4c;
+  --ph-on-secondary-container: #cce8e8;
+  --ph-tertiary: #b7caec;
+  --ph-on-tertiary: #21334c;
+  --ph-tertiary-container: #374a64;
+  --ph-on-tertiary-container: #d0e4ff;
+  --ph-error: #ffb4ab;
+  --ph-on-error: #690005;
+  --ph-error-container: #93000a;
+  --ph-on-error-container: #ffdad6;
+  --ph-surface: #0e1514;
+  --ph-on-surface: #dee4e2;
+  --ph-surface-variant: #3f4948;
+  --ph-on-surface-variant: #bec9c7;
+  --ph-surface-container-lowest: #090f0f;
+  --ph-surface-container-low: #161d1c;
+  --ph-surface-container: #1a2120;
+  --ph-surface-container-high: #252b2b;
+  --ph-surface-container-highest: #303636;
+  --ph-outline: #889391;
+  --ph-outline-variant: #3f4948;
+  --ph-inverse-surface: #dee4e2;
+  --ph-inverse-on-surface: #2a3130;
+  --ph-inverse-primary: #00696d;
+
+  --ph-scheme: dark;
+}
+
+@theme {
+  --color-primary: var(--ph-primary);
+  --color-on-primary: var(--ph-on-primary);
+  --color-primary-container: var(--ph-primary-container);
+  --color-on-primary-container: var(--ph-on-primary-container);
+  --color-secondary: var(--ph-secondary);
+  --color-on-secondary: var(--ph-on-secondary);
+  --color-secondary-container: var(--ph-secondary-container);
+  --color-on-secondary-container: var(--ph-on-secondary-container);
+  --color-tertiary: var(--ph-tertiary);
+  --color-on-tertiary: var(--ph-on-tertiary);
+  --color-tertiary-container: var(--ph-tertiary-container);
+  --color-on-tertiary-container: var(--ph-on-tertiary-container);
+  --color-error: var(--ph-error);
+  --color-on-error: var(--ph-on-error);
+  --color-error-container: var(--ph-error-container);
+  --color-on-error-container: var(--ph-on-error-container);
+  --color-surface: var(--ph-surface);
+  --color-on-surface: var(--ph-on-surface);
+  --color-surface-variant: var(--ph-surface-variant);
+  --color-on-surface-variant: var(--ph-on-surface-variant);
+  --color-surface-lowest: var(--ph-surface-container-lowest);
+  --color-surface-low: var(--ph-surface-container-low);
+  --color-surface-container: var(--ph-surface-container);
+  --color-surface-high: var(--ph-surface-container-high);
+  --color-surface-highest: var(--ph-surface-container-highest);
+  --color-outline: var(--ph-outline);
+  --color-outline-variant: var(--ph-outline-variant);
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 28px;
+}
+
+html {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--ph-surface);
+  color: var(--ph-on-surface);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+/* safe-area helpers for standalone PWA on phones */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* thin scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ph-outline-variant) transparent;
+}
+
+@keyframes ph-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-ph-in {
+  animation: ph-fade-in 0.22s ease-out both;
+}

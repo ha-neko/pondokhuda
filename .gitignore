@@ -1,0 +1,32 @@
+# ===== secrets — never commit =====
+web/.env
+web/.env.*
+config/config-db*.php
+config/config.local.php
+
+# ===== laravel runtime =====
+web/vendor/
+composer.phar
+web/storage/logs/*.log
+web/storage/framework/cache/*
+web/storage/framework/sessions/*
+web/storage/framework/views/*
+web/.idea/
+
+# ===== laravel legacy assets (large, regenerable / vendor) =====
+web/public/adminbsb/
+web/public/pdf/
+
+# ===== node / app build =====
+app/node_modules/
+app/dist/
+app/dev-dist/
+app/android/
+app/ios/
+
+# ===== junk endpoints (quarantined, not for public) =====
+api/_quarantine/
+
+# ===== misc =====
+*.log
+.DS_Store
