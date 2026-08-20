@@ -11,4 +11,10 @@ class SuperOwner extends Authenticatable
     use Notifiable;
 
     protected $table = 'tb_super_owner';
+
+    /** Legacy auth tables do not have Laravel's remember_token column. */
+    public function getRememberTokenName()
+    {
+        return null;
+    }
 }

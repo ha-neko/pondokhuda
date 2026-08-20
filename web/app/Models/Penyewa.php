@@ -31,6 +31,12 @@ class Penyewa extends Model implements
 
     protected $primaryKey = 'kode';
 
+    /** Legacy auth tables do not have Laravel's remember_token column. */
+    public function getRememberTokenName()
+    {
+        return null;
+    }
+
     public function kost()
     {
         return $this->belongsTo('App\Models\Kost', 'kode_kost');

@@ -29,6 +29,12 @@ class Admin extends Model implements
 
     protected $primaryKey = 'kode';
 
+    /** Legacy auth tables do not have Laravel's remember_token column. */
+    public function getRememberTokenName()
+    {
+        return null;
+    }
+
     public function adminkost()
     {
         return $this->hasMany('App\Models\AdminKost', 'kode_admin');

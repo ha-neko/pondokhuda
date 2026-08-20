@@ -34,12 +34,23 @@ class LoginController extends Controller
 				'header'  => api_header(),
 				'method'  => 'POST',
 				'content' => http_build_query($post),
+				'ignore_errors' => true,
+				'timeout' => 15,
 			)
 		);
 
 		$context  = stream_context_create($options);
-		$json = file_get_contents($url, true, $context);
+		$json = @file_get_contents($url, true, $context);
+		if ($json === false) {
+			Session::flash('message', 'Server sedang tidak dapat dihubungi. Silakan coba kembali.');
+			return redirect()->route('loginForm')->withInput($request->only('kode'));
+		}
 		$result = json_decode($json, true);
+		if (isset($result['error']) && $result['error'] === 'too_many_attempts') {
+			$retry = isset($result['retry_after']) ? (int) $result['retry_after'] : 60;
+			Session::flash('message', 'Terlalu banyak percobaan login. Coba lagi dalam ' . $retry . ' detik.');
+			return redirect()->route('loginForm')->withInput($request->only('kode'));
+		}
 
 		// dd($result);
 
