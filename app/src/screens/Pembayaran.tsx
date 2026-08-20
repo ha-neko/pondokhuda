@@ -46,16 +46,16 @@ export default function Pembayaran() {
           <Empty title="Pembayaran belum tersedia" text="Hubungi admin kost jika data belum muncul." icon="wallet" />
         ) : (
           <>
-            <section className="relative overflow-hidden rounded-[1.65rem] bg-on-surface px-5 py-5 text-surface shadow-[0_18px_45px_rgba(8,25,24,.2)]">
+            <section className="relative overflow-hidden rounded-[1.35rem] bg-on-surface px-4.5 py-4.5 text-surface shadow-[0_12px_34px_rgba(8,25,24,.16)]">
               <div className="absolute -right-12 -top-14 size-44 rounded-full bg-primary/25 blur-2xl" />
               <div className="relative flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[.13em] text-surface/55">Status periode ini</p>
-                  <h2 className="mt-1 text-2xl font-black tracking-[-.045em]">{bayar.statusbayar}</h2>
+                  <p className="text-[11px] font-medium text-surface/60">Status periode ini</p>
+                  <h2 className="mt-1 text-xl font-semibold tracking-[-.025em]">{bayar.statusbayar}</h2>
                 </div>
                 <Badge tone={statusTone(bayar.statusbayar)}>{bayar.statusbayar}</Badge>
               </div>
-              <div className="relative mt-6 grid grid-cols-2 gap-x-4 gap-y-5 border-t border-surface/15 pt-5">
+              <div className="relative mt-5 grid grid-cols-2 gap-x-4 gap-y-4 border-t border-surface/15 pt-4">
                 <Metric label="Tagihan" value={money(bayar.tagihantotal)} />
                 <Metric label="Sudah dibayar" value={money(bayar.bayarsebelumnya)} />
                 <Metric label="Sisa pembayaran" value={money(bayar.sisabayarsebelumnya)} danger={remaining > 0} />
@@ -70,14 +70,14 @@ export default function Pembayaran() {
               <ul className="relative flex flex-col gap-3 before:absolute before:bottom-7 before:left-[1.1rem] before:top-7 before:w-px before:bg-outline-variant/70">
                 {history.map((item, index) => (
                   <li key={item.kode_bayar ?? index} className="relative pl-11">
-                    <span className={`absolute left-2.5 top-6 z-10 size-[1.05rem] rounded-full border-[3px] border-surface ${statusTone(item.statusbayar) === 'success' ? 'bg-[#31a852]' : 'bg-error'}`} />
+                    <span className={`absolute left-2.5 top-6 z-10 size-[1.05rem] rounded-full border-[3px] border-surface ${statusTone(item.statusbayar) === 'success' ? 'bg-success' : 'bg-error'}`} />
                     <Card variant="elevated" className="!p-4">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <p className="text-[10px] font-bold uppercase tracking-[.08em] text-primary">
                             Pembayaran {item.bayarke ? `#${item.bayarke}` : `#${history.length - index}`}
                           </p>
-                          <h3 className="mt-1 truncate text-sm font-extrabold text-on-surface">{item.periode_bayar || item.periodesewa}</h3>
+                          <h3 className="mt-1 truncate text-sm font-semibold text-on-surface">{item.periode_bayar || item.periodesewa}</h3>
                           <p className="mt-1 text-xs text-on-surface-variant">
                             {item.tanggal_bayar || item.tanggal_pembayaran}{item.metode ? ` · ${item.metode}` : ''}
                           </p>
@@ -87,11 +87,11 @@ export default function Pembayaran() {
                       <div className="mt-4 flex items-end justify-between border-t border-outline-variant/45 pt-3">
                         <div>
                           <p className="text-[10px] font-semibold text-on-surface-variant">Total dibayar</p>
-                          <p className="money-value text-lg font-black text-on-surface">{money(item.total_bayar)}</p>
+                          <p className="money-value text-base font-semibold text-on-surface">{money(item.total_bayar)}</p>
                         </div>
                         <div className="flex flex-col items-end gap-1 text-[11px]">
                           {Number(item.denda) > 0 && <span className="text-error">Denda {money(item.denda)}</span>}
-                          {Number(item.diskon) > 0 && <span className="text-[#15803d]">Diskon {money(item.diskon)}</span>}
+                          {Number(item.diskon) > 0 && <span className="text-success">Diskon {money(item.diskon)}</span>}
                         </div>
                       </div>
                     </Card>
@@ -110,7 +110,7 @@ function Metric({ label, value, danger, small }: { label: string; value: string;
   return (
     <div>
       <p className="text-[10px] font-semibold text-surface/55">{label}</p>
-      <p className={`money-value mt-1 font-extrabold ${small ? 'text-sm leading-snug' : 'text-base'} ${danger ? 'text-[#ffb4ab]' : 'text-surface'}`}>{value}</p>
+      <p className={`money-value mt-1 font-semibold ${small ? 'text-sm leading-snug' : 'text-[15px]'} ${danger ? 'text-error-container' : 'text-surface'}`}>{value}</p>
     </div>
   )
 }

@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli'
 
 const config: CapacitorConfig = {
   appId: 'id.pondokhuda.app',
-  appName: 'PondokHuda',
+  appName: 'Pondok Huda',
   webDir: 'dist',
   backgroundColor: '#0e1514',
   android: {

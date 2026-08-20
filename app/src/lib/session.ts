@@ -57,7 +57,9 @@ export function applyKostColor(primaryHex?: string): void {
   root.style.setProperty('--ph-primary', primaryHex)
   const dark = root.classList.contains('dark')
   const isLight = luminance(primaryHex) > 0.4
-  root.style.setProperty('--ph-on-primary', isLight !== dark ? '#000000' : '#ffffff')
+  // Keep tenant brand colors, but invert their foreground with the active
+  // appearance so branded cards/buttons change together with every surface.
+  root.style.setProperty('--ph-on-primary', isLight !== dark ? '#101414' : '#ffffff')
   // tone down for inverse/container so text stays legible
   root.style.setProperty('--ph-inverse-primary', lighten(dark ? primaryHex : primaryHex, dark))
 }

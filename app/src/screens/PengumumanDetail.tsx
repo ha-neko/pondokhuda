@@ -66,18 +66,18 @@ export default function PengumumanDetail() {
         {err && !item && <AlertBanner>{err}</AlertBanner>}
         {item && (
           <>
-            <article className="rounded-[1.6rem] bg-surface-lowest p-5 shadow-[0_12px_38px_rgba(15,45,42,.08)]">
+            <article className="rounded-[1.2rem] border border-outline-variant/35 bg-surface-lowest p-5 shadow-[0_7px_22px_rgba(15,45,42,.055)]">
               <div className="flex items-center gap-3">
-                <span className="flex size-11 items-center justify-center rounded-[1rem] bg-primary text-on-primary">
-                  <Icon name="megaphone" size={21} />
+                <span className="flex size-10 items-center justify-center rounded-[.85rem] bg-primary text-on-primary">
+                  <Icon name="notice" size={20} />
                 </span>
                 <div>
                   <p className="text-xs font-extrabold text-on-surface">Admin kost</p>
                   <time className="text-[11px] text-on-surface-variant">{item.tglpublish}</time>
                 </div>
               </div>
-              <h1 className="mt-5 text-[1.65rem] font-black leading-tight tracking-[-.04em] text-on-surface">{item.judul}</h1>
-              <p className="mt-4 whitespace-pre-line text-[15px] leading-[1.8] text-on-surface-variant">{item.berita}</p>
+              <h1 className="mt-5 text-[1.4rem] font-semibold leading-snug tracking-[-.025em] text-on-surface">{item.judul}</h1>
+              <p className="mt-4 whitespace-pre-line text-sm leading-7 text-on-surface-variant">{item.berita}</p>
             </article>
 
             <SectionHeader title="Diskusi" sub={`${chats.length} komentar`} />
@@ -89,10 +89,10 @@ export default function PengumumanDetail() {
                   const mine = chat.koduser === session.kode
                   return (
                     <li key={`${chat.kodchat}-${index}`} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`max-w-[82%] rounded-[1.15rem] px-3.5 py-2.5 text-[13px] leading-relaxed ${mine ? `rounded-br-sm bg-primary text-on-primary ${chat._pending ? 'opacity-60' : ''}` : 'rounded-bl-sm border border-outline-variant/50 bg-surface-lowest text-on-surface'}`}>
+                      <div className={`max-w-[84%] rounded-[1rem] px-3.5 py-2.5 text-[13px] leading-relaxed ${mine ? `rounded-br-sm bg-primary text-on-primary ${chat._pending ? 'opacity-60' : ''}` : 'rounded-bl-sm border border-outline-variant/50 bg-surface-lowest text-on-surface'}`}>
                         {!mine && <p className="mb-0.5 text-[10px] font-bold text-primary">Admin kost</p>}
                         <p>{chat.msg}</p>
-                        <p className={`mt-1 text-right text-[9px] ${mine ? 'text-on-primary/65' : 'text-on-surface-variant'}`}>
+                        <p className={`mt-1 text-right text-[10px] ${mine ? 'text-on-primary/65' : 'text-on-surface-variant'}`}>
                           {fmt(chat.dttime)}{chat._pending ? ' · mengirim…' : ''}
                         </p>
                       </div>
@@ -104,7 +104,7 @@ export default function PengumumanDetail() {
 
             {sendErr && <AlertBanner>{sendErr}</AlertBanner>}
 
-            <form onSubmit={send} className="sticky bottom-2 z-10 mt-1 flex items-center gap-2 rounded-[1.4rem] border border-outline-variant/60 bg-surface-lowest/94 p-2 pl-4 shadow-[0_12px_36px_rgba(8,39,37,.16)] backdrop-blur-xl">
+            <form onSubmit={send} className="sticky bottom-2 z-10 mt-1 flex items-center gap-2 rounded-[1.1rem] border border-outline-variant/60 bg-surface-lowest/94 p-2 pl-4 shadow-[0_8px_26px_rgba(8,39,37,.13)] backdrop-blur-xl">
               <label htmlFor="announcement-comment" className="sr-only">Tulis komentar</label>
               <input
                 id="announcement-comment"

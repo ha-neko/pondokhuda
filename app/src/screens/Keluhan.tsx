@@ -41,7 +41,7 @@ export default function Keluhan() {
         title="Keluhan"
         sub={session.profile.namakost}
         right={
-          <Link to="/keluhan/baru" className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-primary px-4 text-xs font-bold text-on-primary shadow-md focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/30">
+          <Link to="/keluhan/baru" className="inline-flex min-h-10 items-center gap-1.5 rounded-[.85rem] bg-primary px-3.5 text-xs font-semibold text-on-primary shadow-sm focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/30">
             <Icon name="edit" size={15} /> Baru
           </Link>
         }
@@ -55,7 +55,7 @@ export default function Keluhan() {
             title="Semua baik-baik saja"
             text="Belum ada keluhan. Jika menemukan kendala, admin siap membantu."
             icon="comment"
-            action={<Link to="/keluhan/baru" className="text-sm font-bold text-primary">Buat keluhan</Link>}
+            action={<Link to="/keluhan/baru" className="text-sm font-semibold text-primary">Buat keluhan</Link>}
           />
         )}
         {list && (
@@ -64,19 +64,19 @@ export default function Keluhan() {
               const state = latestStatus(item)
               const tone = statusTone(state)
               return (
-                <li key={item.kode} className="relative overflow-hidden rounded-[1.35rem] bg-surface-lowest p-4 shadow-[0_9px_28px_rgba(15,45,42,.07)]">
-                  <span className={`absolute inset-y-0 left-0 w-1 ${tone === 'success' ? 'bg-[#31a852]' : tone === 'error' ? 'bg-error' : 'bg-primary'}`} />
+                <li key={item.kode} className="relative overflow-hidden rounded-[1.1rem] border border-outline-variant/35 bg-surface-lowest p-4">
+                  <span className={`absolute inset-y-0 left-0 w-1 ${tone === 'success' ? 'bg-success' : tone === 'error' ? 'bg-error' : 'bg-primary'}`} />
                   <div className="flex items-start justify-between gap-3 pl-1">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <Badge tone="primary">{item.kategori}</Badge>
                         <time className="text-[10px] text-on-surface-variant">{item.tgl}</time>
                       </div>
-                      <h3 className="mt-2.5 text-[15px] font-extrabold leading-snug text-on-surface">{item.judul}</h3>
+                      <h3 className="mt-2.5 text-[15px] font-semibold leading-snug text-on-surface">{item.judul}</h3>
                       <p className="mt-1 line-clamp-2 text-[13px] leading-relaxed text-on-surface-variant">{item.uraian}</p>
                     </div>
-                    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-surface-low text-on-surface-variant">
-                      <Icon name="comment" size={18} />
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-surface-low text-on-surface-variant">
+                      <Icon name="comment" size={17} />
                     </span>
                   </div>
                   <div className="mt-4 flex items-center justify-between border-t border-outline-variant/40 pl-1 pt-3">

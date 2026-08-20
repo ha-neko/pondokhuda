@@ -93,7 +93,7 @@ export default function KeluhanForm() {
                 type="button"
                 aria-pressed={kategori === item}
                 onClick={() => setKategori(item)}
-                className={`min-h-11 rounded-full px-4 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/25 ${kategori === item ? 'bg-primary text-on-primary shadow-md' : 'border border-outline-variant bg-surface-lowest text-on-surface-variant'}`}
+                className={`min-h-10 rounded-full px-4 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/25 ${kategori === item ? 'bg-primary text-on-primary shadow-sm' : 'border border-outline-variant bg-surface-lowest text-on-surface-variant'}`}
               >
                 {item}
               </button>
@@ -124,7 +124,7 @@ export default function KeluhanForm() {
           <SectionHeader title="Foto pendukung" sub="Opsional · gambar akan dikompres otomatis" />
           <input ref={fileRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => onPick(e.target.files?.[0])} />
           {foto ? (
-            <div className="mt-4 flex items-center gap-3 rounded-[1rem] bg-surface-low p-2.5">
+            <div className="mt-4 flex items-center gap-3 rounded-[.9rem] bg-surface-low p-2.5">
               <img src={`data:image/jpeg;base64,${foto}`} alt="Pratinjau foto keluhan" className="size-16 rounded-[.8rem] object-cover" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-bold text-on-surface">{fotoName || 'Foto keluhan'}</p>
@@ -137,7 +137,7 @@ export default function KeluhanForm() {
               type="button"
               disabled={processingPhoto}
               onClick={() => fileRef.current?.click()}
-              className="mt-4 flex min-h-24 w-full flex-col items-center justify-center gap-1.5 rounded-[1rem] border border-dashed border-outline bg-surface-low/45 text-sm font-bold text-on-surface-variant transition hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/25"
+              className="mt-4 flex min-h-22 w-full flex-col items-center justify-center gap-1.5 rounded-[.9rem] border border-dashed border-outline bg-surface-low/45 text-sm font-semibold text-on-surface-variant transition hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/25"
             >
               <span className="flex size-10 items-center justify-center rounded-full bg-primary-container text-on-primary-container">
                 <Icon name="camera" size={20} />
@@ -148,7 +148,7 @@ export default function KeluhanForm() {
         </Card>
 
         {err && <AlertBanner>{err}</AlertBanner>}
-        <div className="sticky bottom-2 z-10 rounded-[1.4rem] bg-surface/92 p-2 backdrop-blur-xl">
+        <div className="sticky bottom-2 z-10 rounded-[1.05rem] bg-surface/92 p-2 backdrop-blur-xl">
           <Button type="submit" size="lg" loading={sending} className="w-full">Kirim keluhan</Button>
         </div>
       </form>

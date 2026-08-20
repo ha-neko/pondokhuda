@@ -17,17 +17,21 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     applyTheme(theme)
+    if (session) applyKostColor(session.profile.primary)
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
-    const onChange = () => applyTheme(theme)
+    const onChange = () => {
+      applyTheme(theme)
+      if (session) applyKostColor(session.profile.primary)
+    }
     mq.addEventListener('change', onChange)
     return () => mq.removeEventListener('change', onChange)
-  }, [theme])
-
-  useEffect(() => {
-    if (session) applyKostColor(session.profile.primary)
-  }, [session])
+  }, [theme, session])
 
   const setTheme = (t: ThemeMode) => {
+    // Apply before React's next paint so every semantic foreground changes
+    // together instead of leaving custom kost colors one frame behind.
+    applyTheme(t)
+    if (session) applyKostColor(session.profile.primary)
     setThemeState(t)
     saveTheme(t)
   }

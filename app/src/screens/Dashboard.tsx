@@ -9,7 +9,7 @@ import { Icon, type IconName } from '../components/Icon'
 
 const actions: { to: string; label: string; sub: string; icon: IconName; tone: string }[] = [
   { to: '/bayar', label: 'Pembayaran', sub: 'Lihat riwayat', icon: 'wallet', tone: 'bg-primary-container text-on-primary-container' },
-  { to: '/info', label: 'Pengumuman', sub: 'Kabar kost', icon: 'megaphone', tone: 'bg-secondary-container text-on-secondary-container' },
+  { to: '/info', label: 'Pengumuman', sub: 'Kabar kost', icon: 'notice', tone: 'bg-secondary-container text-on-secondary-container' },
   { to: '/keluhan', label: 'Keluhan', sub: 'Lapor kendala', icon: 'comment', tone: 'bg-tertiary-container text-on-tertiary-container' },
 ]
 
@@ -45,16 +45,15 @@ export default function Dashboard() {
 
   return (
     <div>
-      <PageHeader title={p.namakost || 'PondokHuda'} sub={`Kamar ${p.nomorkamar} · ${p.nama}`} />
+      <PageHeader title={p.namakost || 'Pondok Huda'} sub={`Kamar ${p.nomorkamar} · ${p.nama}`} />
       <div className="page-gutter content-stack">
-        <section className="relative overflow-hidden rounded-[1.75rem] bg-primary px-5 py-5 text-on-primary shadow-[0_20px_55px_color-mix(in_srgb,var(--ph-primary)_30%,transparent)]">
-          <div className="pointer-events-none absolute -right-12 -top-20 size-56 rounded-full border-[34px] border-white/8" />
-          <div className="pointer-events-none absolute -bottom-16 left-24 size-40 rounded-full bg-white/6 blur-2xl" />
+        <section className="relative overflow-hidden rounded-[1.35rem] bg-primary px-4.5 py-4.5 text-on-primary shadow-[0_12px_34px_color-mix(in_srgb,var(--ph-primary)_22%,transparent)]">
+          <div className="pointer-events-none absolute -right-14 -top-20 size-52 rounded-full border-[30px] border-white/6" />
 
           <div className="relative flex items-start justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold text-on-primary/70">Halo, {p.nama.split(' ')[0]}</p>
-              <h2 className="mt-1 text-[1.65rem] font-black tracking-[-.045em]">{b?.statusbayar || 'Status tagihan'}</h2>
+              <p className="text-xs font-medium text-on-primary/70">Halo, {p.nama.split(' ')[0]}</p>
+              <h2 className="mt-1 text-2xl font-semibold tracking-[-.03em]">{b?.statusbayar || 'Status tagihan'}</h2>
               {b && <p className="mt-1 text-sm font-medium text-on-primary/80">{daysLabel(b.sisaharibayar)}</p>}
             </div>
             <IconButton
@@ -67,21 +66,21 @@ export default function Dashboard() {
           </div>
 
           {b && (
-            <div className="relative mt-6 grid grid-cols-2 gap-3">
-              <div className="rounded-[1.1rem] border border-white/12 bg-white/10 p-3 backdrop-blur-sm">
-                <p className="text-[10px] font-bold uppercase tracking-[.09em] text-on-primary/60">Total tagihan</p>
-                <p className="money-value mt-1 text-lg font-black">{money(b.tagihantotal)}</p>
+            <div className="relative mt-5 grid grid-cols-2 gap-2.5">
+              <div className="rounded-[.95rem] border border-white/10 bg-white/8 p-3">
+                <p className="text-[11px] font-medium text-on-primary/65">Total tagihan</p>
+                <p className="money-value mt-1 text-base font-semibold">{money(b.tagihantotal)}</p>
               </div>
-              <div className="rounded-[1.1rem] border border-white/12 bg-white/10 p-3 backdrop-blur-sm">
-                <p className="text-[10px] font-bold uppercase tracking-[.09em] text-on-primary/60">Jatuh tempo</p>
-                <p className="mt-1 text-sm font-extrabold leading-snug">{b.nexttglbayar}</p>
+              <div className="rounded-[.95rem] border border-white/10 bg-white/8 p-3">
+                <p className="text-[11px] font-medium text-on-primary/65">Jatuh tempo</p>
+                <p className="mt-1 text-sm font-semibold leading-snug">{b.nexttglbayar}</p>
               </div>
             </div>
           )}
 
           {b && (
-            <div className="relative mt-4 flex items-center gap-2 text-xs font-semibold">
-              <span className={`size-2 rounded-full ${tone === 'success' ? 'bg-[#a7f3b6]' : tone === 'error' ? 'bg-[#ffd0cc]' : 'bg-white/70'}`} />
+            <div className="relative mt-3.5 flex items-center gap-2 text-xs font-medium">
+              <span className={`size-2 rounded-full ${tone === 'success' ? 'bg-success-container' : tone === 'error' ? 'bg-error-container' : 'bg-on-primary/70'}`} />
               {tone === 'success' ? 'Pembayaran periode ini sudah aman' : 'Periksa detail pembayaran Anda'}
             </div>
           )}
@@ -90,18 +89,18 @@ export default function Dashboard() {
         {err && <AlertBanner action={<button onClick={refresh} className="font-bold underline">Coba lagi</button>}>{err}</AlertBanner>}
 
         <SectionHeader title="Akses cepat" sub="Yang paling sering Anda butuhkan" />
-        <div className="grid grid-cols-3 gap-2.5">
+        <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
           {actions.map((a) => (
             <Link
               key={a.to}
               to={a.to}
-              className="group rounded-[1.25rem] bg-surface-lowest p-3 shadow-[0_8px_25px_rgba(15,45,42,.06)] transition duration-200 active:scale-[.97] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/25"
+              className="group rounded-[1rem] border border-outline-variant/35 bg-surface-lowest p-2.5 sm:p-3 transition duration-200 hover:bg-surface-low active:scale-[.98] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/25"
             >
-              <span className={`flex size-10 items-center justify-center rounded-[.9rem] ${a.tone}`}>
-                <Icon name={a.icon} size={20} />
+              <span className={`flex size-9 items-center justify-center rounded-[.8rem] ${a.tone}`}>
+                <Icon name={a.icon} size={18} />
               </span>
-              <p className="mt-3 truncate text-[12px] font-extrabold text-on-surface">{a.label}</p>
-              <p className="mt-0.5 truncate text-[10px] text-on-surface-variant">{a.sub}</p>
+              <p className="mt-2.5 truncate text-[11px] font-semibold text-on-surface sm:text-xs">{a.label}</p>
+              <p className="mt-0.5 truncate text-[11px] text-on-surface-variant">{a.sub}</p>
             </Link>
           ))}
         </div>
@@ -138,7 +137,7 @@ export default function Dashboard() {
                   rel="noreferrer"
                   className="flex min-h-16 items-center gap-3 rounded-[1rem] px-3 transition hover:bg-surface-low focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/20"
                 >
-                  <span className="flex size-10 items-center justify-center rounded-full bg-[#d8f4de] text-[#155d2a]">
+                  <span className="flex size-10 items-center justify-center rounded-full bg-success-container text-on-success-container">
                     <Icon name="phone" size={19} />
                   </span>
                   <span className="min-w-0 flex-1">

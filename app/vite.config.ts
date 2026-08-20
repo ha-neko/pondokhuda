@@ -11,9 +11,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.png', 'brand-logo-white.png', 'brand-logo-black.png'],
       manifest: {
-        name: 'PondokHuda',
-        short_name: 'PondokHuda',
-        description: 'Aplikasi penghuni kost PondokHuda',
+        name: 'Pondok Huda',
+        short_name: 'Pondok Huda',
+        description: 'Aplikasi penghuni kost Pondok Huda',
         lang: 'id',
         theme_color: '#00696d',
         background_color: '#f4fbf9',

@@ -13,16 +13,16 @@ type CardVariant = 'filled' | 'outlined' | 'elevated' | 'tonal'
 
 const buttonVariant: Record<ButtonVariant, string> = {
   filled:
-    'bg-primary text-on-primary shadow-[0_8px_20px_color-mix(in_srgb,var(--ph-primary)_22%,transparent)] hover:brightness-95 active:brightness-90',
+    'bg-primary text-on-primary shadow-[0_6px_16px_color-mix(in_srgb,var(--ph-primary)_18%,transparent)] hover:brightness-95 active:brightness-90',
   tonal: 'bg-primary-container text-on-primary-container hover:brightness-[0.97]',
   outlined: 'border border-outline-variant bg-surface-lowest text-primary hover:bg-primary/5',
   text: 'text-primary hover:bg-primary/7',
 }
 
 const buttonSize: Record<ButtonSize, string> = {
-  sm: 'min-h-10 px-4 text-sm gap-1.5',
-  md: 'min-h-12 px-5 text-sm gap-2',
-  lg: 'min-h-14 px-7 text-base gap-2.5',
+  sm: 'min-h-10 px-3.5 text-[13px] gap-1.5',
+  md: 'min-h-11 px-4 text-sm gap-2',
+  lg: 'min-h-12 px-5 text-sm gap-2',
 }
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -46,7 +46,7 @@ export function Button({
     <button
       disabled={disabled || loading}
       aria-busy={loading || undefined}
-      className={`inline-flex items-center justify-center rounded-full font-semibold tracking-[.01em] select-none transition duration-200 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/30 disabled:pointer-events-none disabled:opacity-40 ${buttonVariant[variant]} ${buttonSize[size]} ${className}`}
+      className={`inline-flex items-center justify-center rounded-[.9rem] font-semibold select-none transition duration-200 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/30 disabled:pointer-events-none disabled:opacity-40 ${buttonVariant[variant]} ${buttonSize[size]} ${className}`}
       {...rest}
     >
       {loading ? <Spinner className="size-4" label="Memproses" /> : icon && <Icon name={icon} size={size === 'lg' ? 22 : 18} />}
@@ -65,10 +65,10 @@ export function IconButton({
     <button
       aria-label={label}
       title={label}
-      className={`inline-flex size-11 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition duration-200 hover:bg-surface-variant active:scale-95 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/30 ${className}`}
+      className={`inline-flex size-10 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition duration-200 hover:bg-surface-variant active:scale-95 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/30 ${className}`}
       {...rest}
     >
-      <Icon name={icon} size={21} />
+      <Icon name={icon} size={20} />
     </button>
   )
 }
@@ -76,7 +76,7 @@ export function IconButton({
 const cardVariant: Record<CardVariant, string> = {
   filled: 'bg-surface-low',
   outlined: 'border border-outline-variant/70 bg-surface-lowest',
-  elevated: 'bg-surface-lowest shadow-[0_10px_30px_rgba(15,45,42,.08)]',
+  elevated: 'bg-surface-lowest shadow-[0_7px_22px_rgba(15,45,42,.065)]',
   tonal: 'bg-primary-container/55 text-on-primary-container',
 }
 
@@ -94,7 +94,7 @@ export function Card({
   return (
     <div
       onClick={onClick}
-      className={`rounded-[1.35rem] px-4 py-4 ${cardVariant[variant]} ${onClick ? 'cursor-pointer transition duration-200 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-[.99]' : ''} ${className}`}
+      className={`rounded-[1.1rem] px-4 py-4 ${cardVariant[variant]} ${onClick ? 'cursor-pointer transition duration-200 hover:bg-surface-low active:scale-[.995]' : ''} ${className}`}
     >
       {children}
     </div>
@@ -126,7 +126,7 @@ export function Field({ label, hint, error, leadingIcon, className = '', ...rest
           id={id}
           aria-invalid={Boolean(error)}
           aria-describedby={descriptionId}
-          className={`min-h-13 w-full rounded-[1rem] border bg-surface-lowest px-4 text-[15px] text-on-surface outline-none transition duration-200 placeholder:text-on-surface-variant/55 focus:border-primary focus:ring-3 focus:ring-primary/15 ${leadingIcon ? 'pl-12' : ''} ${error ? 'border-error' : 'border-outline-variant'} ${className}`}
+          className={`min-h-12 w-full rounded-[.9rem] border bg-surface-lowest px-4 text-sm text-on-surface outline-none transition duration-200 placeholder:text-on-surface-variant/55 focus:border-primary focus:ring-3 focus:ring-primary/15 ${leadingIcon ? 'pl-12' : ''} ${error ? 'border-error' : 'border-outline-variant'} ${className}`}
           {...rest}
         />
       </div>
@@ -157,7 +157,7 @@ export function TextFieldArea({
         id={id}
         aria-invalid={Boolean(error)}
         aria-describedby={descriptionId}
-        className={`min-h-32 rounded-[1rem] border bg-surface-lowest px-4 py-3.5 text-[15px] leading-relaxed text-on-surface outline-none transition duration-200 placeholder:text-on-surface-variant/55 focus:border-primary focus:ring-3 focus:ring-primary/15 ${error ? 'border-error' : 'border-outline-variant'} ${className}`}
+        className={`min-h-30 rounded-[.9rem] border bg-surface-lowest px-4 py-3 text-sm leading-relaxed text-on-surface outline-none transition duration-200 placeholder:text-on-surface-variant/55 focus:border-primary focus:ring-3 focus:ring-primary/15 ${error ? 'border-error' : 'border-outline-variant'} ${className}`}
         {...rest}
       />
       {(error || hint) && (
@@ -172,12 +172,12 @@ export function TextFieldArea({
 export function Badge({ tone = 'primary', children }: { tone?: BadgeTone; children: ReactNode }) {
   const map: Record<BadgeTone, string> = {
     primary: 'bg-primary-container text-on-primary-container',
-    success: 'bg-[#d8f4de] text-[#155d2a] dark:bg-[#174b28] dark:text-[#b9f2c7]',
+    success: 'bg-success-container text-on-success-container',
     error: 'bg-error-container text-on-error-container',
     neutral: 'bg-surface-variant text-on-surface-variant',
   }
   return (
-    <span className={`inline-flex min-h-6 items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold tracking-wide ${map[tone]}`}>
+    <span className={`inline-flex min-h-6 items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${map[tone]}`}>
       {children}
     </span>
   )
@@ -192,8 +192,8 @@ export function Spinner({ className = 'size-5', label = 'Memuat' }: { className?
 export function LoadingState({ label = 'Memuat data…' }: { label?: string }) {
   return (
     <div role="status" className="flex flex-col gap-3 py-4" aria-label={label}>
-      <div className="h-28 animate-pulse rounded-[1.35rem] bg-surface-high" />
-      <div className="h-20 animate-pulse rounded-[1.35rem] bg-surface-low" />
+      <div className="h-24 animate-pulse rounded-[1.1rem] bg-surface-high" />
+      <div className="h-18 animate-pulse rounded-[1.1rem] bg-surface-low" />
       <span className="sr-only">{label}</span>
     </div>
   )
@@ -211,12 +211,12 @@ export function Empty({
   action?: ReactNode
 }) {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-[1.35rem] border border-dashed border-outline-variant bg-surface-low/50 px-6 py-12 text-center">
-      <span className="flex size-14 items-center justify-center rounded-full bg-primary-container text-on-primary-container">
-        <Icon name={icon} size={27} />
+    <div className="flex flex-col items-center gap-3 rounded-[1.1rem] border border-dashed border-outline-variant bg-surface-low/50 px-6 py-10 text-center">
+      <span className="flex size-12 items-center justify-center rounded-full bg-primary-container text-on-primary-container">
+        <Icon name={icon} size={23} />
       </span>
       <div>
-        <p className="font-bold text-on-surface">{title}</p>
+        <p className="font-semibold text-on-surface">{title}</p>
         <p className="mx-auto mt-1 max-w-64 text-sm leading-relaxed text-on-surface-variant">{text}</p>
       </div>
       {action}
@@ -235,12 +235,12 @@ export function AlertBanner({
 }) {
   const style = {
     error: 'bg-error-container text-on-error-container',
-    success: 'bg-[#d8f4de] text-[#155d2a] dark:bg-[#174b28] dark:text-[#b9f2c7]',
+    success: 'bg-success-container text-on-success-container',
     info: 'bg-primary-container text-on-primary-container',
   }[tone]
   const icon: IconName = tone === 'error' ? 'alert' : tone === 'success' ? 'check' : 'info'
   return (
-    <div role={tone === 'error' ? 'alert' : 'status'} className={`flex items-start gap-3 rounded-[1rem] px-4 py-3 text-sm ${style}`}>
+    <div role={tone === 'error' ? 'alert' : 'status'} className={`flex items-start gap-3 rounded-[.9rem] px-4 py-3 text-sm ${style}`}>
       <Icon name={icon} size={19} className="mt-0.5 shrink-0" />
       <div className="min-w-0 flex-1 leading-relaxed">{children}</div>
       {action}
@@ -252,7 +252,7 @@ export function SectionHeader({ title, sub, right }: { title: string; sub?: stri
   return (
     <div className="flex items-end justify-between gap-3 px-0.5 pt-1">
       <div>
-        <h2 className="text-[15px] font-bold tracking-[-.01em] text-on-surface">{title}</h2>
+        <h2 className="text-[15px] font-semibold text-on-surface">{title}</h2>
         {sub && <p className="mt-0.5 text-xs text-on-surface-variant">{sub}</p>}
       </div>
       {right}
@@ -281,11 +281,11 @@ export function PageHeader({
   right?: ReactNode
 }) {
   return (
-    <header className="safe-top sticky top-0 z-20 border-b border-outline-variant/45 bg-surface/88 px-4 backdrop-blur-xl">
-      <div className="mx-auto flex min-h-16 max-w-2xl items-center gap-2">
+    <header className="safe-top sticky top-0 z-20 border-b border-outline-variant/40 bg-surface/90 px-4 backdrop-blur-xl">
+      <div className="mx-auto flex min-h-15 max-w-[608px] items-center gap-2">
         {onBack && <IconButton icon="chevronLeft" label="Kembali" onClick={onBack} className="-ml-2" />}
         <div className="min-w-0 flex-1 py-2">
-          <h1 className="truncate text-[19px] font-extrabold tracking-[-.025em] text-on-surface">{title}</h1>
+          <h1 className="truncate text-lg font-semibold tracking-[-.015em] text-on-surface">{title}</h1>
           {sub && <p className="truncate text-xs text-on-surface-variant">{sub}</p>}
         </div>
         {right}

@@ -34,9 +34,11 @@ jobs:
           # proxies /api to the local PHP API on :8081.
           VITE_API_BASE: https://minnesota-diagnosis-void-stop.trycloudflare.com/api
         run: |
+          python3 -m pip install --user pillow
           npm run build
           npx cap add android
           npx cap sync android
+          python3 scripts/gen-icons.py android/app/src/main/res
 
       - name: setup java
         uses: actions/setup-java@v4
@@ -64,13 +66,13 @@ jobs:
           APK=app/android/app/build/outputs/apk/debug/app-debug.apk
           if [[ "${{ github.ref }}" == refs/tags/* ]]; then
             gh release create "${{ github.ref_name }}" "$APK" \
-              --title "PondokHuda ${{ github.ref_name }}" \
+              --title "Pondok Huda ${{ github.ref_name }}" \
               --notes "Rilis dari tag ${{ github.ref_name }}." \
               --repo "${{ github.repository }}"
           else
             gh release delete dev --repo "${{ github.repository }}" --yes 2>/dev/null || true
             gh release create dev "$APK" \
-              --title "PondokHuda (build otomatis)" \
+              --title "Pondok Huda (build otomatis)" \
               --notes "Build otomatis dari main. commit: ${{ github.sha }}" \
               --repo "${{ github.repository }}"
           fi

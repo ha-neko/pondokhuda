@@ -72,33 +72,33 @@ export default function Profil() {
     <div>
       <PageHeader title="Profil" sub="Akun dan preferensi" />
       <div className="page-gutter content-stack">
-        <section className="relative overflow-hidden rounded-[1.65rem] bg-primary px-5 py-5 text-on-primary shadow-[0_18px_45px_color-mix(in_srgb,var(--ph-primary)_28%,transparent)]">
-          <div className="absolute -right-16 -top-20 size-56 rounded-full border-[36px] border-white/8" />
+        <section className="relative overflow-hidden rounded-[1.35rem] bg-primary px-4.5 py-4.5 text-on-primary shadow-[0_12px_34px_color-mix(in_srgb,var(--ph-primary)_22%,transparent)]">
+          <div className="absolute -right-16 -top-20 size-52 rounded-full border-[30px] border-white/6" />
           <div className="relative flex items-center gap-4">
             {profile.urlfoto && !imageBroken ? (
-              <img src={profile.urlfoto} alt={`Foto ${profile.nama}`} className="size-20 rounded-[1.35rem] border-2 border-white/35 bg-white/10 object-cover shadow-xl" onError={() => setImageBroken(true)} />
+              <img src={profile.urlfoto} alt={`Foto ${profile.nama}`} className="size-16 rounded-[1rem] border border-white/30 bg-white/10 object-cover" onError={() => setImageBroken(true)} />
             ) : (
-              <span className="flex size-20 items-center justify-center rounded-[1.35rem] border border-white/20 bg-white/12">
-                <Icon name="person" size={38} />
+              <span className="flex size-16 items-center justify-center rounded-[1rem] border border-white/20 bg-white/10">
+                <Icon name="person" size={30} />
               </span>
             )}
             <div className="min-w-0">
               <p className="text-xs font-semibold text-on-primary/65">Penghuni kamar {profile.nomorkamar}</p>
-              <h2 className="mt-1 truncate text-xl font-black tracking-[-.035em]">{profile.nama}</h2>
+              <h2 className="mt-1 truncate text-lg font-semibold tracking-[-.02em]">{profile.nama}</h2>
               <p className="mt-1 truncate text-xs text-on-primary/75">{profile.kode} · {profile.namakost}</p>
             </div>
           </div>
         </section>
 
         <SectionHeader title="Tampilan" sub="Pilih tema yang nyaman untuk mata" />
-        <div className="grid grid-cols-3 gap-2 rounded-[1.25rem] bg-surface-low p-1.5">
+        <div className="grid grid-cols-3 gap-1.5 rounded-[1.05rem] bg-surface-low p-1.5">
           {themes.map((item) => (
             <button
               key={item.value}
               type="button"
               aria-pressed={theme === item.value}
               onClick={() => setTheme(item.value)}
-              className={`flex min-h-16 flex-col items-center justify-center gap-1 rounded-[1rem] text-xs font-bold transition focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/25 ${theme === item.value ? 'bg-surface-lowest text-primary shadow-md' : 'text-on-surface-variant'}`}
+              className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-[.85rem] text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/25 ${theme === item.value ? 'bg-surface-lowest text-primary shadow-sm' : 'text-on-surface-variant'}`}
             >
               <Icon name={item.icon} size={20} /> {item.label}
             </button>
@@ -135,7 +135,7 @@ export default function Profil() {
             rel="noreferrer"
             className="flex min-h-16 items-center gap-3 rounded-[1.25rem] border border-outline-variant bg-surface-lowest px-4 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/25"
           >
-            <span className="flex size-10 items-center justify-center rounded-full bg-[#d8f4de] text-[#155d2a]"><Icon name="phone" size={19} /></span>
+            <span className="flex size-10 items-center justify-center rounded-full bg-success-container text-on-success-container"><Icon name="phone" size={19} /></span>
             <span className="min-w-0 flex-1">
               <span className="block text-sm font-bold text-on-surface">Hubungi orang tua / wali</span>
               <span className="block truncate text-xs text-on-surface-variant">{profile.namaortu || profile.nomorhportu}</span>
@@ -147,12 +147,12 @@ export default function Profil() {
         <button
           type="button"
           onClick={logout}
-          className="flex min-h-14 w-full items-center justify-center gap-2 rounded-[1.15rem] border border-error/25 bg-error-container/60 text-sm font-extrabold text-on-error-container transition active:scale-[.98] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-error/25"
+          className="flex min-h-12 w-full items-center justify-center gap-2 rounded-[.95rem] border border-error/25 bg-error-container/60 text-sm font-semibold text-on-error-container transition active:scale-[.99] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-error/25"
         >
           <Icon name="logout" size={18} /> Keluar dari akun
         </button>
 
-        <p className="pb-3 text-center text-[10px] font-semibold uppercase tracking-[.12em] text-on-surface-variant/65">PondokHuda · aplikasi penghuni</p>
+        <p className="pb-3 text-center text-[11px] font-medium text-on-surface-variant/65">Pondok Huda · aplikasi penghuni</p>
       </div>
     </div>
   )

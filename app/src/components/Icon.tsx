@@ -3,7 +3,7 @@ import type { SVGProps } from 'react'
 export type IconName =
   | 'home'
   | 'wallet'
-  | 'megaphone'
+  | 'notice'
   | 'comment'
   | 'person'
   | 'lock'
@@ -29,8 +29,8 @@ const paths: Record<IconName, React.ReactNode> = {
   wallet: (
     <path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6zm3 2v2h10V8H7zm0 5v2h4v-2H7zm8 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" />
   ),
-  megaphone: (
-    <path d="M4 9v6h3l5 4V5L7 9H4zm14.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 4.5l-1.5 1a6 6 0 0 1 0 9l1.5 1a8 8 0 0 0 0-11z" />
+  notice: (
+    <path d="M6.5 3.75h11a2.75 2.75 0 0 1 2.75 2.75v11a2.75 2.75 0 0 1-2.75 2.75h-11a2.75 2.75 0 0 1-2.75-2.75v-11A2.75 2.75 0 0 1 6.5 3.75Zm1.25 5h8.5m-8.5 3.5h8.5m-8.5 3.5h5.5" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
   ),
   comment: <path d="M4 5h16v11H9l-5 4V5zm3 4v2h8V9H7zm0 3v2h5v-2H7z" />,
   person: (
