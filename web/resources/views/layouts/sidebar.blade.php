@@ -36,7 +36,7 @@
         <div class="container-fluid">
             <div class="navbar-header">
                 <a href="javascript:void(0);" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false"></a>
-                <a href="javascript:void(0);" class="bars"></a>
+                <a href="javascript:void(0);" class="bars" role="button" aria-label="Buka menu navigasi" aria-controls="leftsidebar" aria-expanded="false"></a>
                 <!-- <a class="navbar-brand" href="{{ route('loginForm') }}">{{ config('app.name') }}</a> -->
                 <!-- <img src="https://pondok-huda.com/Assets/images/logo/logo.png" width="80px"> -->
                 @php

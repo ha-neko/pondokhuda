@@ -30,11 +30,29 @@
         // Better keyboard behavior for the responsive sidebar.
         document.addEventListener('keydown', function (event) {
             if (event.key !== 'Escape') return;
-            var sidebar = document.getElementById('leftsidebar');
             var overlay = document.querySelector('.overlay');
-            if (sidebar) sidebar.classList.remove('open');
+            document.body.classList.remove('overlay-open');
             if (overlay) overlay.style.display = 'none';
+            updateBurgerState();
         });
+
+        var burger = document.querySelector('.navbar .bars');
+        function updateBurgerState() {
+            if (!burger) return;
+            var open = document.body.classList.contains('overlay-open');
+            burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+            burger.setAttribute('aria-label', open ? 'Tutup menu navigasi' : 'Buka menu navigasi');
+        }
+        if (burger) {
+            burger.addEventListener('click', function () {
+                window.setTimeout(updateBurgerState, 0);
+            });
+        }
+        var overlay = document.querySelector('.overlay');
+        if (overlay) overlay.addEventListener('click', function () {
+            window.setTimeout(updateBurgerState, 0);
+        });
+        updateBurgerState();
 
         // Automatically make destructive actions clearer to assistive tech.
         var dangerButtons = document.querySelectorAll('.btn-danger, [data-action="delete"]');
