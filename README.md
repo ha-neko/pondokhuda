@@ -165,8 +165,8 @@ VITE_API_BASE=/api npm run build   # atau VITE_API_BASE=https://api.pondokhuda.c
 Workflow `.github/workflows/build-apk.yml`:
 
 - **Trigger:** push ke `main` (`workflow_dispatch` manual juga bisa).
-- **Alur:** install deps → build web (dengan `VITE_API_BASE` dari repo
-  variable `API_BASE_URL`, fallback `https://api.pondokhuda.com/api`) →
+- **Alur:** install deps → build web (sementara memakai URL tunnel dev di
+  workflow; ganti ke API permanen saat domain aktif) →
   `cap add android` + `cap sync` → Gradle `assembleDebug` → upload artifact →
   **release otomatis** ke GitHub Releases.
 - **Release:** push ke `main` = rolling release `dev` (di-update tiap push,
