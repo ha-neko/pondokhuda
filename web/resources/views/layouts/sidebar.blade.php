@@ -42,12 +42,16 @@
                 @php
                     if (Auth::guard('super-owner')->check()) {
                         $homeUrl = route('super-owner.dashboard');
+                        $manualUrl = asset('user-manual/super-owner.pdf');
                     } elseif (Auth::guard('owner')->check()) {
                         $homeUrl = route('owner.dashboard');
+                        $manualUrl = asset('user-manual/owner.pdf');
                     } elseif (Auth::guard('admin')->check()) {
                         $homeUrl = route('admin.dashboard');
+                        $manualUrl = asset('user-manual/admin.pdf');
                     } else {
                         $homeUrl = route('penyewa.dashboard');
+                        $manualUrl = null;
                     }
                 @endphp
                 <a class="navbar-brand" id="text-title" href="{{ $homeUrl }}">
@@ -196,10 +200,12 @@
                         <ul class="dropdown-menu pull-right">
                             <!-- <li><a href="javascript:void(0);"><i class="material-icons">person</i>Profile</a></li>
                             <li role="separator" class="divider"></li> -->
+                            @if($manualUrl)
                             <li>
-                                <a href="#">
-                                <i class="material-icons">description</i>User Manual</a>
+                                <a href="{{ $manualUrl }}" target="_blank" rel="noopener noreferrer">
+                                <i class="material-icons">description</i>Buku Panduan (PDF)</a>
                             </li>
+                            @endif
                             @if(Auth::guard('penyewa')->check())
                             <li>
                                 <a href="https://pondokhuda.com/deploy/app/asharilabs/ysm0118123/ph2k18v0.apk" download><i class="material-icons">get_app</i>Download APK</a>

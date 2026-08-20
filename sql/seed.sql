@@ -18,8 +18,8 @@ VALUES ('K001', 'Kost Pondok Huda Dev', 'Jl. Contoh No. 1, Kota', 'kost@dev.loca
 
 INSERT INTO tb_owner_kost (kode_owner, kode_kost) VALUES ('o001w', 'K001');
 
-INSERT INTO tb_admin (kode, nama, pin, nomor_telepon, email) VALUES
-('a001d', 'Admin Dev', '123456', '081200000002', 'admin@dev.local');
+INSERT INTO tb_admin (kode, kode_owner, nama, pin, nomor_telepon, email) VALUES
+('a001d', 'o001w', 'Admin Dev', '123456', '081200000002', 'admin@dev.local');
 
 INSERT INTO tb_admin_kost (kode_admin, kode_kost) VALUES ('a001d', 'K001');
 
@@ -48,8 +48,10 @@ INSERT INTO tb_beritakost (judul, berita, tglpublish, lastupdate, status, kode_k
 INSERT INTO tb_keluhan_kategori (kode_keluhan, kategori_keluhan) VALUES
 (1, 'Kerusakan Fasilitas'), (2, 'Kebersihan'), (3, 'Lainnya');
 
-INSERT INTO tb_keu_akun (kode_akun, nama_akun) VALUES
-('1.1.01', 'Kas'), ('4.1.01', 'Pendapatan Sewa'), ('5.1.01', 'Beban Operasional');
+INSERT INTO tb_keu_akun (kode_akun, nama_akun, kode_jenis_akun) VALUES
+('1.1.01', 'Kas', 1),
+('4.1.01', 'Pendapatan Sewa', 3),
+('5.1.01', 'Beban Operasional', 4);
 
 INSERT INTO tb_master_prov (provinsi, kotakab, kecamatan, kodepos) VALUES
 ('DKI Jakarta', 'Jakarta Selatan', 'Kebayoran Baru', '12110'),

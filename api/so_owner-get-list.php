@@ -12,8 +12,9 @@ if( !$koneksi)
 $admin = array();
 
 // get data semua kamar -----------------------------------------
-$querygetowner = "SELECT kode, nama, pin, nomor_telepon, email,
-                  DATE_FORMAT(tanggal_terdaftar,'%d/%m/%Y')
+$querygetowner = "SELECT tb_owner.kode, tb_owner.nama, tb_owner.pin,
+                  tb_owner.nomor_telepon, tb_owner.email,
+                  DATE_FORMAT(tb_owner.tanggal_terdaftar,'%d/%m/%Y')
                   AS tanggal_terdaftar,
                   tb_owner_kost.kode_kost, tb_kost.nama_kost
 
@@ -28,6 +29,12 @@ $querygetowner = "SELECT kode, nama, pin, nomor_telepon, email,
                   ORDER BY tb_owner.kode ASC";
                   
 $resultgetowner = mysqli_query($koneksi, $querygetowner);
+if ($resultgetowner === false)
+{
+    http_response_code(500);
+    echo json_encode(array('error' => 'query_failed', 'owner' => null));
+    exit;
+}
 if( mysqli_num_rows($resultgetowner) > 0)
 {
     while($rows = mysqli_fetch_assoc($resultgetowner))

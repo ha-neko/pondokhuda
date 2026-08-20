@@ -29,6 +29,12 @@ $querygetadmin = "SELECT kode, nama, pin, nomor_telepon,
                   ORDER BY tb_admin.kode";
                     
 $resultgetadmin = mysqli_query($koneksi, $querygetadmin);
+if ($resultgetadmin === false)
+{
+    http_response_code(500);
+    echo json_encode(array('error' => 'query_failed', 'admin' => null));
+    exit;
+}
 if( mysqli_num_rows($resultgetadmin) > 0)
 {
     while($rows = mysqli_fetch_assoc($resultgetadmin))

@@ -1409,7 +1409,13 @@ class AdminController extends Controller
 
         ];
         $url = api_url('admin_pengeluaran-get-jenis.php');
-        $json = json_decode(file_get_contents($url), true);
+        $json = json_decode(api_get($url), true);
+        if (!is_array($json)) {
+            $json = array('jenispengeluaran' => array());
+        }
+        if (!isset($json['jenispengeluaran']) || !is_array($json['jenispengeluaran'])) {
+            $json['jenispengeluaran'] = array();
+        }
 
         return view('admin.pengeluaran', ['keluar' => $json], compact('data'));
     }

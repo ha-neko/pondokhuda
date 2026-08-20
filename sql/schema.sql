@@ -56,6 +56,7 @@ CREATE TABLE tb_owner_kost (
 DROP TABLE IF EXISTS tb_admin;
 CREATE TABLE tb_admin (
   kode VARCHAR(20) NOT NULL PRIMARY KEY,
+  kode_owner VARCHAR(20) DEFAULT NULL,
   nama VARCHAR(120) DEFAULT NULL,
   pin VARCHAR(40) DEFAULT NULL,
   nomor_telepon VARCHAR(30) DEFAULT NULL,
@@ -241,7 +242,8 @@ CREATE TABLE tb_log_owner (
 DROP TABLE IF EXISTS tb_keu_akun;
 CREATE TABLE tb_keu_akun (
   kode_akun VARCHAR(20) NOT NULL PRIMARY KEY,
-  nama_akun VARCHAR(120) DEFAULT NULL
+  nama_akun VARCHAR(120) DEFAULT NULL,
+  kode_jenis_akun INT DEFAULT NULL
 );
 
 DROP TABLE IF EXISTS tb_keu_jurnal_umum;
