@@ -78,9 +78,6 @@ jobs:
             gh release delete dev --repo "${{ github.repository }}" --yes 2>/dev/null || true
             gh release create dev "$APK" \
               --title "PondokHuda (build otomatis)" \
-              --notes "Build otomatis dari main.
-
-commit: ${{ github.sha }}
-tanggal: ${{ github.event.head_commit.timestamp }}" \
+              --notes "Build otomatis dari main. commit: ${{ github.sha }}" \
               --repo "${{ github.repository }}"
           fi
