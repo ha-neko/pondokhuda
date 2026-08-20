@@ -160,6 +160,29 @@ VITE_API_BASE=/api npm run build   # atau VITE_API_BASE=https://api.pondokhuda.c
 # hasil: app/dist → deploy statis + proxy /api
 ```
 
+### CI/CD — build + auto release APK (GitHub Actions)
+
+Workflow `.github/workflows/build-apk.yml`:
+
+- **Trigger:** push ke `main` (`workflow_dispatch` manual juga bisa).
+- **Alur:** install deps → build web (dengan `VITE_API_BASE` dari repo
+  variable `API_BASE_URL`, fallback `https://api.pondokhuda.com/api`) →
+  `cap add android` + `cap sync` → Gradle `assembleDebug` → upload artifact →
+  **release otomatis** ke GitHub Releases.
+- **Release:** push ke `main` = rolling release `dev` (di-update tiap push,
+  tag lama dihapus); push **tag `v*`** = rilis versi bernama.
+- **Setup yang dibutuhkan di repo (Settings → Secrets and variables → Actions):**
+  - Variable `API_BASE_URL` → base URL API untuk APK
+    (WebView origin-nya `https://localhost`, jadi harus absolut + CORS aktif).
+- **APK** tersedia di: halaman Actions (artifact) atau Releases (`dev`).
+
+### CORS
+
+API (`api/kon.php` + `api/.htaccess`) mengirim
+`Access-Control-Allow-Origin: *` — dibutuhkan WebView Capacitor (origin
+`https://localhost`) dan klien browser lain. OPTIONS preflight ditangani
+`kon.php` (204).
+
 ---
 
 ## Model keamanan API (diterapkan di working copy)

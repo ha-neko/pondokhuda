@@ -25,6 +25,18 @@ if (getenv('PH_DEBUG')) {
 date_default_timezone_set("Asia/Bangkok");
 
 /* ------------------------------------------------------------------ */
+/* cors — allow cross-origin mobile/web clients                        */
+/* ------------------------------------------------------------------ */
+
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, X-Api-Token');
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
+
+/* ------------------------------------------------------------------ */
 /* config                                                              */
 /* ------------------------------------------------------------------ */
 

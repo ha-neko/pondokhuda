@@ -2,3 +2,8 @@ Options -Indexes
 <FilesMatch "^(error_log|\.env|.*\.log)$">
     Require all denied
 </FilesMatch>
+
+# CORS — needed by the capacitor webview (origin https://localhost)
+Header set Access-Control-Allow-Origin "*"
+Header set Access-Control-Allow-Methods "POST, GET, OPTIONS"
+Header set Access-Control-Allow-Headers "Content-Type, X-Api-Token"
