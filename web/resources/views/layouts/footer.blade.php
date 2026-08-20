@@ -17,7 +17,7 @@
     <script src="{{{ URL::asset('adminbsb/plugins/jquery-countto/jquery.countTo.js') }}}"></script>
 
     <!-- bootstrap-datetimepicker -->
-    <script src="{{{ URL::asset('adminbsb/plugins//moment/min/moment.min.js') }}}"></script>
+    <script src="{{{ URL::asset('adminbsb/plugins/moment/min/moment.min.js') }}}"></script>
     <script src="{{{ URL::asset('adminbsb/plugins/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js') }}}"></script>
 
     <!-- Morris Plugin Js -->
@@ -32,10 +32,6 @@
 
     <!-- Custom Js -->
     <script src="{{{ URL::asset('adminbsb/js/admin.js')}}}"></script>
-    <script src="{{{ URL::asset('adminbsb/js/pages/examples/sign-in.js') }}}"></script>
-
-    <!-- Demo Js -->
-    <script src="{{{ URL::asset('adminbsb/js/demo.js')}}}"></script>
 
     <!-- Jquery DataTable Plugin Js -->
     <script src="{{{ URL::asset('adminbsb/plugins/jquery-datatable/jquery.dataTables.js')}}}"></script>
@@ -49,7 +45,8 @@
     <script src="{{{ URL::asset('adminbsb/plugins/jquery-datatable/extensions/export/vfs_fonts.js')}}}"></script>
     <script src="{{{ URL::asset('adminbsb/plugins/jquery-datatable/extensions/export/buttons.html5.min.js')}}}"></script>
     <script src="{{{ URL::asset('adminbsb/plugins/jquery-datatable/extensions/export/buttons.print.min.js')}}}"></script>
-    <script src="https://pondok-huda.com/js/show-input-message.js"></script>
+    <script src="{{ asset('js/show-input-message.js') }}"></script>
+    <script src="{{ asset('js/pondokhuda-modern.js') }}"></script>
     <!-- Content Yield Js -->
     @yield('js-menu')
     @yield('js-content')

@@ -1,21 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @auth
         @if(Auth::guard('super-owner')->check())
         <title> Si Juragan Kost | {{ $data['pageTitle'] }} </title>
         @else
-        <title> {{ $appName }} | {{ $data['pageTitle'] }} </title>
+        <title> {{ isset($appName) ? $appName : 'PondokHuda' }} | {{ $data['pageTitle'] }} </title>
         @endif
     @else
     <title> Si Juragan Kost | {{ $data['pageTitle'] }} </title>
     @endauth
     <!-- Favicon-->
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
 
     <!-- Bootstrap Core Css -->
     <link href="{{{ URL::asset('adminbsb/plugins/bootstrap/css/bootstrap.css')}}}" rel="stylesheet">
@@ -56,10 +57,8 @@
     <!-- Colorpicker Css -->
     <link href="{{{ URL::asset('adminbsb/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.css') }}}" rel="stylesheet" />
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
+    <!-- Material icons; application typography uses a fast system font stack. -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet"> 
 
     <!-- Light Gallery Plugin Css -->
     <link href="{{{ URL::asset('adminbsb/plugins/light-gallery/css/lightgallery.css') }}}" rel="stylesheet">
@@ -67,6 +66,8 @@
     <!-- Custom Css -->
     <link href="{{{ URL::asset('adminbsb/css/style.css')}}}" rel="stylesheet">
     
-    <link rel="stylesheet" type="text/css" href="https://pondok-huda.com/Assets/custom-loading.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('Assets/custom-loading.css') }}">
+    <!-- PondokHuda design layer: keep legacy AdminBSB intact, override safely. -->
+    <link href="{{ asset('css/pondokhuda-modern.css') }}" rel="stylesheet">
     @yield('css-content')
 </head>

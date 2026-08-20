@@ -13,7 +13,7 @@
         <li id="owner" class="">
             <a href="{{route('super-owner.owner')}}">
                 <i class="material-icons">accessibility</i>
-                <span>Owners</span>
+                <span>Pemilik</span>
             </a>
         </li>
     </ul>
@@ -28,7 +28,7 @@
         <li id="dashboard" class="">
             <a href="{{route('owner.dashboard')}}">
                 <i class="material-icons">home</i>
-                <span>Home</span>
+                <span>Beranda</span>
             </a>
         </li>
         <li id="kost" class="">
@@ -76,7 +76,7 @@
         <li id="kamar" class="">
             <a href="{{ route('owner.kamar') }}">
                 <i class="material-icons">hotel</i>
-                <span>Olah Data Kamar</span>
+                <span>Kamar</span>
             </a>
         </li>
         <li id="keluhan" class="">
@@ -97,12 +97,12 @@
                 <span>Pemasukan</span>
             </a>
             <ul class="ml-menu" id="submenu-pembayaran">
-                <li id="bayar-kos" class="">
+                <li id="pendapatan-lain" class="">
                     <a href="{{route('owner.pembayaran')}}">
                         Bayar kos
                     </a>
                 </li>
-                <li id="bayar-kos" class="">
+                <li id="pendapatan-lain" class="">
                     <a href="{{ route('owner.lainlain') }}">
                         Pendapatan lain-lain
                     </a>
@@ -225,7 +225,7 @@
                 <span>Pengumuman</span>
             </a>
         </li>
-        <li id="keluhan">
+        <li id="whatsapp-admin">
             <a href="{{ route('penyewa.keluhan') }}">
                 <i class="material-icons">message</i>
                 <span>Keluhan</span>
@@ -234,14 +234,13 @@
         <li id="keluhan">
             <a href="javascript:void(0);" data-toggle="modal" data-target="#whatsappAdmin">
                 <i class="material-icons">phone_iphone</i>
-                <span>Whatsapp Admin / Owner (Mobile Only)</span>
+                <span>Hubungi Admin / Pemilik</span>
             </a>
         </li>
         <li id="pembayaran">
             <a href="javascript:void(0);" class="menu-toggle" id="toggle-pembayaran">
                 <i class="material-icons">payment</i>
                 <span>Pembayaran</span>
-            </a>
             </a>
             <ul class="ml-menu">
                 <li>
@@ -265,8 +264,17 @@
     // document.getElementById({{ $data['activeId'] }}).onclick = function() {
     //     alert({{ $data['activeId'] }});
     // }
-    window.onload = function() {
-        document.getElementById("{{ $data['activeId'] }}").className = "active";
-    }
+    document.addEventListener('DOMContentLoaded', function () {
+        var id = <?php echo json_encode(isset($data['activeId']) ? $data['activeId'] : ''); ?>;
+        var activeItem = id ? document.getElementById(id) : null;
+        if (!activeItem) return;
+        activeItem.classList.add('active');
+        var submenu = activeItem.closest ? activeItem.closest('.ml-menu') : null;
+        if (submenu) {
+            submenu.style.display = 'block';
+            var parent = submenu.parentElement;
+            if (parent) parent.classList.add('active');
+        }
+    });
 </script>
 @endsection

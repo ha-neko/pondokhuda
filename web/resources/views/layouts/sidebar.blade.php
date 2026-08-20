@@ -39,18 +39,34 @@
                 <a href="javascript:void(0);" class="bars"></a>
                 <!-- <a class="navbar-brand" href="{{ route('loginForm') }}">{{ config('app.name') }}</a> -->
                 <!-- <img src="https://pondok-huda.com/Assets/images/logo/logo.png" width="80px"> -->
-                <a class="navbar-brand" id="text-title" href="{{ route('loginForm') }}">
+                @php
+                    if (Auth::guard('super-owner')->check()) {
+                        $homeUrl = route('super-owner.dashboard');
+                    } elseif (Auth::guard('owner')->check()) {
+                        $homeUrl = route('owner.dashboard');
+                    } elseif (Auth::guard('admin')->check()) {
+                        $homeUrl = route('admin.dashboard');
+                    } else {
+                        $homeUrl = route('penyewa.dashboard');
+                    }
+                @endphp
+                <a class="navbar-brand" id="text-title" href="{{ $homeUrl }}">
+                    <span class="brand-mark"><i class="material-icons">home</i></span>
+                    <span class="brand-copy">
                     @if(Auth::guard('super-owner')->check())
                     {{'Si Juragan Kost'}}
                     @else
-                    {{ $appName }}
+                    {{ isset($appName) ? $appName : 'PondokHuda' }}
                     @endif
+                    </span>
                 </a>
             </div>
             <div class="collapse navbar-collapse" id="navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <!-- CHANGE THEME AND SETTINGS -->
-                    <li class="pull-right"><a href="javascript:void(0);" class="js-right-sidebar" style="opacity: 0;"><i class="material-icons">more_vert</i></a></li>
+                    <li class="navbar-user-label pull-right">
+                        <span>{{ Auth::user()->nama }}</span>
+                    </li>
                     <!-- END OF CHANGE THEME AND SETTINGS -->
                     @if(Auth::guard('owner')->check())
                     <!-- KELOLA KOST OWNER -->
@@ -156,7 +172,11 @@
             <!-- User Info -->
             <div class="user-info">
                 <div class="image">
-                    <div id="img-foto" style="background-image: url('{{ 'https://pondokhuda.com/'.Auth::user()->urlfoto}}'); width: 48px; height: 48px; background-size: cover; background-repeat: no-repeat; background-position: 50% 50%; border-radius: 100px; border: 1px solid #d4d4d6;"></div>
+                    @php
+                        $rawPhoto = Auth::user()->urlfoto;
+                        $photoUrl = strpos($rawPhoto, 'http') === 0 ? $rawPhoto : asset(ltrim($rawPhoto, '/'));
+                    @endphp
+                    <div id="img-foto" class="user-avatar" style="background-image: url('{{ $photoUrl }}');"></div>
                 </div>
                 <div class="info-container">
                     <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{Auth::user()->nama}}</div>
@@ -203,13 +223,13 @@
             <!-- Footer -->
             <div class="legal">
                 <div class="copyright">
-                    &copy; 2019 
+                    &copy; {{ date('Y') }}
                     <a href="javascript:void(0);">
                     {{'Pondok Huda'}}
                     </a>.
                 </div>
                 <div class="version">
-                    <b>Version: </b> 1.0.0
+                    <b>Version: </b> 2.0.0
                 </div>
             </div>
             <!-- #Footer -->
