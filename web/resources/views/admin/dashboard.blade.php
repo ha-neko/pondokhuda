@@ -12,111 +12,77 @@
 	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>{{ Session::get('message') }}
 </p>
 @endif
-<div class="row clearfix">
-    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-        <div class="card">
-            <div class="body bg-teal">
-                <div class="font-bold m-b--35">INFORMASI KAMAR</div>
-                <ul class="dashboard-stat-list">
-                    <li>
-                        Kamar Terisi
-                        <span class="pull-right">{{ $report['report'][0]['infokamar'][0]['terisi'] }}</span>
-                    </li>
-                    <li>
-                        Kamar Kosong
-                        <span class="pull-right">{{ $report['report'][0]['infokamar'][2]['kamarkosong'] }}</span>
-                    </li>
-                    <li>
-                        % Kamar Terisi
-                        <span class="pull-right">{{ $report['report'][0]['infokamar'][3]['persentasekamarterisi'] }}%</span>
-                    </li>
-                    <li>
-                        % Kamar Kosong
-                        <span class="pull-right">{{ $report['report'][0]['infokamar'][4]['persentasekamarkosong'] }}%</span>
-                    </li>
-                </ul>
+<div class="row clearfix ph-dashboard-cards">
+    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+        <div class="ph-dashboard-panel ph-dashboard-panel--brand">
+            <div class="ph-dashboard-panel__head">
+                <span class="ph-dashboard-panel__eyebrow">Okupansi kamar</span>
+                <span class="ph-dashboard-panel__icon"><i class="material-icons">hotel</i></span>
+            </div>
+            <div class="ph-dashboard-panel__value">{{ $report['report'][0]['infokamar'][3]['persentasekamarterisi'] }}%</div>
+            <div class="ph-dashboard-panel__label">Kamar sedang terisi</div>
+            <div class="ph-dashboard-panel__footer">
+                <div><small>Terisi</small><strong>{{ $report['report'][0]['infokamar'][0]['terisi'] }} kamar</strong></div>
+                <div><small>Tersedia</small><strong>{{ $report['report'][0]['infokamar'][2]['kamarkosong'] }} kamar</strong></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+        <div class="ph-dashboard-panel ph-dashboard-panel--cyan">
+            <div class="ph-dashboard-panel__head">
+                <span class="ph-dashboard-panel__eyebrow">Keluhan penghuni</span>
+                <span class="ph-dashboard-panel__icon"><i class="material-icons">forum</i></span>
+            </div>
+            <div class="ph-dashboard-panel__value">{{ $report['report'][1]['keluhan'][0]['total'] }}</div>
+            <div class="ph-dashboard-panel__label">Total keluhan tercatat</div>
+            <div class="ph-dashboard-panel__footer">
+                <div><small>Dikerjakan</small><strong>{{ $report['report'][1]['keluhan'][2]['dikerjakan'] }}%</strong></div>
+                <div><small>Selesai</small><strong>{{ $report['report'][1]['keluhan'][3]['selesai'] }}%</strong></div>
             </div>
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-        <div class="card">
-            <div class="body bg-cyan">
-                <div class="m-b--35 font-bold">KELUHAN</div>
-                <ul class="dashboard-stat-list">
-                    <li>
-                        Banyak Keluhan
-                        <span class="pull-right">
-                            {{ $report['report'][1]['keluhan'][0]['total'] }}
-                        </span>
-                    </li>
-                    <li>
-                        % Pelaporan
-                        <span class="pull-right">
-                            {{ $report['report'][1]['keluhan'][1]['pelaporan'] }}%
-                        </span>
-                    </li>
-                    <li>
-                        % Dikerjakan
-                        <span class="pull-right">
-                            {{ $report['report'][1]['keluhan'][2]['dikerjakan'] }}%
-                        </span>
-                    </li>
-                    <li>
-                        % Selesai
-                        <span class="pull-right">
-                            {{ $report['report'][1]['keluhan'][3]['selesai'] }}%
-                        </span>
-                    </li>
-                </ul>
+        <div class="ph-dashboard-panel ph-dashboard-panel--violet">
+            <div class="ph-dashboard-panel__head">
+                <span class="ph-dashboard-panel__eyebrow">Tren pembayaran</span>
+                <span class="ph-dashboard-panel__icon"><i class="material-icons">monitoring</i></span>
             </div>
-        </div>
-    </div>
-    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-        <div class="card">
-            <div class="body bg-pink">
-                <div class="sparkline" data-type="line" data-spot-Radius="4" data-highlight-Spot-Color="rgb(233, 30, 99)" data-highlight-Line-Color="#fff"
-                     data-min-Spot-Color="rgb(255,255,255)" data-max-Spot-Color="rgb(255,255,255)" data-spot-Color="rgb(255,255,255)"
-                     data-offset="90" data-width="100%" data-height="92px" data-line-Width="2" data-line-Color="rgba(255,255,255,0.7)"
-                     data-fill-Color="rgba(0, 188, 212, 0)">
-                    @if($report['pendapatan'] != null)
+            <div class="sparkline" data-type="line" data-spot-Radius="3" data-highlight-Spot-Color="#fff" data-highlight-Line-Color="#fff"
+                 data-min-Spot-Color="#fff" data-max-Spot-Color="#fff" data-spot-Color="#fff"
+                 data-offset="90" data-width="100%" data-height="108px" data-line-Width="2" data-line-Color="rgba(255,255,255,0.86)"
+                 data-fill-Color="rgba(255,255,255,0.08)">
+                @if($report['pendapatan'] != null)
                     @for ($i=0; $i < count($report['pendapatan']); $i++)
-                    @php
-                        $date1 = strtotime($report['pendapatan'][$i]['tanggal']);
-                        $date2 = strtotime(date("Y-m-d"));
-                        $datediff = $date2 - $date1;
-                        $th = round($datediff / (60 * 60 * 24));
-                    @endphp
-                    @if((int)$th < 301)
-                        @if($i+1 != count($report['pendapatan']))
-                            @if($report['pendapatan'][$i]['tanggal'] != $report['pendapatan'][$i + 1]['tanggal'])
-                                {{ $report['pendapatan'][$i]['jumlah'] }},
+                        @php
+                            $date1 = strtotime($report['pendapatan'][$i]['tanggal']);
+                            $date2 = strtotime(date("Y-m-d"));
+                            $datediff = $date2 - $date1;
+                            $th = round($datediff / (60 * 60 * 24));
+                        @endphp
+                        @if((int)$th < 301)
+                            @if($i+1 != count($report['pendapatan']))
+                                @if($report['pendapatan'][$i]['tanggal'] != $report['pendapatan'][$i + 1]['tanggal'])
+                                    {{ $report['pendapatan'][$i]['jumlah'] }},
+                                @endif
                             @else
+                                {{ $report['pendapatan'][$i]['jumlah'] }}
                             @endif
-                        @else
-                            {{ $report['pendapatan'][$i]['jumlah'] }}
                         @endif
-                    @endif
                     @endfor
-                    @else
-                    Tidak ada Pembayaran
-                    @endif
-                </div>
-                <ul class="dashboard-stat-list">
-                    <li>
-                        <b>GRAFIK PEMBAYARAN</b>
-                        <!-- <span class="pull-right"><b>1 200</b> <small>USERS</small></span> -->
-                    </li>
-                </ul>
+                @else
+                    0
+                @endif
             </div>
+            <div class="ph-dashboard-panel__label">10 bulan terakhir</div>
         </div>
     </div>
 </div>
 <div class="row clearfix">
     <!-- Task Info -->
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <div class="card">
+        <div class="card ph-table-card">
             <div class="header">
-                <h2>Informasi Penyewa</h2>
+                <h2>Informasi Penyewa <small>Status jatuh tempo dan progres pembayaran penghuni</small></h2>
             </div>
             <div class="body">
                 <div class="table-responsive">

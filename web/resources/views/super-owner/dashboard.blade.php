@@ -12,49 +12,28 @@
 	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>{{ Session::get('message') }}
 </p>
 @endif
-<!-- CARD -->
-<!-- OWNER, KOST, KAMAR, PENYEWA -->
-<div class="row clearfix">
-    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-        <div class="card">
-            <div class="body bg-teal">
-                <div class="font-bold m-b--35">INFORMASI KOST</div>
-                <ul class="dashboard-stat-list">
-                    <li>
-                        Jumlah Owner Terdaftar
-                        <span class="pull-right">{{ $report['report'][0]['jumlah_owner'] }}</span>
-                    </li>
-                    <li>
-                        Jumlah Kost Terdaftar
-                        <span class="pull-right">{{ $report['report'][0]['jumlah_kost'] }}</span>
-                    </li>
-                    <li>
-                        Jumlah Kamar Terdaftar
-                        <span class="pull-right">{{ $report['report'][0]['jumlah_kamar'] }}</span>
-                    </li>
-                    <li>
-                        Jumlah Penyewa Aktif Terdaftar
-                        <span class="pull-right">{{ $report['report'][0]['jumlah_penyewa'] }}</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
+<div class="ph-overview-grid">
+    <div class="ph-overview-tile">
+        <i class="material-icons">person</i>
+        <strong>{{ $report['report'][0]['jumlah_owner'] }}</strong>
+        <span>Pemilik terdaftar</span>
     </div>
-    <!-- END OF OWNER, KOST, KAMAR, PENYEWA -->
-    <!-- SOMETHING 1 -->
-    <!-- <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-        <div class="card">
-        </div>
-    </div> -->
-    <!-- SOMETHING 1 -->
-    <!-- SOMETHING 2 -->
-    <!-- <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-        <div class="card">
-        </div>
-    </div> -->
-    <!-- END OF SOMETHING 2 -->
+    <div class="ph-overview-tile">
+        <i class="material-icons">location_city</i>
+        <strong>{{ $report['report'][0]['jumlah_kost'] }}</strong>
+        <span>Kost dikelola</span>
+    </div>
+    <div class="ph-overview-tile">
+        <i class="material-icons">hotel</i>
+        <strong>{{ $report['report'][0]['jumlah_kamar'] }}</strong>
+        <span>Total kamar</span>
+    </div>
+    <div class="ph-overview-tile">
+        <i class="material-icons">group</i>
+        <strong>{{ $report['report'][0]['jumlah_penyewa'] }}</strong>
+        <span>Penyewa aktif</span>
+    </div>
 </div>
-<!-- END OF CARD -->
 
 <!-- <div class="row clearfix">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">

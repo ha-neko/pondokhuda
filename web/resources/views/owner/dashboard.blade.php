@@ -62,85 +62,57 @@
 </div> -->
 <!-- #END# Widgets -->
 
-<!-- CARD -->
-<!-- PENYEWA -->
-<div class="row clearfix">
-    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-        <div class="card">
-            <div class="body bg-teal">
-                <div class="font-bold m-b--35">INFORMASI KAMAR</div>
-                <ul class="dashboard-stat-list">
-                    <li>
-                        Kamar Terisi
-                        <span class="pull-right">{{ $report['report'][0]['infokamar'][0]['terisi'] }}</span>
-                    </li>
-                    <li>
-                        Kamar Kosong
-                        <span class="pull-right">{{ $report['report'][0]['infokamar'][2]['kamarkosong'] }}</span>
-                    </li>
-                    <li>
-                        % Kamar Terisi
-                        <span class="pull-right">{{ $report['report'][0]['infokamar'][3]['persentasekamarterisi'] }}%</span>
-                    </li>
-                    <li>
-                        % Kamar Kosong
-                        <span class="pull-right">{{ $report['report'][0]['infokamar'][4]['persentasekamarkosong'] }}%</span>
-                    </li>
-                </ul>
+<div class="row clearfix ph-dashboard-cards">
+    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+        <div class="ph-dashboard-panel ph-dashboard-panel--brand">
+            <div class="ph-dashboard-panel__head">
+                <span class="ph-dashboard-panel__eyebrow">Okupansi kamar</span>
+                <span class="ph-dashboard-panel__icon"><i class="material-icons">hotel</i></span>
+            </div>
+            <div class="ph-dashboard-panel__value">{{ $report['report'][0]['infokamar'][3]['persentasekamarterisi'] }}%</div>
+            <div class="ph-dashboard-panel__label">Kamar sedang terisi</div>
+            <div class="ph-dashboard-panel__footer">
+                <div><small>Terisi</small><strong>{{ $report['report'][0]['infokamar'][0]['terisi'] }} kamar</strong></div>
+                <div><small>Tersedia</small><strong>{{ $report['report'][0]['infokamar'][2]['kamarkosong'] }} kamar</strong></div>
             </div>
         </div>
     </div>
-    <!-- END OF PENYEWA -->
-    <!-- KELUHAN -->
-    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-        <div class="card">
-            <div class="body bg-cyan">
-                <div class="m-b--35 font-bold">KELUHAN</div>
-                <ul class="dashboard-stat-list">
-                    <li>
-                        Banyak Keluhan
-                        <span class="pull-right">
-                            {{ $report['report'][1]['keluhan'][0]['total'] }}
-                        </span>
-                    </li>
-                    <li>
-                        % Pelaporan
-                        <span class="pull-right">
-                            {{ $report['report'][1]['keluhan'][1]['pelaporan'] }}%
-                        </span>
-                    </li>
-                    <li>
-                        % Dikerjakan
-                        <span class="pull-right">
-                            {{ $report['report'][1]['keluhan'][2]['dikerjakan'] }}%
-                        </span>
-                    </li>
-                    <li>
-                        % Selesai
-                        <span class="pull-right">
-                            {{ $report['report'][1]['keluhan'][3]['selesai'] }}%
-                        </span>
-                    </li>
-                </ul>
+    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+        <div class="ph-dashboard-panel ph-dashboard-panel--cyan">
+            <div class="ph-dashboard-panel__head">
+                <span class="ph-dashboard-panel__eyebrow">Keluhan penghuni</span>
+                <span class="ph-dashboard-panel__icon"><i class="material-icons">forum</i></span>
+            </div>
+            <div class="ph-dashboard-panel__value">{{ $report['report'][1]['keluhan'][0]['total'] }}</div>
+            <div class="ph-dashboard-panel__label">Total keluhan tercatat</div>
+            <div class="ph-dashboard-panel__footer">
+                <div><small>Dikerjakan</small><strong>{{ $report['report'][1]['keluhan'][2]['dikerjakan'] }}%</strong></div>
+                <div><small>Selesai</small><strong>{{ $report['report'][1]['keluhan'][3]['selesai'] }}%</strong></div>
             </div>
         </div>
     </div>
-    <!-- END OF KELUHAN -->
-    <!-- SOMETHING -->
-    <!-- <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-        <div class="card">
+    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+        <div class="ph-dashboard-panel ph-dashboard-panel--plain">
+            <div class="ph-dashboard-panel__head">
+                <span class="ph-dashboard-panel__eyebrow">Aksi cepat</span>
+                <span class="ph-dashboard-panel__icon"><i class="material-icons">bolt</i></span>
+            </div>
+            <div class="ph-quick-actions">
+                <a href="{{ route('owner.pembayaran') }}"><i class="material-icons">payments</i> Catat pembayaran <i class="material-icons arrow">chevron_right</i></a>
+                <a href="{{ route('owner.keluhan') }}"><i class="material-icons">chat</i> Tinjau keluhan <i class="material-icons arrow">chevron_right</i></a>
+                <a href="{{ route('owner.pengumuman') }}"><i class="material-icons">campaign</i> Kelola pengumuman <i class="material-icons arrow">chevron_right</i></a>
+            </div>
         </div>
-    </div> -->
-    <!-- END OF SOMETHING -->
+    </div>
 </div>
-<!-- END OF CARD -->
 <!-- INFORMASI SEWA -->
 <div class="row clearfix">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="card">
+        <div class="card ph-table-card">
             <div class="header">
                 <h2>
                     Informasi Sewa
+                    <small>Status jatuh tempo dan progres pembayaran penghuni</small>
                 </h2>
             </div>
             <div class="body">
