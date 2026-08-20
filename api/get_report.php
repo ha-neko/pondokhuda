@@ -14,7 +14,7 @@ if( !$koneksi)
 $datakamar = array();
 $kamarterisi = array();
 $kI = 0;
-$qryKamarTerisi = "SELECT COUNT(kode_kamar) AS kamarterisi
+$qryKamarTerisi = "SELECT COUNT(DISTINCT tb_sewa_kamar.kode_kamar) AS kamarterisi
 
                    FROM tb_sewa_kamar
                    
@@ -41,8 +41,7 @@ $kamartersedia = array();
 $kS = 0;
 $qryKamarTersedia = "SELECT COUNT(id) AS kamartersedia
                      FROM tb_kamar
-                     WHERE kode_kost='$kodekost'
-                     AND statuskamar = 'Untuk Sewa'";
+                     WHERE kode_kost='$kodekost'";
 $rslKamarTersedia = mysqli_query($koneksi, $qryKamarTersedia);
 if( mysqli_num_rows($rslKamarTersedia) == 1) 
 {
@@ -56,14 +55,15 @@ if( mysqli_num_rows($rslKamarTersedia) == 1)
     array_push($datakamar, $kamartersedia);
 }
 
-// isi kamar kosong
-array_push($datakamar, array('kamarkosong' => ($kS - $kI)));
+// Kamar kosong = total kamar - kamar dengan sewa aktif. Never negative.
+$jumlahKamarKosong = max(0, $kS - $kI);
+array_push($datakamar, array('kamarkosong' => $jumlahKamarKosong));
 
 // persentase kamar terisi dan kosong
 if($kS != 0)
 {
-    $persentaseisi = $kI/$kS * 100;
-    $persentasekosong = 100 - $persentaseisi;
+    $persentaseisi = min(100, max(0, ($kI/$kS * 100)));
+    $persentasekosong = min(100, max(0, (100 - $persentaseisi)));
 }
 else
 {
