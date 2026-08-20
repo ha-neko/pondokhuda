@@ -13,7 +13,7 @@
     <main class="ph-login">
         <section class="ph-login-visual" aria-label="Tentang PondokHuda">
             <div class="ph-login-brand">
-                <span class="brand-mark"><i class="material-icons">home</i></span>
+                <span class="brand-mark"><img src="{{ asset('Assets/images/logo/default-logo-white.png') }}" alt=""></span>
                 <span>PondokHuda</span>
             </div>
 
@@ -37,7 +37,7 @@
         <section class="ph-login-formpane">
             <div class="ph-login-card">
                 <div class="ph-login-mobile-brand">
-                    <span class="brand-mark"><i class="material-icons">home</i></span>
+                    <span class="brand-mark"><img src="{{ asset('Assets/images/logo/default-logo-white.png') }}" alt=""></span>
                     <span>PondokHuda</span>
                 </div>
 

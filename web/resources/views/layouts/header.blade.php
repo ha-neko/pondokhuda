@@ -16,7 +16,7 @@
     <title> Si Juragan Kost | {{ $data['pageTitle'] }} </title>
     @endauth
     <!-- Favicon-->
-    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('Assets/images/logo/default-logo-black.png') }}" type="image/png">
 
     <!-- Bootstrap Core Css -->
     <link href="{{{ URL::asset('adminbsb/plugins/bootstrap/css/bootstrap.css')}}}" rel="stylesheet">

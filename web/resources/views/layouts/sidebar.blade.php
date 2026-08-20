@@ -55,7 +55,7 @@
                     }
                 @endphp
                 <a class="navbar-brand" id="text-title" href="{{ $homeUrl }}">
-                    <span class="brand-mark"><i class="material-icons">home</i></span>
+                    <span class="brand-mark"><img src="{{ asset('Assets/images/logo/default-logo-white.png') }}" alt=""></span>
                     <span class="brand-copy">
                     @if(Auth::guard('super-owner')->check())
                     {{'Si Juragan Kost'}}
