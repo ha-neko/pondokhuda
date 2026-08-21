@@ -48,7 +48,7 @@ export default function Login() {
       <div className="pointer-events-none absolute -left-28 -top-24 size-80 rounded-full bg-[#55dce0]/14 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-40 -right-24 size-96 rounded-full bg-[#a7f3d0]/10 blur-3xl" />
 
-      <div className="safe-top relative mx-auto flex min-h-dvh max-w-[480px] flex-col px-5 pb-5 pt-7">
+      <div className="relative mx-auto flex min-h-dvh max-w-[480px] flex-col px-5 pb-5 pt-[calc(1.5rem+env(safe-area-inset-top))] sm:pt-[calc(1.75rem+env(safe-area-inset-top))]">
         <div className="flex items-center gap-3 px-1">
           <span className="grid size-11 place-items-center rounded-[.9rem] border border-white/15 bg-white/9 backdrop-blur">
             <img src="/brand-logo-white.png" alt="" className="size-7 object-contain" />
@@ -63,7 +63,7 @@ export default function Login() {
           <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/8 px-3 py-1 text-xs font-medium text-[#a8eff0]">
             <Icon name="check" size={14} /> Informasi kost dalam satu tempat
           </span>
-          <h1 className="mt-4 max-w-sm text-[2.1rem] font-semibold leading-[1.12] tracking-[-.04em]">
+          <h1 className="mt-4 max-w-sm text-[1.85rem] font-semibold leading-[1.14] tracking-[-.035em] sm:text-[2.1rem]">
             Pulang terasa lebih tenang.
           </h1>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/65">

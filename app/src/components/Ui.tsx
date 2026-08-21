@@ -285,7 +285,7 @@ export function PageHeader({
       <div className="mx-auto flex min-h-15 max-w-[608px] items-center gap-2">
         {onBack && <IconButton icon="chevronLeft" label="Kembali" onClick={onBack} className="-ml-2" />}
         <div className="min-w-0 flex-1 py-2">
-          <h1 className="truncate text-lg font-semibold tracking-[-.015em] text-on-surface">{title}</h1>
+          <h1 className="truncate text-[17px] font-semibold tracking-[-.01em] text-on-surface sm:text-lg">{title}</h1>
           {sub && <p className="truncate text-xs text-on-surface-variant">{sub}</p>}
         </div>
         {right}
