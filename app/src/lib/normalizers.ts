@@ -68,11 +68,25 @@ export async function apiPembayaran(
   if (!r.data.personalinfobayar) {
     return { ok: false, error: 'User tidak diketahui. Silakan hubungi admin kost.', rawText: r.rawText }
   }
-  return {
-    ok: true,
-    data: { bayar: r.data.personalinfobayar, resume: r.data.resumepembayaran! },
-    rawText: r.rawText,
+  const data = { bayar: r.data.personalinfobayar, resume: r.data.resumepembayaran! }
+  pembayaranMemo.set(`${kode}|${pin}`, { at: Date.now(), data })
+  return { ok: true, data, rawText: r.rawText }
+}
+
+// Dedupe burst: Dashboard dan Pembayaran sama-sama revalidasi saat dibuka.
+// Silent refresh dalam 15 detik memakai hasil terakhir, tidak menembak lagi.
+const pembayaranMemo = new Map<string, { at: number; data: { bayar: PembayaranInfo; resume: ResumePembayaran } }>()
+const PEMBAYARAN_SILENT_TTL = 15_000
+
+export async function apiPembayaranSilent(
+  kode: string,
+  pin: string,
+): Promise<ApiResult<{ bayar: PembayaranInfo; resume: ResumePembayaran }>> {
+  const hit = pembayaranMemo.get(`${kode}|${pin}`)
+  if (hit && Date.now() - hit.at < PEMBAYARAN_SILENT_TTL) {
+    return { ok: true, data: hit.data, rawText: '' }
   }
+  return apiPembayaran(kode, pin)
 }
 
 export async function apiPengumuman(kode: string): Promise<ApiResult<Pengumuman[]>> {

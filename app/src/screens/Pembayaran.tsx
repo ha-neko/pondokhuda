@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSessionContext } from '../lib/session-context'
-import { apiPembayaran } from '../lib/normalizers'
+import { apiPembayaran, apiPembayaranSilent } from '../lib/normalizers'
 import { updateSession } from '../lib/session'
 import { money, stripRupiah } from '../lib/format'
 import { AlertBanner, Badge, Card, Empty, LoadingState, PageHeader, SectionHeader, statusTone } from '../components/Ui'
@@ -14,7 +14,9 @@ export default function Pembayaran() {
     if (!session) return
     if (!silent) setLoading(true)
     setErr('')
-    const result = await apiPembayaran(session.kode, session.pin)
+    const result = silent
+      ? await apiPembayaranSilent(session.kode, session.pin)
+      : await apiPembayaran(session.kode, session.pin)
     if (!result.ok) {
       if (!silent) setErr(result.error)
       return

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { useSessionContext } from '../lib/session-context'
-import { apiPembayaran } from '../lib/normalizers'
+import { apiPembayaran, apiPembayaranSilent } from '../lib/normalizers'
 import { updateSession } from '../lib/session'
 import { daysLabel, money, waLink } from '../lib/format'
 import { AlertBanner, Card, IconButton, PageHeader, SectionHeader, statusTone } from '../components/Ui'
@@ -22,7 +22,9 @@ export default function Dashboard() {
     if (!session || refreshing) return
     setRefreshing(true)
     if (!silent) setErr('')
-    const r = await apiPembayaran(session.kode, session.pin)
+    const r = silent
+      ? await apiPembayaranSilent(session.kode, session.pin)
+      : await apiPembayaran(session.kode, session.pin)
     setRefreshing(false)
     if (!r.ok) {
       if (!silent) setErr(r.error)
