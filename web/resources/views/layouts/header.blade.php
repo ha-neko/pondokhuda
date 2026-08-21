@@ -68,6 +68,6 @@
     
     <link rel="stylesheet" type="text/css" href="{{ asset('Assets/custom-loading.css') }}">
     <!-- PondokHuda design layer: keep legacy AdminBSB intact, override safely. -->
-    <link href="{{ asset('css/pondokhuda-modern.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/pondokhuda-modern.css') }}?v={{ filemtime(public_path('css/pondokhuda-modern.css')) }}" rel="stylesheet">
     @yield('css-content')
 </head>

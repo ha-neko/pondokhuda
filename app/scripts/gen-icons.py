@@ -53,6 +53,36 @@ def launcher(size: int, maskable: bool = False, round_icon: bool = False) -> Ima
     return image
 
 
+def splash(width: int, height: int) -> Image.Image:
+    """Calm branded launch screen for pre-Android 12 devices."""
+    image = Image.new("RGBA", (width, height), (6, 47, 48, 255))
+    glow = Image.new("RGBA", image.size, (0, 0, 0, 0))
+    glow_draw = ImageDraw.Draw(glow)
+    glow_size = round(min(width, height) * 0.72)
+    cx, cy = width // 2, round(height * 0.45)
+    glow_draw.ellipse(
+        (cx - glow_size // 2, cy - glow_size // 2,
+         cx + glow_size // 2, cy + glow_size // 2),
+        fill=(76, 217, 222, 18),
+    )
+    image = Image.alpha_composite(image, glow)
+
+    side = max(72, round(min(width, height) * 0.23))
+    symbol = mark(side)
+    image.alpha_composite(symbol, ((width - side) // 2, cy - side // 2))
+
+    draw = ImageDraw.Draw(image)
+    line_width = max(18, round(side * 0.42))
+    line_height = max(3, round(side * 0.035))
+    line_top = cy + side // 2 + round(side * 0.17)
+    draw.rounded_rectangle(
+        (cx - line_width // 2, line_top, cx + line_width // 2, line_top + line_height),
+        radius=line_height,
+        fill=(141, 226, 217, 180),
+    )
+    return image
+
+
 def generate_web() -> None:
     mark(256).save(PUBLIC / "brand-logo-white.png")
     mark(256, BRAND_DARK).save(PUBLIC / "brand-logo-black.png")
@@ -88,6 +118,59 @@ def generate_android(res: Path) -> None:
         android:strokeWidth="4.5" android:strokeLineCap="round" android:strokeLineJoin="round" />
 </vector>
 """)
+    (drawable / "splash_mark.xml").write_text("""<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:pathData="M34,51 L54,34 L74,51 M40,47 L40,74 M68,47 L68,74 M40,61 L68,61"
+        android:fillColor="@android:color/transparent" android:strokeColor="#FFFFFF"
+        android:strokeWidth="5" android:strokeLineCap="round" android:strokeLineJoin="round" />
+</vector>
+""")
+
+    splash_sizes = {
+        "drawable": (480, 320),
+        "drawable-land-mdpi": (480, 320),
+        "drawable-land-hdpi": (800, 480),
+        "drawable-land-xhdpi": (1280, 720),
+        "drawable-land-xxhdpi": (1600, 960),
+        "drawable-land-xxxhdpi": (1920, 1280),
+        "drawable-port-mdpi": (320, 480),
+        "drawable-port-hdpi": (480, 800),
+        "drawable-port-xhdpi": (720, 1280),
+        "drawable-port-xxhdpi": (960, 1600),
+        "drawable-port-xxxhdpi": (1280, 1920),
+    }
+    for directory_name, dimensions in splash_sizes.items():
+        directory = res / directory_name
+        directory.mkdir(parents=True, exist_ok=True)
+        splash(*dimensions).save(directory / "splash.png")
+
+    values = res / "values"
+    values.mkdir(parents=True, exist_ok=True)
+    (values / "styles.xml").write_text("""<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:background">@null</item>
+    </style>
+    <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
+        <item name="android:background">@drawable/splash</item>
+        <item name="windowSplashScreenBackground">#062F30</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_mark</item>
+        <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
+        <item name="android:statusBarColor">#062F30</item>
+        <item name="android:navigationBarColor">#062F30</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
+""")
     adaptive = res / "mipmap-anydpi-v26"
     adaptive.mkdir(parents=True, exist_ok=True)
     for name in ("ic_launcher.xml", "ic_launcher_round.xml"):
@@ -102,4 +185,4 @@ def generate_android(res: Path) -> None:
 generate_web()
 if len(sys.argv) > 1:
     generate_android(Path(sys.argv[1]).resolve())
-print("generated Pondok Huda web and launcher icons")
+print("generated Pondok Huda web, launcher, and Android splash assets")

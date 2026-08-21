@@ -119,7 +119,14 @@ a:hover, a:focus { color: var(--ph-brand-dark); text-decoration: none; }
 }
 
 .brand-mark .material-icons { font-size: 23px; }
-.brand-mark img { width: 27px; height: 27px; object-fit: contain; }
+.brand-mark img {
+    display: block;
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
+    object-position: center;
+    transform: translate(-1px, -1px);
+}
 .brand-copy { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .navbar .navbar-right > li > a {
@@ -457,9 +464,47 @@ textarea.form-control { height: auto; min-height: 110px; resize: vertical; }
 .pagination > .active > span { background: var(--ph-brand); border-color: var(--ph-brand); }
 
 /* ---------- feedback/modal/dropdown ---------- */
-.alert { border: 0; border-radius: 12px; box-shadow: none; }
-.alert-danger { background: #fdecec; color: #a61b2b; }
-.alert-success { background: #e8f6ec; color: #166534; }
+.alert {
+    position: relative;
+    min-height: 52px;
+    padding: 15px 46px 14px 48px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    box-shadow: none;
+    font-weight: 650;
+    line-height: 1.5;
+}
+.alert:before {
+    position: absolute;
+    left: 16px;
+    top: 14px;
+    font-family: 'Material Icons';
+    font-size: 21px;
+    line-height: 1;
+}
+.alert .close {
+    position: absolute;
+    top: 13px;
+    right: 15px;
+    color: inherit;
+    opacity: .62;
+    text-shadow: none;
+}
+.alert .close:hover { opacity: 1; }
+.alert.alert-danger {
+    border-color: #f4c5ca;
+    background: #fde8ea !important;
+    color: #8f1725 !important;
+    box-shadow: inset 4px 0 0 #dc3545;
+}
+.alert-danger:before { content: '\e000'; }
+.alert.alert-success {
+    border-color: #b9dfc4;
+    background: #ddf3e3 !important;
+    color: #14532d !important;
+    box-shadow: inset 4px 0 0 #21834a;
+}
+.alert-success:before { content: '\e86c'; }
 .label, .badge { border-radius: 999px; padding: 5px 9px; font-weight: 700; }
 .modal-content { border: 0; border-radius: 20px; box-shadow: var(--ph-shadow-md); overflow: hidden; }
 .modal-header { padding: 19px 22px; border-bottom: 1px solid var(--ph-border); }
