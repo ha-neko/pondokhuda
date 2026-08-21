@@ -63,7 +63,7 @@ export default function Pembayaran() {
               </div>
             </section>
 
-            <SectionHeader title="Riwayat pembayaran" sub={`${history.length} transaksi tercatat`} />
+            <SectionHeader title="Riwayat pembayaran" sub={`${history.filter((i) => i.kode_bayar !== 'current').length} transaksi tercatat`} />
             {history.length === 0 ? (
               <Empty text="Belum ada transaksi yang tercatat pada akun ini." icon="wallet" />
             ) : (

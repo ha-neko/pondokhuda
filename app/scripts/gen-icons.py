@@ -11,8 +11,8 @@ PUBLIC = ROOT / "public"
 OUT = PUBLIC / "icons"
 OUT.mkdir(parents=True, exist_ok=True)
 
-BRAND = (5, 111, 108, 255)
-BRAND_DARK = (4, 88, 86, 255)
+BRAND = (46, 125, 50, 255)
+BRAND_DARK = (27, 94, 32, 255)
 WHITE = (255, 255, 255, 255)
 
 
@@ -57,8 +57,8 @@ def splash(width: int, height: int) -> Image.Image:
     """Refined branded launch screen for pre-Android 12 devices."""
     image = Image.new("RGBA", (width, height))
     draw = ImageDraw.Draw(image)
-    top = (4, 35, 36)
-    bottom = (7, 62, 59)
+    top = (6, 38, 15)
+    bottom = (16, 74, 33)
     for y in range(height):
         t = y / max(1, height - 1)
         color = tuple(round(top[i] + (bottom[i] - top[i]) * t) for i in range(3)) + (255,)
@@ -69,8 +69,8 @@ def splash(width: int, height: int) -> Image.Image:
     decor_draw = ImageDraw.Draw(decor)
     decor_draw.ellipse(
         (width - unit * 0.58, -unit * 0.28, width + unit * 0.18, unit * 0.48),
-        fill=(76, 217, 222, 13),
-        outline=(141, 226, 217, 18),
+        fill=(134, 217, 122, 13),
+        outline=(168, 230, 158, 18),
         width=max(2, round(unit * 0.008)),
     )
     decor_draw.ellipse(
@@ -95,7 +95,7 @@ def splash(width: int, height: int) -> Image.Image:
     surface_draw.rounded_rectangle(
         box,
         radius=radius,
-        fill=(7, 116, 111, 255),
+        fill=(56, 142, 60, 255),
         outline=(255, 255, 255, 32),
         width=max(1, round(tile * 0.012)),
     )
@@ -172,7 +172,7 @@ def generate_android(res: Path) -> None:
     drawable.mkdir(parents=True, exist_ok=True)
     (drawable / "ic_launcher_background.xml").write_text("""<?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <solid android:color="#056F6C" />
+    <solid android:color="#2E7D32" />
 </shape>
 """)
     foreground = res / "drawable-v24"
@@ -191,7 +191,7 @@ def generate_android(res: Path) -> None:
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
     <path android:pathData="M34,22 H74 C80.6,22 86,27.4 86,34 V74 C86,80.6 80.6,86 74,86 H34 C27.4,86 22,80.6 22,74 V34 C22,27.4 27.4,22 34,22 Z"
-        android:fillColor="#07746F" />
+        android:fillColor="#388E3C" />
     <path android:pathData="M36,51 L54,35 L72,51 M41,48 L41,73 M67,48 L67,73 M41,60 L67,60"
         android:fillColor="@android:color/transparent" android:strokeColor="#FFFFFF"
         android:strokeWidth="4.5" android:strokeLineCap="round" android:strokeLineJoin="round" />
@@ -232,11 +232,11 @@ def generate_android(res: Path) -> None:
     </style>
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
         <item name="android:background">@drawable/splash</item>
-        <item name="windowSplashScreenBackground">#062F30</item>
+        <item name="windowSplashScreenBackground">#06290F</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_mark</item>
         <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
-        <item name="android:statusBarColor">#062F30</item>
-        <item name="android:navigationBarColor">#062F30</item>
+        <item name="android:statusBarColor">#06290F</item>
+        <item name="android:navigationBarColor">#06290F</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>

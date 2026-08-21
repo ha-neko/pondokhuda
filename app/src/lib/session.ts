@@ -47,7 +47,7 @@ export function applyTheme(t: ThemeMode): void {
     t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
   document.documentElement.classList.toggle('dark', dark)
   const meta = document.querySelector('meta[name="theme-color"]')
-  if (meta) meta.setAttribute('content', dark ? '#0e1514' : '#00696d')
+  if (meta) meta.setAttribute('content', dark ? '#0f140e' : '#2e7d32')
 }
 
 /** Apply the kost's primary color as the brand seed override. */

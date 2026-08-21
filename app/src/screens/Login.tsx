@@ -44,7 +44,7 @@ export default function Login() {
   }
 
   return (
-    <div className="relative min-h-dvh overflow-hidden bg-[#062f30] text-white">
+    <div className="relative min-h-dvh overflow-hidden bg-[#06290f] text-white">
       <div className="pointer-events-none absolute -left-28 -top-24 size-80 rounded-full bg-[#55dce0]/14 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-40 -right-24 size-96 rounded-full bg-[#a7f3d0]/10 blur-3xl" />
 

@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
 /* ============================================================
-   M3 design tokens — seed #00696D (teal) + dynamic per-kost
+   M3 design tokens — seed #2E7D32 (green, matches web theme-light-green)
    ============================================================ */
 
 :root {
-  --ph-primary: #00696d;
+  --ph-primary: #2e7d32;
   --ph-on-primary: #ffffff;
-  --ph-primary-container: #9cf1f4;
-  --ph-on-primary-container: #002021;
-  --ph-secondary: #4a6363;
+  --ph-primary-container: #b9f1b4;
+  --ph-on-primary-container: #002105;
+  --ph-secondary: #52634f;
   --ph-on-secondary: #ffffff;
-  --ph-secondary-container: #cce8e8;
-  --ph-on-secondary-container: #051f20;
+  --ph-secondary-container: #d5e8d0;
+  --ph-on-secondary-container: #101f10;
   --ph-tertiary: #4b607c;
   --ph-on-tertiary: #ffffff;
   --ph-tertiary-container: #d0e4ff;
@@ -24,34 +24,34 @@
   --ph-success: #246b3b;
   --ph-success-container: #d8f4de;
   --ph-on-success-container: #155d2a;
-  --ph-surface: #f4fbf9;
-  --ph-on-surface: #151d1c;
-  --ph-surface-variant: #dae5e3;
-  --ph-on-surface-variant: #3f4948;
+  --ph-surface: #f6faf3;
+  --ph-on-surface: #171d15;
+  --ph-surface-variant: #dde5d8;
+  --ph-on-surface-variant: #414941;
   --ph-surface-container-lowest: #ffffff;
-  --ph-surface-container-low: #eef5f3;
-  --ph-surface-container: #e8efed;
-  --ph-surface-container-high: #e2eae8;
-  --ph-surface-container-highest: #dce4e2;
-  --ph-outline: #6f7978;
-  --ph-outline-variant: #bec9c7;
+  --ph-surface-container-low: #f0f5ec;
+  --ph-surface-container: #eaefe6;
+  --ph-surface-container-high: #e4eae0;
+  --ph-surface-container-highest: #dee4db;
+  --ph-outline: #71796f;
+  --ph-outline-variant: #c1c9bd;
   --ph-scrim: #000000;
-  --ph-inverse-surface: #2a3130;
-  --ph-inverse-on-surface: #eef5f3;
-  --ph-inverse-primary: #4cd9de;
+  --ph-inverse-surface: #2b322a;
+  --ph-inverse-on-surface: #eef2e9;
+  --ph-inverse-primary: #93d48a;
 
   --ph-scheme: light;
 }
 
 .dark {
-  --ph-primary: #4cd9de;
-  --ph-on-primary: #003739;
-  --ph-primary-container: #004f53;
-  --ph-on-primary-container: #9cf1f4;
-  --ph-secondary: #acc9c9;
-  --ph-on-secondary: #173233;
-  --ph-secondary-container: #2e4b4c;
-  --ph-on-secondary-container: #cce8e8;
+  --ph-primary: #93d48a;
+  --ph-on-primary: #00390f;
+  --ph-primary-container: #205427;
+  --ph-on-primary-container: #aef199;
+  --ph-secondary: #b9ccb2;
+  --ph-on-secondary: #253424;
+  --ph-secondary-container: #3b4b39;
+  --ph-on-secondary-container: #d5e8d0;
   --ph-tertiary: #b7caec;
   --ph-on-tertiary: #21334c;
   --ph-tertiary-container: #374a64;
@@ -63,20 +63,20 @@
   --ph-success: #8bd7a0;
   --ph-success-container: #174b28;
   --ph-on-success-container: #b9f2c7;
-  --ph-surface: #0e1514;
-  --ph-on-surface: #dee4e2;
-  --ph-surface-variant: #3f4948;
-  --ph-on-surface-variant: #bec9c7;
-  --ph-surface-container-lowest: #090f0f;
-  --ph-surface-container-low: #161d1c;
-  --ph-surface-container: #1a2120;
-  --ph-surface-container-high: #252b2b;
-  --ph-surface-container-highest: #303636;
-  --ph-outline: #889391;
-  --ph-outline-variant: #3f4948;
-  --ph-inverse-surface: #dee4e2;
-  --ph-inverse-on-surface: #2a3130;
-  --ph-inverse-primary: #00696d;
+  --ph-surface: #0f140e;
+  --ph-on-surface: #dee4da;
+  --ph-surface-variant: #414941;
+  --ph-on-surface-variant: #c1c9bd;
+  --ph-surface-container-lowest: #090f09;
+  --ph-surface-container-low: #171d16;
+  --ph-surface-container: #1b211a;
+  --ph-surface-container-high: #262c24;
+  --ph-surface-container-highest: #31372f;
+  --ph-outline: #8b9388;
+  --ph-outline-variant: #414941;
+  --ph-inverse-surface: #dee4da;
+  --ph-inverse-on-surface: #2b322a;
+  --ph-inverse-primary: #2e7d32;
 
   --ph-scheme: dark;
 }
