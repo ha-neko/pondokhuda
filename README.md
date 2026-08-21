@@ -49,6 +49,27 @@ hilang). PHP 7.4.33 dibangun dari source dengan libs lokal di
 
 ## Boot semuanya
 
+Cara paling mudah adalah memakai process manager bawaan. Tanpa argumen, ia
+membuka TUI untuk start/stop/restart, status, log, dan tunnel HTTPS:
+
+```bash
+./dev.sh
+```
+
+Perintah yang sama juga bisa dipakai tanpa UI, misalnya:
+
+```bash
+./dev.sh start             # MariaDB + API + Laravel + Vite
+./dev.sh status
+./dev.sh logs api          # follow log, keluar dengan Ctrl-C
+./dev.sh start tunnel      # tunnel HTTPS opsional untuk app
+./dev.sh stop
+```
+
+PID dan log runtime disimpan di `.dev-runtime/` dan tidak masuk Git.
+
+### Boot manual
+
 ```bash
 mariadbd --datadir=/home/leafy/.pondok/mysql \
   --socket=/home/leafy/.pondok/mysql.sock --port=3306 \

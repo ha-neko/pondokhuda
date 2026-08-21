@@ -23,6 +23,7 @@ app/dist/
 app/dev-dist/
 app/android/
 app/ios/
+.dev-runtime/
 
 # ===== junk endpoints (quarantined, not for public) =====
 api/_quarantine/
