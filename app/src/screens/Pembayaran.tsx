@@ -17,6 +17,7 @@ export default function Pembayaran() {
     const result = silent
       ? await apiPembayaranSilent(session.kode, session.pin)
       : await apiPembayaran(session.kode, session.pin)
+    if (!silent) setLoading(false)
     if (!result.ok) {
       if (!silent) setErr(result.error)
       return
@@ -26,8 +27,8 @@ export default function Pembayaran() {
   }
 
   useEffect(() => {
-    // stale-while-revalidate: cache langsung tampil, status segarkan di belakang
-    load(!session?.bayar)
+    // stale-while-revalidate: dengan cache -> senyap; tanpa cache -> muat penuh
+    load(!!session?.bayar)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.kode])
 
