@@ -257,7 +257,8 @@ class Dashboard:
                 "yellow": 221 if curses.COLORS >= 256 else curses.COLOR_YELLOW,
                 "red": 203 if curses.COLORS >= 256 else curses.COLOR_RED,
                 "magenta": 176 if curses.COLORS >= 256 else curses.COLOR_MAGENTA,
-                "muted": 245 if curses.COLORS >= 256 else curses.COLOR_WHITE,
+                "muted": 250 if curses.COLORS >= 256 else curses.COLOR_WHITE,
+                "text": 255 if curses.COLORS >= 256 else curses.COLOR_WHITE,
             }
             for index, (name, foreground) in enumerate(palette.items(), 1):
                 try:
@@ -272,7 +273,7 @@ class Dashboard:
                 self.colors["selected"] = curses.color_pair(8) | curses.A_BOLD
             except curses.error:
                 pass
-        for name in ("cyan", "blue", "green", "yellow", "red", "magenta", "muted", "selected"):
+        for name in ("cyan", "blue", "green", "yellow", "red", "magenta", "muted", "text", "selected"):
             self.colors.setdefault(name, 0)
         self.colors["selected"] |= curses.A_REVERSE | curses.A_BOLD
 
@@ -505,7 +506,7 @@ class Dashboard:
             lines = ["no log output"]
         lines = lines[-max(1, height - 2) :]
         for offset, line in enumerate(lines):
-            self.add(y + 1 + offset, x + 2, fit(line, width - 4), self.colors["muted"], width - 4)
+            self.add(y + 1 + offset, x + 2, fit(line, width - 4), self.colors["text"], width - 4)
 
     def draw_log_grid(self, y: int, height: int, width: int) -> None:
         gap = 1
@@ -546,7 +547,7 @@ class Dashboard:
             self.add(row, 2, fit(f"{snapshot.service.label}  ·  {snapshot.state}", width - 4), attr, width - 4)
             row += 1
             for line in lines[-(allocation - 1) :]:
-                self.add(row, 4, fit(line, width - 6), self.colors["muted"], width - 6)
+                self.add(row, 4, fit(line, width - 6), self.colors["text"], width - 6)
                 row += 1
 
     def draw_footer(self, height: int, width: int) -> None:
@@ -577,7 +578,7 @@ class Dashboard:
             lines = ["no log output"]
         start_y = panel_y + 1
         for index, line in enumerate(lines[-count:]):
-            self.add(start_y + index, panel_x + 2, fit(line, panel_w - 4), self.colors["muted"], panel_w - 4)
+            self.add(start_y + index, panel_x + 2, fit(line, panel_w - 4), self.colors["text"], panel_w - 4)
         mode = "following" if self.log_offset == 0 else f"-{self.log_offset} lines"
         hint = f"{mode}  ·  ↑↓/PgUp/PgDn scroll  ·  End follow  ·  l/Esc close"
         self.add(panel_y + panel_h - 2, panel_x + 2, fit(hint, panel_w - 4), self.colors["cyan"], panel_w - 4)
