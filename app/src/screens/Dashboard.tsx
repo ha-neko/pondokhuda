@@ -18,14 +18,14 @@ export default function Dashboard() {
   const [refreshing, setRefreshing] = useState(false)
   const [err, setErr] = useState('')
 
-  async function refresh() {
+  async function refresh(silent = false) {
     if (!session || refreshing) return
     setRefreshing(true)
-    setErr('')
+    if (!silent) setErr('')
     const r = await apiPembayaran(session.kode, session.pin)
     setRefreshing(false)
     if (!r.ok) {
-      setErr(r.error)
+      if (!silent) setErr(r.error)
       return
     }
     const next = updateSession({ bayar: r.data.bayar, resume: r.data.resume })
@@ -33,7 +33,8 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    if (session && !session.bayar) refresh()
+    // stale-while-revalidate: tampilkan cache, lalu segarkan status di belakang
+    if (session) refresh(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.kode])
 
@@ -59,7 +60,7 @@ export default function Dashboard() {
             <IconButton
               icon="refresh"
               label="Muat ulang pembayaran"
-              onClick={refresh}
+              onClick={() => refresh()}
               disabled={refreshing}
               className={`bg-white/12 text-on-primary hover:bg-white/20 ${refreshing ? 'animate-spin' : ''}`}
             />
@@ -86,7 +87,7 @@ export default function Dashboard() {
           )}
         </section>
 
-        {err && <AlertBanner action={<button onClick={refresh} className="font-bold underline">Coba lagi</button>}>{err}</AlertBanner>}
+        {err && <AlertBanner action={<button onClick={() => refresh()} className="font-bold underline">Coba lagi</button>}>{err}</AlertBanner>}
 
         <SectionHeader title="Akses cepat" sub="Yang paling sering Anda butuhkan" />
         <div className="grid grid-cols-3 gap-2 sm:gap-2.5">

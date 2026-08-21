@@ -10,14 +10,13 @@ export default function Pembayaran() {
   const [loading, setLoading] = useState(!session?.bayar)
   const [err, setErr] = useState('')
 
-  async function load() {
+  async function load(silent = false) {
     if (!session) return
-    setLoading(true)
+    if (!silent) setLoading(true)
     setErr('')
     const result = await apiPembayaran(session.kode, session.pin)
-    setLoading(false)
     if (!result.ok) {
-      setErr(result.error)
+      if (!silent) setErr(result.error)
       return
     }
     const next = updateSession({ bayar: result.data.bayar, resume: result.data.resume })
@@ -25,7 +24,8 @@ export default function Pembayaran() {
   }
 
   useEffect(() => {
-    if (!session?.bayar) load()
+    // stale-while-revalidate: cache langsung tampil, status segarkan di belakang
+    load(!session?.bayar)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.kode])
 
@@ -41,7 +41,7 @@ export default function Pembayaran() {
         {loading ? (
           <LoadingState label="Memuat riwayat pembayaran" />
         ) : err ? (
-          <AlertBanner action={<button onClick={load} className="font-bold underline">Coba lagi</button>}>{err}</AlertBanner>
+          <AlertBanner action={<button onClick={() => load(false)} className="font-bold underline">Coba lagi</button>}>{err}</AlertBanner>
         ) : !bayar ? (
           <Empty title="Pembayaran belum tersedia" text="Hubungi admin kost jika data belum muncul." icon="wallet" />
         ) : (
