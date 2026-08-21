@@ -45,7 +45,7 @@
         <div class="ph-dashboard-panel ph-dashboard-panel--violet">
             <div class="ph-dashboard-panel__head">
                 <span class="ph-dashboard-panel__eyebrow">Tren pembayaran</span>
-                <span class="ph-dashboard-panel__icon"><i class="material-icons">monitoring</i></span>
+                <span class="ph-dashboard-panel__icon"><i class="material-icons">show_chart</i></span>
             </div>
             <div class="sparkline" data-type="line" data-spot-Radius="3" data-highlight-Spot-Color="#fff" data-highlight-Line-Color="#fff"
                  data-min-Spot-Color="#fff" data-max-Spot-Color="#fff" data-spot-Color="#fff"
