@@ -3,7 +3,7 @@
 from pathlib import Path
 import sys
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -54,33 +54,101 @@ def launcher(size: int, maskable: bool = False, round_icon: bool = False) -> Ima
 
 
 def splash(width: int, height: int) -> Image.Image:
-    """Calm branded launch screen for pre-Android 12 devices."""
-    image = Image.new("RGBA", (width, height), (6, 47, 48, 255))
-    glow = Image.new("RGBA", image.size, (0, 0, 0, 0))
-    glow_draw = ImageDraw.Draw(glow)
-    glow_size = round(min(width, height) * 0.72)
-    cx, cy = width // 2, round(height * 0.45)
-    glow_draw.ellipse(
-        (cx - glow_size // 2, cy - glow_size // 2,
-         cx + glow_size // 2, cy + glow_size // 2),
-        fill=(76, 217, 222, 18),
-    )
-    image = Image.alpha_composite(image, glow)
+    """Refined branded launch screen for pre-Android 12 devices."""
+    image = Image.new("RGBA", (width, height))
+    draw = ImageDraw.Draw(image)
+    top = (4, 35, 36)
+    bottom = (7, 62, 59)
+    for y in range(height):
+        t = y / max(1, height - 1)
+        color = tuple(round(top[i] + (bottom[i] - top[i]) * t) for i in range(3)) + (255,)
+        draw.line((0, y, width, y), fill=color)
 
-    side = max(72, round(min(width, height) * 0.23))
-    symbol = mark(side)
-    image.alpha_composite(symbol, ((width - side) // 2, cy - side // 2))
+    unit = min(width, height)
+    decor = Image.new("RGBA", image.size, (0, 0, 0, 0))
+    decor_draw = ImageDraw.Draw(decor)
+    decor_draw.ellipse(
+        (width - unit * 0.58, -unit * 0.28, width + unit * 0.18, unit * 0.48),
+        fill=(76, 217, 222, 13),
+        outline=(141, 226, 217, 18),
+        width=max(2, round(unit * 0.008)),
+    )
+    decor_draw.ellipse(
+        (-unit * 0.42, height - unit * 0.36, unit * 0.34, height + unit * 0.40),
+        fill=(167, 243, 208, 8),
+    )
+    image = Image.alpha_composite(image, decor)
+
+    cx = width // 2
+    cy = round(height * (0.39 if height >= width else 0.38))
+    tile = max(76, round(unit * 0.22))
+    radius = round(tile * 0.25)
+    surface = Image.new("RGBA", image.size, (0, 0, 0, 0))
+    surface_draw = ImageDraw.Draw(surface)
+    box = (cx - tile // 2, cy - tile // 2, cx + tile // 2, cy + tile // 2)
+    shadow_offset = max(3, round(tile * 0.055))
+    surface_draw.rounded_rectangle(
+        (box[0], box[1] + shadow_offset, box[2], box[3] + shadow_offset),
+        radius=radius,
+        fill=(0, 0, 0, 42),
+    )
+    surface_draw.rounded_rectangle(
+        box,
+        radius=radius,
+        fill=(7, 116, 111, 255),
+        outline=(255, 255, 255, 32),
+        width=max(1, round(tile * 0.012)),
+    )
+    image = Image.alpha_composite(image, surface)
+
+    symbol_side = round(tile * 0.62)
+    symbol = mark(symbol_side)
+    image.alpha_composite(symbol, (cx - symbol_side // 2, cy - symbol_side // 2))
 
     draw = ImageDraw.Draw(image)
-    line_width = max(18, round(side * 0.42))
-    line_height = max(3, round(side * 0.035))
-    line_top = cy + side // 2 + round(side * 0.17)
-    draw.rounded_rectangle(
-        (cx - line_width // 2, line_top, cx + line_width // 2, line_top + line_height),
-        radius=line_height,
-        fill=(141, 226, 217, 180),
+    title_font = splash_font(max(16, round(unit * 0.047)), bold=True)
+    sub_font = splash_font(max(11, round(unit * 0.021)), bold=False)
+    title = "Pondok Huda"
+    subtitle = "ruang nyaman untuk penghuni"
+    title_y = box[3] + round(unit * 0.075)
+    draw_centered(draw, title, title_y, title_font, (245, 251, 249, 255), width)
+    draw_centered(
+        draw,
+        subtitle,
+        title_y + round(unit * 0.062),
+        sub_font,
+        (190, 211, 207, 225),
+        width,
     )
     return image
+
+
+def splash_font(size: int, bold: bool) -> ImageFont.ImageFont:
+    names = (
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/TTF/DejaVuSans-Bold.ttf",
+    ) if bold else (
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/TTF/DejaVuSans.ttf",
+    )
+    for name in names:
+        path = Path(name)
+        if path.exists():
+            return ImageFont.truetype(str(path), size=size)
+    return ImageFont.load_default()
+
+
+def draw_centered(
+    draw: ImageDraw.ImageDraw,
+    text: str,
+    y: int,
+    font: ImageFont.ImageFont,
+    fill: tuple[int, int, int, int],
+    width: int,
+) -> None:
+    bounds = draw.textbbox((0, 0), text, font=font)
+    text_width = bounds[2] - bounds[0]
+    draw.text(((width - text_width) // 2, y), text, font=font, fill=fill)
 
 
 def generate_web() -> None:
@@ -122,9 +190,11 @@ def generate_android(res: Path) -> None:
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
-    <path android:pathData="M34,51 L54,34 L74,51 M40,47 L40,74 M68,47 L68,74 M40,61 L68,61"
+    <path android:pathData="M34,22 H74 C80.6,22 86,27.4 86,34 V74 C86,80.6 80.6,86 74,86 H34 C27.4,86 22,80.6 22,74 V34 C22,27.4 27.4,22 34,22 Z"
+        android:fillColor="#07746F" />
+    <path android:pathData="M36,51 L54,35 L72,51 M41,48 L41,73 M67,48 L67,73 M41,60 L67,60"
         android:fillColor="@android:color/transparent" android:strokeColor="#FFFFFF"
-        android:strokeWidth="5" android:strokeLineCap="round" android:strokeLineJoin="round" />
+        android:strokeWidth="4.5" android:strokeLineCap="round" android:strokeLineJoin="round" />
 </vector>
 """)
 

@@ -63,7 +63,7 @@ export default function Login() {
           <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/8 px-3 py-1 text-xs font-medium text-[#a8eff0]">
             <Icon name="check" size={14} /> Informasi kost dalam satu tempat
           </span>
-          <h1 className="mt-4 max-w-sm text-[1.85rem] font-semibold leading-[1.14] tracking-[-.035em] sm:text-[2.1rem]">
+          <h1 className="mt-4 max-w-sm text-[1.65rem] font-semibold leading-[1.16] tracking-[-.025em] sm:text-[1.9rem]">
             Pulang terasa lebih tenang.
           </h1>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/65">

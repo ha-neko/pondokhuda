@@ -50,11 +50,22 @@ hilang). PHP 7.4.33 dibangun dari source dengan libs lokal di
 ## Boot semuanya
 
 Cara paling mudah adalah memakai process manager bawaan. Tanpa argumen, ia
-membuka TUI untuk start/stop/restart, status, log, dan tunnel HTTPS:
+membuka dashboard ncurses real-time untuk start/stop/restart, health, PID,
+uptime, resource usage, seluruh component log, dan tunnel HTTPS. Rendering
+memakai buffered screen diff sehingga refresh tidak membersihkan layar atau
+berkedip:
 
 ```bash
 ./dev.sh
 ```
+
+Navigasi dengan `↑/↓` atau `j/k`. `Enter` menyalakan/mematikan service terpilih;
+`s`, `x`, dan `r` menjalankan start, stop, dan restart; `a` menyalakan core
+stack; `z` menghentikan semuanya; `t` toggle tunnel; `c` membersihkan log; dan
+`q` keluar. `l` membuka full log yang bisa di-scroll, `p` pause telemetry, dan
+`?` membuka bantuan. Mouse juga didukung. Layout log otomatis berubah dari
+ringkasan lima komponen pada terminal kecil menjadi grid panel pada terminal
+lebar.
 
 Perintah yang sama juga bisa dipakai tanpa UI, misalnya:
 
@@ -66,7 +77,14 @@ Perintah yang sama juga bisa dipakai tanpa UI, misalnya:
 ./dev.sh stop
 ```
 
-PID dan log runtime disimpan di `.dev-runtime/` dan tidak masuk Git.
+PID dan log runtime disimpan di `.dev-runtime/` dan tidak masuk Git. Mutasi
+service diserialisasi dengan lock; PID disertai process start-time dan identitas
+command agar stale/reused PID tidak pernah dihentikan secara keliru.
+
+Quick tunnel memakai URL acak. Untuk hostname permanen tanpa membeli domain,
+jalankan `./dev.sh tunnel-help`, claim static domain dari akun ngrok gratis,
+lalu salin `.dev-tunnel.env.example` menjadi `.dev-tunnel.env`. TUI akan
+otomatis memakai hostname tersebut pada menu **Toggle HTTPS tunnel**.
 
 ### Boot manual
 

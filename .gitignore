@@ -24,6 +24,9 @@ app/dev-dist/
 app/android/
 app/ios/
 .dev-runtime/
+.dev-tunnel.env
+__pycache__/
+*.py[cod]
 
 # ===== junk endpoints (quarantined, not for public) =====
 api/_quarantine/

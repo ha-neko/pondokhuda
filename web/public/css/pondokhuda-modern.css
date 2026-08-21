@@ -738,7 +738,24 @@ body.login-page {
 .ph-input-wrap { position: relative; }
 .ph-input-wrap .material-icons { position: absolute; left: 14px; top: 13px; z-index: 2; color: #84949d; font-size: 21px; }
 .ph-input-wrap .form-control { height: 50px; padding-left: 46px; font-size: 14px; }
-.ph-pin-toggle { position: absolute; right: 10px; top: 8px; width: 35px; height: 35px; padding: 0; border: 0; border-radius: 9px; background: transparent; color: var(--ph-muted); }
+.ph-pin-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    width: 35px;
+    height: 35px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(-50%);
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--ph-muted);
+    line-height: 1;
+}
+.ph-pin-toggle .material-icons { display: block; line-height: 1; }
 .ph-login-submit { width: 100%; min-height: 50px; margin-top: 6px; border-radius: 12px; background: var(--ph-brand) !important; color: #fff !important; font-size: 14px; }
 .ph-login-submit.is-loading { pointer-events: none; opacity: .72; }
 .ph-login-actions { margin-top: 18px; display: flex; justify-content: space-between; align-items: center; gap: 12px; color: var(--ph-muted); font-size: 12px; }

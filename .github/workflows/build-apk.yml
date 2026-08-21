@@ -30,9 +30,9 @@ jobs:
       - name: build web + capacitor android
         working-directory: app
         env:
-          # Temporary dev target. The tunnel forwards to Vite :5173, which
+          # Stable ngrok dev target. The tunnel forwards to Vite :5173, which
           # proxies /api to the local PHP API on :8081.
-          VITE_API_BASE: https://minnesota-diagnosis-void-stop.trycloudflare.com/api
+          VITE_API_BASE: https://stunning-unclamped-hydrated.ngrok-free.dev/api
         run: |
           python3 -m pip install --user pillow
           npm run build
