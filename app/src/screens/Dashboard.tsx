@@ -53,8 +53,8 @@ export default function Dashboard() {
           <div className="relative flex items-start justify-between gap-3">
             <div>
               <p className="text-xs font-medium text-on-primary/70">Halo, {p.nama.split(' ')[0]}</p>
-              <h2 className="mt-1 text-2xl font-semibold tracking-[-.03em]">{b?.statusbayar || 'Status tagihan'}</h2>
-              {b && <p className="mt-1 text-sm font-medium text-on-primary/80">{daysLabel(b.sisaharibayar)}</p>}
+              <h2 className="mt-1 text-xl font-semibold tracking-[-.03em]">{b?.statusbayar || 'Status tagihan'}</h2>
+              {b && <p className="mt-1 text-xs font-medium text-on-primary/80">{daysLabel(b.sisaharibayar)}</p>}
             </div>
             <IconButton
               icon="refresh"
@@ -66,10 +66,10 @@ export default function Dashboard() {
           </div>
 
           {b && (
-            <div className="relative mt-5 grid grid-cols-2 gap-2.5">
+            <div className="relative mt-4 grid grid-cols-2 gap-2.5">
               <div className="rounded-[.95rem] border border-white/12 bg-linear-to-b from-white/16 to-white/6 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_5px_14px_rgba(0,0,0,0.10)]">
                 <p className="text-[11px] font-medium text-on-primary/65">Total tagihan</p>
-                <p className="money-value mt-1 text-base font-semibold">{money(b.tagihantotal)}</p>
+                <p className="money-value mt-1 text-sm font-semibold">{money(b.tagihantotal)}</p>
               </div>
               <div className="rounded-[.95rem] border border-white/12 bg-linear-to-b from-white/16 to-white/6 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_5px_14px_rgba(0,0,0,0.10)]">
                 <p className="text-[11px] font-medium text-on-primary/65">Jatuh tempo</p>
@@ -79,7 +79,7 @@ export default function Dashboard() {
           )}
 
           {b && (
-            <div className="relative mt-3.5 flex items-center gap-2 text-xs font-medium">
+            <div className="relative mt-3 flex items-center gap-2 text-[11px] font-medium">
               <span className={`size-2 rounded-full ${tone === 'success' ? 'bg-success-container' : tone === 'error' ? 'bg-error-container' : 'bg-on-primary/70'}`} />
               {tone === 'success' ? 'Pembayaran periode ini sudah aman' : 'Periksa detail pembayaran Anda'}
             </div>
