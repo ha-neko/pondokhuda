@@ -4,7 +4,7 @@ const config: CapacitorConfig = {
   appId: 'id.pondokhuda.app',
   appName: 'Pondok Huda',
   webDir: 'dist',
-  backgroundColor: '#0e1514',
+  backgroundColor: '#0f140e',
   android: {
     allowMixedContent: true,
   },
