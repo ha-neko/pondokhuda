@@ -75,7 +75,9 @@ export default function Pembayaran() {
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <p className="text-[10px] font-bold uppercase tracking-[.08em] text-primary">
-                            Pembayaran {item.bayarke ? `#${item.bayarke}` : `#${history.length - index}`}
+                            {item.kode_bayar === 'current'
+                              ? 'Periode berjalan'
+                              : `Pembayaran #${item.bayarke ?? history.length - index}`}
                           </p>
                           <h3 className="mt-1 truncate text-sm font-semibold text-on-surface">{item.periode_bayar || item.periodesewa}</h3>
                           <p className="mt-1 text-xs text-on-surface-variant">
@@ -86,7 +88,7 @@ export default function Pembayaran() {
                       </div>
                       <div className="mt-4 flex items-end justify-between border-t border-outline-variant/45 pt-3">
                         <div>
-                          <p className="text-[10px] font-semibold text-on-surface-variant">Total dibayar</p>
+                          <p className="text-[10px] font-semibold text-on-surface-variant">{item.tanggal_bayar ? 'Total dibayar' : 'Total tagihan'}</p>
                           <p className="money-value text-base font-semibold text-on-surface">{money(item.total_bayar)}</p>
                         </div>
                         <div className="flex flex-col items-end gap-1 text-[11px]">

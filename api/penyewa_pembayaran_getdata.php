@@ -121,6 +121,38 @@ if( mysqli_num_rows($resultgetnextbayar) == 1)
             $statusTagihan = $rows['status_bayar'];
         }
 
+        // Saat menunggak, tampilkan periode berjalan sebagai baris pertama riwayat
+        // supaya status Jatuh Tempo terlihat langsung pada daftar pembayaran.
+        if ($sisaHariKeJatuhTempo < 0)
+        {
+            if (!is_array($datapembayaran))
+            {
+                $datapembayaran = array();
+            }
+            $tglNextTs = strtotime($rows['tanggal_pembayaran_selanjutnya']);
+            $periodeBerjalan = date('d M Y', $tglNextTs) . ' s.d. ' . date('d M Y', strtotime('+1 month', $tglNextTs));
+            $jumlahTagihanBerjalan = (float)$rows['abc'];
+            array_unshift($datapembayaran, array(
+                "bayarke" => null,
+                "kode_bayar" => "current",
+                "nomor_kamar" => null,
+                "tanggal_reminder" => null,
+                "tanggal_pembayaran" => date('d M Y', $tglNextTs),
+                "tanggal_bayar" => null,
+                "after_duedate" => null,
+                "periode_bayar" => $periodeBerjalan,
+                "harga_perbulan" => null,
+                "denda" => 0,
+                "diskon" => 0,
+                "total_harga" => $jumlahTagihanBerjalan,
+                "total_bayar" => $jumlahTagihanBerjalan,
+                "metode" => "Belum dibayar",
+                "periodesewa" => $periodeBerjalan,
+                "sisabayarcurr" => $jumlahTagihanBerjalan,
+                "statusbayar" => "Jatuh Tempo"
+            ));
+        }
+
         $finalDataPembayaran = array(
             "kumulasi" => $rows['abc'],
             "tanggalbayar" => $rows['tanggal_bayar_sebelumnya'],
