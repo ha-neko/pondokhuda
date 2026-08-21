@@ -67,11 +67,11 @@ export default function Dashboard() {
 
           {b && (
             <div className="relative mt-5 grid grid-cols-2 gap-2.5">
-              <div className="rounded-[.95rem] border border-white/10 bg-white/8 p-3">
+              <div className="rounded-[.95rem] border border-white/12 bg-linear-to-b from-white/16 to-white/6 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_5px_14px_rgba(0,0,0,0.10)]">
                 <p className="text-[11px] font-medium text-on-primary/65">Total tagihan</p>
                 <p className="money-value mt-1 text-base font-semibold">{money(b.tagihantotal)}</p>
               </div>
-              <div className="rounded-[.95rem] border border-white/10 bg-white/8 p-3">
+              <div className="rounded-[.95rem] border border-white/12 bg-linear-to-b from-white/16 to-white/6 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_5px_14px_rgba(0,0,0,0.10)]">
                 <p className="text-[11px] font-medium text-on-primary/65">Jatuh tempo</p>
                 <p className="mt-1 text-sm font-semibold leading-snug">{b.nexttglbayar}</p>
               </div>
