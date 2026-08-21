@@ -263,7 +263,8 @@ export function SectionHeader({ title, sub, right }: { title: string; sub?: stri
 export function statusTone(status: string | undefined): BadgeTone {
   if (!status) return 'neutral'
   const s = String(status).trim().toLowerCase()
-  if (s.includes('belum') || s.includes('gagal') || s.includes('tolak') || s.includes('batal')) return 'error'
+  if (s.includes('jatuh tempo') || s.includes('belum') || s.includes('gagal') || s.includes('tolak') || s.includes('batal')) return 'error'
+  if (s.includes('warning')) return 'primary'
   if (s === 'lunas' || s.includes('selesai') || s.includes('berhasil') || s.includes('resolved')) return 'success'
   if (s.includes('proses') || s.includes('diajukan') || s.includes('menunggu') || s.includes('baru')) return 'primary'
   return 'neutral'

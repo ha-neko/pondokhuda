@@ -104,12 +104,29 @@ if( mysqli_num_rows($resultgetnextbayar) == 1)
 {
     while($rows = mysqli_fetch_assoc($resultgetnextbayar))
     {
+        // Status tagihan yang sadar tanggal jatuh tempo (selaras dengan dashboard web):
+        // melewati jatuh tempo -> "Jatuh Tempo", mendekati (<= 3 hari) -> "Warning",
+        // selain itu pakai kelengkapan pembayaran invoice terakhir (Lunas/Belum Lunas).
+        $sisaHariKeJatuhTempo = (int)$rows['jatuhtempobulandepan'];
+        if ($sisaHariKeJatuhTempo < 0)
+        {
+            $statusTagihan = "Jatuh Tempo";
+        }
+        else if ($sisaHariKeJatuhTempo <= 3)
+        {
+            $statusTagihan = "Warning";
+        }
+        else
+        {
+            $statusTagihan = $rows['status_bayar'];
+        }
+
         $finalDataPembayaran = array(
             "kumulasi" => $rows['abc'],
             "tanggalbayar" => $rows['tanggal_bayar_sebelumnya'],
             "nexttglbayar" => $rows['tanggal_pembayaran_selanjutnya'],
             "sisaharibayar" => $rows['jatuhtempobulandepan'],
-            "statusbayar" => $rows['status_bayar'],
+            "statusbayar" => $statusTagihan,
             "tagihantotal" => "Rp. " . $rows['total_harga_sebelumnya'],
             "sisabayarsebelumnya" => "Rp. " . $rows['sisa_bayar_sebelumnya'],
             "bayarsebelumnya" => "Rp. " . $rows['total_bayar_sebelumnya'],
