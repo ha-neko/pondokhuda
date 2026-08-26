@@ -8,7 +8,7 @@ production database** — nothing in the old database is modified.
  api.pondokhuda.com ───► │ ~/api          raw PHP api     │──┐
  admin.pondokhuda.com ─► │ ~/laravel/public  dashboard    │  ├── same MySQL db
  app.pondokhuda.com ───► │ ~/tenant-app   PWA (optional)  │──┘   (old data)
-        APK (phones) ─────────────────────── calls https://api.…/api
+        APK (phones) ─────────────────────── calls https://api.…
 ```
 
 ## 0. one-time on your machine
@@ -71,7 +71,7 @@ Then enable *Force HTTPS Redirect* in the Domains panel for each.
 
 ```bash
 curl -X POST https://api.pondokhuda.com/login_ph.php \
-     -d "_kodepenyewa=<real kode>&_nomorpin=<real pin>"
+     -d "kode=<real kode>&pin=<real pin>"
 ```
 
 Expect JSON `personalinfopenyewa`. Then open
@@ -86,7 +86,7 @@ script if you changed one side.
 Edit `.github/workflows/build-apk.yml`:
 
 ```yaml
-VITE_API_BASE: https://api.pondokhuda.com/api
+VITE_API_BASE: https://api.pondokhuda.com
 ```
 
 push → download the new artifact. The tunnel (`*.ngrok-free.dev`) stays for

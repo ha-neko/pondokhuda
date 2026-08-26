@@ -45,12 +45,15 @@ $c = array(
 );
 file_put_contents($argv[6], "<?php\nreturn " . var_export($c, true) . ";\n");
 ' "$DB_HOST" "$DB_USER" "$DB_PASS" "$DB_NAME" "$API_TOKEN" "$STAGE/config-db.php"
-cat > "$STAGE/.htaccess" <<'HT'
-Options -Indexes
+# keep the existing api/.htaccess (CORS fallback), only add the kon.php guard
+if [[ -f "$STAGE/.htaccess" ]] && ! grep -q 'kon.php' "$STAGE/.htaccess"; then
+    cat >> "$STAGE/.htaccess" <<'HT'
+
 <Files "kon.php">
   Require all denied
 </Files>
 HT
+fi
 tar -czf "$RELEASE/api-$API_DOMAIN.tar.gz" -C "$STAGE" .
 rm -rf "$STAGE"
 
@@ -79,7 +82,7 @@ APP_KEY=$("$PHP" "$STAGE/artisan" key:generate --show --no-ansi)
     echo "DB_USERNAME=$DB_USER"
     echo "DB_PASSWORD=$DB_PASS"
     echo ''
-    echo "API_BASE_URL=https://$API_DOMAIN/api"
+    echo "API_BASE_URL=https://$API_DOMAIN"
     echo "API_TOKEN=$API_TOKEN"
 } > "$STAGE/.env"
 chmod -R u+rwX "$STAGE/storage"
@@ -88,7 +91,7 @@ rm -rf "$STAGE"
 
 echo "==> [3/3] tenant pwa"
 if [[ -n "${TENANT_APP_DOMAIN:-}" ]]; then
-    (cd "$ROOT/app" && VITE_API_BASE="https://$API_DOMAIN/api" npm run build >/dev/null)
+    (cd "$ROOT/app" && VITE_API_BASE="https://$API_DOMAIN" npm run build >/dev/null)
     STAGE="$RELEASE/.stage-app"
     mkdir -p "$STAGE"
     rsync -a "$ROOT/app/dist/" "$STAGE/"
@@ -104,4 +107,4 @@ ls -lh "$RELEASE" | awk 'NR>1 {printf "    %-46s %s\n", $NF, $5}'
 echo
 echo "next: read deploy/README.md — create the subdomains, upload, extract,"
 echo "      set PHP 7.4, enable AutoSSL. apk rebuild afterwards:"
-echo "      VITE_API_BASE=https://$API_DOMAIN/api"
+echo "      VITE_API_BASE=https://$API_DOMAIN"
