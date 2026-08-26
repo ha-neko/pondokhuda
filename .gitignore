@@ -34,3 +34,7 @@ api/_quarantine/
 # ===== misc =====
 *.log
 .DS_Store
+
+# cPanel deploy artifacts
+deploy/prod.env
+deploy/release/
