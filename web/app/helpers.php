@@ -39,12 +39,40 @@ if (!function_exists('api_get')) {
      */
     function api_get($url)
     {
-        $context = stream_context_create(array(
-            'http' => array(
-                'header' => api_header(),
-                'method' => 'GET',
-            ),
+        $ch = curl_init($url);
+        curl_setopt_array($ch, array(
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER     => array('Content-type: application/x-www-form-urlencoded', 'X-Api-Token: ' . config('api.token')),
+            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_SSL_VERIFYPEER => true,
         ));
-        return file_get_contents($url, false, $context);
+        $result = curl_exec($ch);
+        curl_close($ch);
+        return $result !== false ? $result : false;
+    }
+}
+
+if (!function_exists('api_post')) {
+    /**
+     * POST to a pondokhuda API endpoint with token + form data.
+     *
+     * @param  string  $url
+     * @param  array   $data  key => value pairs
+     * @return string|false
+     */
+    function api_post($url, array $data)
+    {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, array(
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => http_build_query($data),
+            CURLOPT_HTTPHEADER     => array('Content-type: application/x-www-form-urlencoded', 'X-Api-Token: ' . config('api.token')),
+            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_SSL_VERIFYPEER => true,
+        ));
+        $result = curl_exec($ch);
+        curl_close($ch);
+        return $result !== false ? $result : false;
     }
 }

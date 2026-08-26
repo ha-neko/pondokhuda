@@ -70,8 +70,7 @@ class OwnerController extends Controller
                     'content' => http_build_query($data)
                 )
             );
-            $context = stream_context_create($option);
-            $result = file_get_contents($url, false, $context);
+            $result = api_post($url, $data);
 
             $json = json_decode($result, true);
 
@@ -162,8 +161,7 @@ class OwnerController extends Controller
             )
         );
 
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
         // return $result;
@@ -204,8 +202,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 
@@ -248,8 +245,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 
@@ -277,8 +273,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -328,8 +323,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
         //dd($json);
@@ -357,8 +351,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 
@@ -413,8 +406,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 
@@ -445,8 +437,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 
@@ -475,9 +466,8 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
-        $result2 = file_get_contents($url2, false);
+        $result = api_post($url, $data);
+        $result2 = api_get($url2);
         $json = json_decode($result, true);
         $json2 = json_decode($result2, true);
         // dd($json);
@@ -674,8 +664,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         // return $result;
         if ($result == '{"daftarpenyewa":"penyewaterdaftar"}') {
             Session::flash('alert-class', 'alert-success');
@@ -703,14 +692,13 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
-        $result2 = file_get_contents($url2, false);
+        $result = api_post($url, $data);
+        $result2 = api_get($url2);
         $json = json_decode($result, true);
         $json2 = json_decode($result2, true);
         // $kode = $id;
         // $url = api_url('admin_getdatapenyewa-getprov.php');
-        // $json = json_decode(file_get_contents($url), true);
+        // $json = json_decode(api_get($url), true);
         $data = [
             'pageTitle' => 'Owner Edit Penyewa',
             'activeId' => 'penyewa',
@@ -778,7 +766,7 @@ class OwnerController extends Controller
                 )
             );
             $context = stream_context_create($option);
-            $result = file_get_contents($url, true, $context);
+            $result = api_post($url, $data);
 
             if (strpos($result, 'berhasil update penyewa') !== false) {
                 Session::flash('alert-class', 'alert-success');
@@ -844,8 +832,7 @@ class OwnerController extends Controller
                     'content' => http_build_query($data)
                 )
             );
-            $context = stream_context_create($option);
-            $result = file_get_contents($url, false, $context);
+            $result = api_post($url, $data);
 
             if (strpos($result, 'berhasil update penyewa') !== false) {
                 Session::flash('alert-class', 'alert-success');
@@ -874,8 +861,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -895,8 +881,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 
@@ -923,8 +908,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         return $result;
     }
 
@@ -945,8 +929,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -965,8 +948,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         return $result;
     }
 
@@ -1031,8 +1013,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         // return $result;
         if ($result == '{"datapindah":"penyewa berhasil pindah"}') {
             Session::flash('alert-class', 'alert-success');
@@ -1060,8 +1041,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 
@@ -1100,8 +1080,7 @@ class OwnerController extends Controller
             )
         );
 
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $json = json_decode($result, true);
 
         // return $result;
@@ -1130,8 +1109,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -1149,8 +1127,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -1168,8 +1145,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -1177,7 +1153,7 @@ class OwnerController extends Controller
     public function penyewaLaporan()
     {
         $url = api_url('get_report.php');
-        $json = json_decode(file_get_contents($url), true);
+        $json = json_decode(api_get($url), true);
 
         $data = [
             'pageTitle'       => 'Laporan Data Penyewa',
@@ -1204,8 +1180,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $json = json_decode($result, true);
 
         $data = [
@@ -1232,8 +1207,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -1251,8 +1225,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $json = json_decode($result, true);
 
         $data = [
@@ -1281,8 +1254,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 
@@ -1312,10 +1284,8 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-
-        $result = file_get_contents($url, false, $context);
-        $result2 = file_get_contents($url2, false, $context);
+        $result = api_post($url, $data);
+        $result2 = api_get($url2);
 
         $data = [
             'pageTitle'       => 'Ubah Data Kamar',
@@ -1360,8 +1330,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 
@@ -1395,8 +1364,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $json = json_decode($result, true);
         //dd($json);
         $data = [
@@ -1425,8 +1393,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $json = json_decode($result, true);
         $data = [
             'pageTitle'       => 'Owner Detail Keluhan',
@@ -1457,8 +1424,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $data = [
             'pageTitle' => 'Owner Keluhan',
             'activeId' => 'keluhan',
@@ -1487,8 +1453,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $json = json_decode($result, true);
         // dd($json);
         return $json;
@@ -1511,8 +1476,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $json = json_decode($result, true);
         $data = [
             'pageTitle' => 'Owner Edit Keluhan',
@@ -1547,8 +1511,7 @@ class OwnerController extends Controller
                     'content' => http_build_query($data)
                 )
             );
-            $context = stream_context_create($option);
-            $result = file_get_contents($url, false, $context);
+            $result = api_post($url, $data);
 
             // return $result;
             if ($result == '{"ubahstatuskeluhan":"status keluhan sukses diperbarui"}') {
@@ -1575,8 +1538,7 @@ class OwnerController extends Controller
                     'content' => http_build_query($data)
                 )
             );
-            $context = stream_context_create($option);
-            $result = file_get_contents($url, false, $context);
+            $result = api_post($url, $data);
 
             // return $result;
             if ($result == '{"ubahstatuskeluhan":"status keluhan sukses diperbarui"}') {
@@ -1607,8 +1569,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
         $data = [
@@ -1643,8 +1604,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         //{"pengumuman":"databerhasilditambah"}
         if ($result == '{"pengumuman":"databerhasilditambah"}') {
             Session::flash('message', 'Pengumuman berhasil ditambahkan');
@@ -1670,8 +1630,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
         $kode = $id;
@@ -1711,8 +1670,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         if ($result == '{"pengumuman":"updateberhasil"}') {
             Session::flash('message', 'Berhasil melakukan perubahan pada pengumuman');
@@ -1742,8 +1700,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
         //dd($json);
@@ -1799,8 +1756,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -1822,8 +1778,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
         //dd($json);
@@ -1879,8 +1834,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -1901,8 +1855,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );        
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);*/
         //dd($json);
@@ -1956,8 +1909,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );        
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;*/
     }
@@ -1977,8 +1929,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
         //dd($json);
@@ -2032,8 +1983,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 
@@ -2064,8 +2014,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -2125,8 +2074,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         // return $result;
         if ($result == '{"datapembayaran":"data pembayaran berhasil diinput"}') {
             Session::flash('message', 'Pembayaran Berhasil');
@@ -2168,8 +2116,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $data = [
             'pageTitle' => 'Owner Input Pendapatan Lain-lain',
             'activeId' => 'pemasukan',
@@ -2239,8 +2186,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         // return $result;
 
@@ -2273,8 +2219,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 
@@ -2302,8 +2247,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -2324,8 +2268,7 @@ class OwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $json = json_decode($result, true);
 
         $data = [

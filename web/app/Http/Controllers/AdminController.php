@@ -57,8 +57,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
         $data = [
@@ -91,8 +90,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $data = [
             'pageTitle' => 'Admin Keluhan',
             'activeId' => 'keluhan',
@@ -119,8 +117,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $data = [
             'pageTitle' => 'Admin Keluhan',
             'activeId' => 'keluhan',
@@ -149,8 +146,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $json = json_decode($result, true);
         // dd($json);
         return $json;
@@ -174,8 +170,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $json = json_decode($result, true);
         $data = [
             'pageTitle' => 'Admin Detail Keluhan',
@@ -211,8 +206,7 @@ class AdminController extends Controller
                     'content' => http_build_query($data)
                 )
             );
-            $context = stream_context_create($option);
-            $result = file_get_contents($url, false, $context);
+            $result = api_post($url, $data);
 
             // return $result;
             if ($result == '{"ubahstatuskeluhan":"status keluhan sukses diperbarui"}') {
@@ -239,8 +233,7 @@ class AdminController extends Controller
                     'content' => http_build_query($data)
                 )
             );
-            $context = stream_context_create($option);
-            $result = file_get_contents($url, false, $context);
+            $result = api_post($url, $data);
 
             // return $result;
             if ($result == '{"ubahstatuskeluhan":"status keluhan sukses diperbarui"}') {
@@ -279,8 +272,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $json = json_decode($result, true);
         // dd($json);
         $data = [
@@ -305,8 +297,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -324,8 +315,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -345,8 +335,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 
@@ -385,8 +374,7 @@ class AdminController extends Controller
             )
         );
 
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         // return $result;
         if ($result = '{"selesaisewa":"penyewa selesai menyewa"}') {
@@ -413,9 +401,8 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
-        $result2 = file_get_contents($url2, false);
+        $result = api_post($url, $data);
+        $result2 = api_get($url2);
         $json = json_decode($result, true);
         $json2 = json_decode($result2, true);
         // dd($json);
@@ -443,8 +430,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -464,8 +450,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 
@@ -492,8 +477,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         return $result;
     }
 
@@ -511,8 +495,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         return $result;
     }
 
@@ -531,8 +514,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -553,8 +535,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -577,8 +558,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -603,8 +583,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -670,8 +649,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         // return $result;
         if ($result == '{"datapindah":"penyewa berhasil pindah"}') {
             Session::flash('message', 'Berhasil memindahkan penyewa');
@@ -886,8 +864,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         // return $result;
         if ($result == '{"daftarpenyewa":"penyewaterdaftar"}') {
             Session::flash('message', 'Penyewa baru telah berhasil ditambahkan silahkan cek email untuk mendapatkan username dan password');
@@ -916,14 +893,13 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
-        $result2 = file_get_contents($url2, false);
+        $result = api_post($url, $data);
+        $result2 = api_get($url2);
         $json = json_decode($result, true);
         $json2 = json_decode($result2, true);
         // $kode = $id;
         // $url = api_url('admin_getdatapenyewa-getprov.php');
-        // $json = json_decode(file_get_contents($url), true);
+        // $json = json_decode(api_get($url), true);
         $data = [
             'pageTitle' => 'Admin Edit Penyewa',
             'activeId' => 'penyewa',
@@ -991,7 +967,7 @@ class AdminController extends Controller
                 )
             );
             $context = stream_context_create($option);
-            $result = file_get_contents($url, true, $context);
+            $result = api_post($url, $data);
 
             if (strpos($result, 'berhasil update penyewa') !== false) {
                 Session::flash('message', 'Berhasil melakukan update penyewa');
@@ -1055,8 +1031,7 @@ class AdminController extends Controller
                     'content' => http_build_query($data)
                 )
             );
-            $context = stream_context_create($option);
-            $result = file_get_contents($url, false, $context);
+            $result = api_post($url, $data);
 
             if (strpos($result, 'berhasil update penyewa') !== false) {
                 Session::flash('message', 'Berhasil melakukan update penyewa');
@@ -1085,8 +1060,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -1110,8 +1084,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 
@@ -1147,8 +1120,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         //{"pengumuman":"databerhasilditambah"}
         if ($result == '{"pengumuman":"databerhasilditambah"}') {
             Session::flash('message', 'Pengumuman berhasil ditambahkan');
@@ -1174,8 +1146,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
         $kode = $id;
@@ -1215,8 +1186,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         if ($result == '{"pengumuman":"updateberhasil"}') {
             Session::flash('message', 'Berhasil melakukan perubahan pada pengumuman');
@@ -1242,8 +1212,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 
@@ -1274,8 +1243,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -1340,8 +1308,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         // return $result;
         if ($result == '{"datapembayaran":"data pembayaran berhasil diinput"}') {
             Session::flash('message', 'Pembayaran Berhasil');
@@ -1383,8 +1350,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $data = [
             'pageTitle' => 'Admin Input Pendapatan Lain-lain',
             'activeId' => 'pemasukan',
@@ -1451,8 +1417,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         // return $result;
 
@@ -1480,8 +1445,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 
@@ -1509,8 +1473,7 @@ class AdminController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }

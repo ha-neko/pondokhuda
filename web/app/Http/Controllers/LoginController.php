@@ -29,18 +29,7 @@ class LoginController extends Controller
 	{
 		$url = api_url('login_ph.php');
 		$post = array('kode' => $request->kode, 'pin' => $request->pin);
-		$options = array(
-			'http' => array(
-				'header'  => api_header(),
-				'method'  => 'POST',
-				'content' => http_build_query($post),
-				'ignore_errors' => true,
-				'timeout' => 15,
-			)
-		);
-
-		$context  = stream_context_create($options);
-		$json = @file_get_contents($url, true, $context);
+		$json = api_post($url, $post);
 		if ($json === false) {
 			Session::flash('message', 'Server sedang tidak dapat dihubungi. Silakan coba kembali.');
 			return redirect()->route('loginForm')->withInput($request->only('kode'));

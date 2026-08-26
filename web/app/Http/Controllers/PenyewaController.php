@@ -34,8 +34,7 @@ class PenyewaController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $json = json_decode($result, true);
 
         $data = [
@@ -62,8 +61,7 @@ class PenyewaController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $json = json_decode($result, true);
         return $result;
     }
@@ -88,8 +86,7 @@ class PenyewaController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $json = json_decode($result, true);
 
         $data = [
@@ -119,8 +116,7 @@ class PenyewaController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $json = json_decode($result, true);
         // dd($json);
 
@@ -149,8 +145,7 @@ class PenyewaController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $json = json_decode($result, true);
 
         $data = [
@@ -181,8 +176,7 @@ class PenyewaController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $json = json_decode($result, true);
 
         $data = [
@@ -217,8 +211,7 @@ class PenyewaController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         // return $result;
         if ($result == '{"insertkeluhanbaru":"inputkeluhansukes"}') {
@@ -249,8 +242,7 @@ class PenyewaController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         // return $result;
         if ($result == '{"ubahpin":"pin berhasil diubah"}') {

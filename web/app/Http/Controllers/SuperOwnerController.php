@@ -75,8 +75,7 @@ class SuperOwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         return $result;
     }
@@ -106,8 +105,7 @@ class SuperOwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 
@@ -138,8 +136,7 @@ class SuperOwnerController extends Controller
             )
         );
 
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
         $json = json_decode($result, true);
 
         $data = [
@@ -169,8 +166,7 @@ class SuperOwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 
@@ -199,8 +195,7 @@ class SuperOwnerController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 

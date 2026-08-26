@@ -36,8 +36,7 @@ class TestController extends Controller
                 'content' => http_build_query($data)
             )
         );
-        $context = stream_context_create($option);
-        $result = file_get_contents($url, false, $context);
+        $result = api_post($url, $data);
 
         $json = json_decode($result, true);
 
