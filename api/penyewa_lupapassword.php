@@ -39,18 +39,12 @@ while($rows = mysqli_fetch_assoc($result))
 if( $_isada)
 {
     // pin is only sent by email, never exposed in the http response
-    echo json_encode(array('hasil'=>$kodedanpin));
-    
-    try{
-        $header = "From: noreply @pondok-huda.com" . "\r\n";
-        $header .= 'Content-type: text/html; charset=utf-8' . "\r\n";
-        
-        // echo "\nemail target: " . $_email . "\n" . "kode: " . $kode . "\nPIN: " . $pin;
-        mail($_email,"Lupa Password", "<b>Kode dan PIN anda</b><br>Kode: ". $kode . "<br>PIN: ". $pin . "<br><br><<< ---NO-EMAIL-REPLY--- >>>", $header);
-    }
-    catch(Exception $ex)
-    {
-        echo json_encode(array("error_send_email" => "errorsendemail: " . $ex->getMessage()));
+    $sent = ph_send_mail($_email, "Lupa Password", "<b>Kode dan PIN anda</b><br>Kode: ". $kode . "<br>PIN: ". $pin . "<br><br><<< ---NO-EMAIL-REPLY--- >>>", ph_html_mail_headers());
+    if ($sent) {
+        echo json_encode(array('hasil'=>$kodedanpin));
+    } else {
+        http_response_code(502);
+        echo json_encode(array('hasil'=>'gagal_kirim_email'));
     }
 }
 else

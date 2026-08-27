@@ -73,6 +73,110 @@ $pass = $PH['db']['pass'];
 $daba = $PH['db']['name'];
 
 /* ------------------------------------------------------------------ */
+/* mail + receipt helpers                                              */
+/* ------------------------------------------------------------------ */
+
+function ph_mail_from()
+{
+    global $PH;
+    $from = isset($PH['mail']['from']) ? trim($PH['mail']['from']) : '';
+    if ($from === '') {
+        $from = getenv('PH_MAIL_FROM') ? trim(getenv('PH_MAIL_FROM')) : 'noreply@pondokhuda.com';
+    }
+    return $from;
+}
+
+function ph_mail_from_name()
+{
+    global $PH;
+    $name = isset($PH['mail']['from_name']) ? trim($PH['mail']['from_name']) : '';
+    return $name !== '' ? $name : 'Pondok Huda';
+}
+
+function ph_html_mail_headers()
+{
+    return 'From: ' . ph_mail_from_name() . ' <' . ph_mail_from() . ">\r\n"
+         . "MIME-Version: 1.0\r\n"
+         . "Content-Type: text/html; charset=UTF-8\r\n";
+}
+
+/** Submit mail through the cPanel/PHP mail transport and log real failures. */
+function ph_send_mail($to, $subject, $message, $headers)
+{
+    $to = trim((string) $to);
+    $from = ph_mail_from();
+    if (!filter_var($to, FILTER_VALIDATE_EMAIL) || !filter_var($from, FILTER_VALIDATE_EMAIL)) {
+        error_log('pondokhuda mail rejected invalid sender or recipient');
+        return false;
+    }
+
+    $sent = mail($to, $subject, $message, $headers, '-f' . $from);
+    if (!$sent) {
+        $last = error_get_last();
+        error_log('pondokhuda mail submission failed: ' . ($last ? $last['message'] : 'mail() returned false'));
+    }
+    return $sent;
+}
+
+/** Locate receipt assets in a release archive or in this development tree. */
+function ph_receipt_asset($name)
+{
+    global $PH;
+    $configured = isset($PH['receipt'][$name]) ? $PH['receipt'][$name] : '';
+    $candidates = array();
+    if ($configured !== '') {
+        $candidates[] = $configured;
+    }
+    if ($name === 'tcpdf') {
+        $candidates[] = __DIR__ . '/pdf/TCPDF-master/tcpdf.php';
+        $candidates[] = __DIR__ . '/../web/public/pdf/TCPDF-master/tcpdf.php';
+    } elseif ($name === 'template') {
+        $candidates[] = __DIR__ . '/kwitansi/template-invoice.jpg';
+        $candidates[] = __DIR__ . '/../web/public/kwitansi/template-invoice.jpg';
+    }
+    foreach ($candidates as $path) {
+        if (is_file($path) && is_readable($path)) {
+            return $path;
+        }
+    }
+    throw new RuntimeException('receipt asset is missing: ' . $name);
+}
+
+function ph_invoice_temp_file()
+{
+    $base = tempnam(sys_get_temp_dir(), 'pondokhuda-invoice-');
+    if ($base === false) {
+        throw new RuntimeException('cannot create invoice temporary file');
+    }
+    @unlink($base);
+    return $base . '.pdf';
+}
+
+/** Resolve the Laravel public Assets directory for local and cPanel layouts. */
+function ph_public_asset_root()
+{
+    global $PH;
+    $configured = isset($PH['assets']['public_root']) ? trim($PH['assets']['public_root']) : '';
+    $env = getenv('PH_PUBLIC_ASSET_ROOT') ? trim(getenv('PH_PUBLIC_ASSET_ROOT')) : '';
+    $candidates = array();
+    if ($configured !== '') {
+        $candidates[] = $configured;
+    }
+    if ($env !== '') {
+        $candidates[] = $env;
+    }
+    // Production: ~/api and ~/laravel. Development: project/api and project/web.
+    $candidates[] = dirname(__DIR__) . '/laravel/public/Assets';
+    $candidates[] = dirname(__DIR__) . '/web/public/Assets';
+    foreach ($candidates as $path) {
+        if (is_dir($path)) {
+            return rtrim($path, '/');
+        }
+    }
+    throw new RuntimeException('public asset directory is missing');
+}
+
+/* ------------------------------------------------------------------ */
 /* connection (also used for escaping)                                 */
 /* ------------------------------------------------------------------ */
 

@@ -23,6 +23,11 @@
             <div class="body">
                 <form onSubmit="return validate()" id="form" action="{{route('super-owner.owner-create')}}" method="POST" enctype="multipart/form-data">
                     @csrf
+                    @if ($errors->any())
+                        <div class="alert alert-danger" role="alert">
+                            {{ $errors->first() }}
+                        </div>
+                    @endif
                     <center>
                         <div class="form-group form-float">
                             <div id="imgfoto" style="background-image: url(''); width: 150px; height: 150px; background-size: cover; background-repeat: no-repeat; background-position: 50% 50%; border-radius: 100px; border: 5px solid #d4d4d6;"></div>
@@ -70,7 +75,7 @@
 @endsection
 
 @section('js-content')
-<script src="https://pondok-huda.com/js/validate.js" type="text/javascript"></script>
+<script src="{{ asset('js/validate.js') }}" type="text/javascript"></script>
 <script type="text/javascript">
 
     $(document).ready(function(){
@@ -89,7 +94,7 @@
 
     function readURL(input) {
         var file = document.getElementById("foto").files[0];
-        if(file.size <= 1000000) {
+        if(file && file.size <= 921600) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
 

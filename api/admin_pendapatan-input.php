@@ -295,12 +295,13 @@ if ($isInsert)
             
         }
     }
+    $invoiceFile = null;
     if($c == true)
     {  
         if($logo == "https://pondok-huda.com") {
             $logo = "https://pondok-huda.com/Assets/images/logo/default-logo-black.png";
         }
-        include '../pdf/TCPDF-master/tcpdf.php';
+        require_once ph_receipt_asset('tcpdf');
         // $pdf = new TCPDF();
         // create new PDF document
         $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
@@ -315,7 +316,7 @@ if ($isInsert)
         // set auto page breaks false
         $pdf->SetAutoPageBreak(false, 0);
         $pdf->AddPage('P', 'A4');
-        $img_file = '../kwitansi/template-invoice.jpg';
+        $img_file = ph_receipt_asset('template');
         // Display image on full page
         $pdf->Image($img_file, 0, 0, 210, 297, 'JPG', '', '', true, 200, '', false, false, 0, false, false, true);
         $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
@@ -594,7 +595,8 @@ if ($isInsert)
         // $pdf->Output();
         
         // Save PDF to server
-        $pdf->Output('/home/pondokhu/public_html/kwitansi/invoice.pdf', 'F');
+        $invoiceFile = ph_invoice_temp_file();
+        $pdf->Output($invoiceFile, 'F');
         $c = false;
     }
     // ---------------------------SEND EMAIL--------------------------------
@@ -604,14 +606,14 @@ if ($isInsert)
         $to = $emailList[$i];
     
         //sender
-        $from = 'huda@superemail.com';
-        $fromName = 'PondokHuda';
+        $from = ph_mail_from();
+        $fromName = ph_mail_from_name();
         
         //email subject
         $subject = 'Pembayaran Sewa Kost'; 
         
         //attachment file path
-        $file = "../kwitansi/invoice.pdf";
+        $file = $invoiceFile;
         
         //email body content
         $htmlContent = '<h1>Pembayaran Sewa Kost Berhasil</h1>
@@ -652,10 +654,13 @@ if ($isInsert)
         $returnpath = "-f" . $from;
         
         //send email
-        $mail = @mail($to, $subject, $message, $headers, $returnpath); 
+        $mail = is_string($file) && is_file($file) && ph_send_mail($to, $subject, $message, $headers);
         
         //email sending status
         // echo $mail?"<h1>Mail sent. ".$cekemail."</h1>":"<h1>Mail sending failed.</h1>";
+    }
+    if (isset($invoiceFile) && is_file($invoiceFile)) {
+        @unlink($invoiceFile);
     }
     // ------------------------END SEND EMAIL-----------------------------
 }

@@ -247,19 +247,7 @@ if($isPenyewa)
         // echo "\nemail: " . $_email;
         // echo "\npin: " . $_nomorpin;
         
-        try
-        {
-            $header = "From: noreply @pondok-huda.com" . "\r\n";
-            $header .= 'Content-type: text/html; charset=utf-8' . "\r\n";
-            
-            mail($_email, "Pendaftaran Penyewa Baru", "Selamat anda telah teregistrasi dalam sistem informasi Si Juragan Kost, atas nama " . $_nama . " :-) <br><br>Kode Akses: <b>" . $_kode . "</b><br>Nomor PIN: <b>" . $_nomorpin . "</b><br><br>Silahkan login dengan kode akses dan PIN tersebut pada <a href='https://pondok-huda.com/deploy/app/asharilabs/ysm0118123/ph2k18v0.apk'>Aplikasi Android Si Juragan Kost</a>, kemudian anda dapat mengubah nomor PIN tersebut (sesuaikan dengan keinginan anda) pada menu Biodata. TERIMA KASIH :) <br><<<NO-EMAIL-REPLY>>>", $header);
-            
-            $isEmail = true;
-        }
-        catch(Exception $ex)
-        {
-            echo json_encode(array("error_send_email" => "errorsendemail: " . $ex->getMessage()));
-        }
+        $isEmail = ph_send_mail($_email, "Pendaftaran Penyewa Baru", "Selamat anda telah teregistrasi dalam sistem informasi Si Juragan Kost, atas nama " . $_nama . " :-) <br><br>Kode Akses: <b>" . $_kode . "</b><br>Nomor PIN: <b>" . $_nomorpin . "</b><br><br>Silahkan login dengan kode akses dan PIN tersebut pada <a href='https://pondok-huda.com/deploy/app/asharilabs/ysm0118123/ph2k18v0.apk'>Aplikasi Android Si Juragan Kost</a>, kemudian anda dapat mengubah nomor PIN tersebut (sesuaikan dengan keinginan anda) pada menu Biodata. TERIMA KASIH :) <br><<<NO-EMAIL-REPLY>>>", ph_html_mail_headers());
     }
 }
 
@@ -363,19 +351,7 @@ if(isset($noktp2))
             // echo "\nemail: " . $_email;
             // echo "\npin: " . $_nomorpin;
             
-            try
-            {
-                $header = "From: noreply @pondok-huda.com" . "\r\n";
-                $header .= 'Content-type: text/html; charset=utf-8' . "\r\n";
-                
-                mail($_email, "Pendaftaran Penyewa Baru", "Selamat anda telah teregistrasi dalam sistem informasi PONDOK HUDA, atas nama " . $_nama . " :-) <br><br>Kode Akses: <b>" . $_kode . "</b><br>Nomor PIN: <b>" . $_nomorpin . "</b><br><br>Silahkan login dengan kode akses dan PIN tersebut pada <a href='https://pondok-huda.com/deploy/app/asharilabs/ysm0118123/ph2k18v0.apk'>Aplikasi Android Pondok Huda</a>, kemudian anda dapat mengubah nomor PIN tersebut (sesuaikan dengan keinginan anda) pada menu Biodata. TERIMA KASIH :) <br><<<NO-EMAIL-REPLY>>>", $header);
-                
-                $isEmail = true;
-            }
-            catch(Exception $ex)
-            {
-                echo json_encode(array("error_send_email" => "errorsendemail: " . $ex->getMessage()));
-            }
+            $isEmail = ph_send_mail($_email, "Pendaftaran Penyewa Baru", "Selamat anda telah teregistrasi dalam sistem informasi PONDOK HUDA, atas nama " . $_nama . " :-) <br><br>Kode Akses: <b>" . $_kode . "</b><br>Nomor PIN: <b>" . $_nomorpin . "</b><br><br>Silahkan login dengan kode akses dan PIN tersebut pada <a href='https://pondok-huda.com/deploy/app/asharilabs/ysm0118123/ph2k18v0.apk'>Aplikasi Android Pondok Huda</a>, kemudian anda dapat mengubah nomor PIN tersebut (sesuaikan dengan keinginan anda) pada menu Biodata. TERIMA KASIH :) <br><<<NO-EMAIL-REPLY>>>", ph_html_mail_headers());
         }
     }
     
@@ -769,12 +745,13 @@ INNER JOIN tb_sewa_kamar ON tb_bayar_kost.kode_sewa = tb_sewa_kamar.kode_sewa
                 
             }
         }
+        $invoiceFile = null;
         if($c == true)
         {  
             if($logo == "https://pondok-huda.com") {
                 $logo = "https://pondok-huda.com/Assets/images/logo/default-logo-black.png";
             }
-            include '../pdf/TCPDF-master/tcpdf.php';
+            require_once ph_receipt_asset('tcpdf');
             $pdf = new TCPDF();
             // remove default header/footer
             $pdf->setPrintHeader(false);
@@ -786,7 +763,7 @@ INNER JOIN tb_sewa_kamar ON tb_bayar_kost.kode_sewa = tb_sewa_kamar.kode_sewa
             // set auto page breaks false
             $pdf->SetAutoPageBreak(false, 0);
             $pdf->AddPage('P', 'A4');
-            $img_file = '../kwitansi/template-invoice.jpg';
+            $img_file = ph_receipt_asset('template');
             // Display image on full page
             $pdf->Image($img_file, 0, 0, 210, 297, 'JPG', '', '', true, 200, '', false, false, 0, false, false, true);
             $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
@@ -1065,7 +1042,8 @@ INNER JOIN tb_sewa_kamar ON tb_bayar_kost.kode_sewa = tb_sewa_kamar.kode_sewa
             // $pdf->Output();
             
             // Save PDF to server
-            $pdf->Output('/home/pondokhu/public_html/kwitansi/invoice.pdf', 'F');
+            $invoiceFile = ph_invoice_temp_file();
+            $pdf->Output($invoiceFile, 'F');
             $c = false;
         }
         // ---------------------------SEND EMAIL--------------------------------
@@ -1075,14 +1053,14 @@ INNER JOIN tb_sewa_kamar ON tb_bayar_kost.kode_sewa = tb_sewa_kamar.kode_sewa
             $to = $emailList[$i];
         
             //sender
-            $from = 'huda@superemail.com';
-            $fromName = 'PondokHuda';
+            $from = ph_mail_from();
+            $fromName = ph_mail_from_name();
             
             //email subject
             $subject = 'Pembayaran Sewa Kost'; 
             
             //attachment file path
-            $file = "../kwitansi/invoice.pdf";
+            $file = $invoiceFile;
             
             //email body content
             $htmlContent = '<h1>Pembayaran Sewa Kost Berhasil</h1>
@@ -1123,10 +1101,13 @@ INNER JOIN tb_sewa_kamar ON tb_bayar_kost.kode_sewa = tb_sewa_kamar.kode_sewa
             $returnpath = "-f" . $from;
             
             //send email
-            $mail = @mail($to, $subject, $message, $headers, $returnpath); 
+            $mail = is_string($file) && is_file($file) && ph_send_mail($to, $subject, $message, $headers);
             
             //email sending status
             // echo $mail?"<h1>Mail sent. ".$cekemail."</h1>":"<h1>Mail sending failed.</h1>";
+        }
+        if (isset($invoiceFile) && is_file($invoiceFile)) {
+            @unlink($invoiceFile);
         }
         
         if(isset($noktp2))

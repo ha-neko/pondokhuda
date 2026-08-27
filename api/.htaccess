@@ -7,3 +7,7 @@ Options -Indexes
 Header set Access-Control-Allow-Origin "*"
 Header set Access-Control-Allow-Methods "POST, GET, OPTIONS"
 Header set Access-Control-Allow-Headers "Content-Type, X-Api-Token"
+
+<Files "kon.php">
+  Require all denied
+</Files>

@@ -3,6 +3,7 @@ web/.env
 web/.env.*
 config/config-db*.php
 config/config.local.php
+api/config-db.php
 
 # ===== laravel runtime =====
 web/vendor/

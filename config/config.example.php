@@ -21,4 +21,13 @@ return array(
         // one or more accepted X-Api-Token values for gated endpoints
         'change-me-token',
     ),
+    'mail' => array(
+        // Must be a real mailbox/domain accepted by the cPanel mail transport.
+        'from' => 'noreply@pondokhuda.com',
+        'from_name' => 'Pondok Huda',
+    ),
+    'assets' => array(
+        // Optional override. Default cPanel layout resolves to ~/laravel/public/Assets.
+        'public_root' => '/home/cpanel-user/laravel/public/Assets',
+    ),
 );

@@ -772,7 +772,8 @@ body.login-page {
         bottom: 0;
         margin-left: 0 !important;
         border-radius: 0;
-        z-index: 40;
+        /* AdminBSB sets z-index: 11 !important; stay above the overlay. */
+        z-index: 40 !important;
         transition: left .24s cubic-bezier(.2,.8,.2,1);
     }
     body.overlay-open { overflow: hidden; }

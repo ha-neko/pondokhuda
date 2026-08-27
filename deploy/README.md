@@ -30,6 +30,11 @@ Produces `deploy/release/`:
 The script generates `config-db.php` and `.env` with matching credentials and a
 fresh `APP_KEY`, so nothing needs hand-editing on the server.
 
+Before building, create the `MAIL_FROM` address in cPanel and configure it in
+`deploy/prod.env`. The API uses PHP's local cPanel mail transport; SPF and DKIM
+must be valid for that sender domain. Receipt releases bundle TCPDF and the
+invoice template from `web/public/` automatically.
+
 ## 1. create the subdomains
 
 cPanel → **Domains → Create A New Domain** (or Subdomains):
@@ -61,6 +66,8 @@ File Manager → for each row of the table above:
 
 Laravel note: extract `admin-…tar.gz` into `~/laravel` — the archive already
 contains `public/`; the subdomain docroot must be `laravel/public`.
+The release also keeps `~/laravel/public/Assets/images/owner` writable by the
+cPanel account so the API can store optional owner photos there.
 
 ## 4. SSL
 

@@ -82,12 +82,23 @@ class SuperOwnerController extends Controller
 
     public function ownerCreate(Request $request)
     {
+        $request->validate(array(
+            'nama' => 'required|string|max:255',
+            'notelp' => 'required|max:30',
+            'email' => 'required|email|max:255',
+            'foto' => 'nullable|image|max:900',
+        ));
+
         $url = api_url('so_owner-create.php');
 
-        if ($request->foto == null) {
+        if (!$request->hasFile('foto')) {
             $foto = "0";
         } else {
-            $foto = base64_encode(File::get($request->foto));
+            $upload = $request->file('foto');
+            if (!$upload->isValid()) {
+                return redirect()->back()->withInput()->withErrors(array('foto' => 'Upload foto gagal.'));
+            }
+            $foto = base64_encode(File::get($upload->getRealPath()));
         }
 
         $data = array(
@@ -109,12 +120,12 @@ class SuperOwnerController extends Controller
 
         $json = json_decode($result, true);
 
-        if ($json['owner'] == "owner berhasil ditambah") {
+        if (is_array($json) && isset($json['owner']) && $json['owner'] == "owner berhasil ditambah") {
             Session::flash('alert-class', 'alert-success');
             Session::flash('message', 'owner berhasil ditambah');
         } else {
             Session::flash('alert-class', 'alert-danger');
-            Session::flash('message', $result);
+            Session::flash('message', is_array($json) && isset($json['owner']) ? $json['owner'] : 'API tidak memberikan respons yang valid.');
         }
 
         return redirect()->route('super-owner.owner');
