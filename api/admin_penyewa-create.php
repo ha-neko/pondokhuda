@@ -425,6 +425,13 @@ if($isEmail)
     
     if(isset($noktp2))
     {
+        // Server-side check: verify room is actually unoccupied
+        $checkOccupancy2 = "SELECT COUNT(*) AS cnt FROM tb_sewa_kamar WHERE kode_kamar='$kodekamar' AND tanggal_selesai IS NULL";
+        $resultCheck2 = mysqli_query($koneksi, $checkOccupancy2);
+        $rowCheck2 = mysqli_fetch_assoc($resultCheck2);
+        if ($rowCheck2 && $rowCheck2['cnt'] > 0) {
+            echo json_encode(array("daftarpenyewa" => "kamar ini sudah terisi penyewa lain, silahkan pilih kamar lain"));
+        } else {
         $queryInsertSewaKamar = "INSERT INTO tb_sewa_kamar(kode_kamar, tanggal_mulai, harga_perbulan, tanggal_pembayaran, periode_bayar)
             VALUES ('$kodekamar', '$tanggalmulai', '$hargakamar', '$tanggalpembayaran', '$periodebayar')";
         
@@ -452,6 +459,7 @@ if($isEmail)
         {
             echo json_encode(array("daftarpenyewa" => "error input data sewa  baru"));
         }
+        } // end occupancy check
     }
     else
     {
@@ -539,6 +547,18 @@ if($isEmail)
         }
         else
         {
+            // Server-side check: verify room is actually unoccupied
+            $checkOccupancy = "SELECT COUNT(*) AS cnt FROM tb_sewa_kamar WHERE kode_kamar='$kodekamar' AND tanggal_selesai IS NULL";
+            $resultCheck = mysqli_query($koneksi, $checkOccupancy);
+            $rowCheck = mysqli_fetch_assoc($resultCheck);
+            $roomOccupied = ($rowCheck && $rowCheck['cnt'] > 0);
+
+            if($roomOccupied)
+            {
+                echo json_encode(array("daftarpenyewa" => "kamar ini sudah terisi penyewa lain, silahkan pilih kamar lain"));
+            }
+            else
+            {
             $queryInsertSewaKamar = "INSERT INTO tb_sewa_kamar(kode_kamar, tanggal_mulai, harga_perbulan, tanggal_pembayaran, periode_bayar)
             VALUES ('$kodekamar', '$tanggalmulai', '$hargakamar', '$tanggalpembayaran', '$periodebayar')";
         
@@ -565,6 +585,7 @@ if($isEmail)
             else
             {
                 echo json_encode(array("daftarpenyewa" => "error input data sewa  baru"));
+            }
             }
         }
     }
