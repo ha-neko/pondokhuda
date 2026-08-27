@@ -8,9 +8,11 @@ $kodekost = $_POST['_kodekost'];
 
 $koneksi = mysqli_connect($host, $user, $pass, $daba);
 
-if( !$koneksi)
+if (!$koneksi)
 {
-  return;
+    header('Content-Type: application/json');
+    echo json_encode(array('pendapatan' => 'koneksi database gagal'));
+    return;
 }
 
 $querygetpendapatan = "SELECT tb_keu_akun.kode_akun, tb_keu_akun.nama_akun,

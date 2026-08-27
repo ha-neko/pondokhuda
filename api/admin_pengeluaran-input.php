@@ -24,8 +24,10 @@ $kodekost = $_POST['_kodekost'];
 
 $koneksi = mysqli_connect($host, $user, $pass, $daba);
 
-if( !$koneksi)
+if (!$koneksi)
 {
+    header('Content-Type: application/json');
+    echo json_encode(array('error' => 'koneksi database gagal'));
     return;
 }
 

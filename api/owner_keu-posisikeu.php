@@ -7,9 +7,11 @@ $tahun = $_POST['_tahun'];
 
 $koneksi = mysqli_connect($host, $user, $pass, $daba);
 
-if( !$koneksi)
+if (!$koneksi)
 {
-  return;
+    header('Content-Type: application/json');
+    echo json_encode(array('kas' => 'koneksi database gagal'));
+    return;
 }
 
 $querygetdebit = "SELECT tb_keu_jurnal_umum.kode_akun, nama_akun, SUM(jumlah) AS saldo

@@ -5,8 +5,10 @@ include ("kon.php");
 $koneksi = mysqli_connect($host, $user, $pass, $daba);
 $berita = $_POST['_berita'];
 
-if( !$koneksi)
+if (!$koneksi)
 {
+    header('Content-Type: application/json');
+    echo json_encode(array('pengumuman' => 'koneksi database gagal'));
     return;
 }
 

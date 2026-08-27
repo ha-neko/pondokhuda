@@ -6,8 +6,10 @@ $kode = $_POST['_kodekeluhan'];
 
 $koneksi = mysqli_connect($host, $user, $pass, $daba);
 
-if( !$koneksi)
+if (!$koneksi)
 {
+    header('Content-Type: application/json');
+    echo json_encode(array('komen' => 'koneksi database gagal'));
     return;
 }
 

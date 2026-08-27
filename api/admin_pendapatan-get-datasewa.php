@@ -8,8 +8,10 @@ $kode_kamar = $_POST['_kodekamar'];
 $no_kamar = $_POST['_nokamar'];
 $kode_kost = $_POST['_kodekost'];
 
-if( !$koneksi)
+if (!$koneksi)
 {
+    header('Content-Type: application/json');
+    echo json_encode(array('databayarsewa' => 'koneksi database gagal'));
     return;
 }
 

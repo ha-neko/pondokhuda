@@ -9,8 +9,10 @@ $kodekost = $_POST['_kodekost'];
 $jumlahpenyewa = $_POST['_jmlpenyewa'];
 // $jumlahpenyewa = 1;
 
-if( !$koneksi)
+if (!$koneksi)
 {
+    header('Content-Type: application/json');
+    echo json_encode(array('kamar' => 'koneksi database gagal'));
     return;
 }
 

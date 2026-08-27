@@ -12,6 +12,8 @@ $koneksi = mysqli_connect($host, $user, $pass, $daba);
 
 if( !$koneksi)
 {
+	header('Content-Type: application/json');
+	echo json_encode(array('kontakadmin' => 'koneksi database gagal'));
 	return;
 }
 

@@ -4,9 +4,11 @@ include ("kon.php");
 
 $koneksi = mysqli_connect($host, $user, $pass, $daba);
 
-if( !$koneksi)
+if (!$koneksi)
 {
-  return;
+    header('Content-Type: application/json');
+    echo json_encode(array('error' => 'koneksi database gagal'));
+    return;
 }
 
 $tanggal_bayar = date("Y-m-d");

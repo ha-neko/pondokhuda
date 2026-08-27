@@ -37,9 +37,11 @@ $kodekost = $_POST['_kodekost'];
 
 $koneksi = mysqli_connect($host, $user, $pass, $daba);
 
-if( !$koneksi)
+if (!$koneksi)
 {
-  return;
+    header('Content-Type: application/json');
+    echo json_encode(array('datapembayaran' => 'koneksi database gagal'));
+    return;
 }
 
 $querygetkdbayar = "SELECT kode_bayar

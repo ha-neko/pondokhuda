@@ -6,8 +6,10 @@ $kodeadmin = $_POST['_kodeadmin'];
 
 $koneksi = mysqli_connect($host, $user, $pass, $daba);
 
-if( !$koneksi)
+if (!$koneksi)
 {
+    header('Content-Type: application/json');
+    echo json_encode(array('admin' => 'koneksi database gagal'));
     return;
 }
 

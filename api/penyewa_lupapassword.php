@@ -6,8 +6,10 @@ ph_rate_limit('lupapassword', 10, 900, 300);
 
 $koneksi = mysqli_connect($host, $user, $pass, $daba);
 
-if( !$koneksi)
+if (!$koneksi)
 {
+    header('Content-Type: application/json');
+    echo json_encode(array('hasil' => 'koneksi database gagal'));
     return;
 }
 
