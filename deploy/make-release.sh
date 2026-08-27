@@ -120,7 +120,7 @@ STAGE="$RELEASE/.stage-laravel"
 mkdir -p "$STAGE"
 copy_admin_tree "$STAGE"
 mkdir -p "$STAGE/storage/framework/"{views,sessions,cache} "$STAGE/storage/logs"
-mkdir -p "$STAGE/public/Assets/images/owner"
+mkdir -p "$STAGE/public/Assets/images/owner" "$STAGE/public/Assets/images/user"
 if [[ -n "$PHP" && -x "$PHP" ]]; then
     APP_KEY=$("$PHP" "$STAGE/artisan" key:generate --show --no-ansi)
 else
@@ -144,7 +144,7 @@ fi
     echo "API_TOKEN=$API_TOKEN"
 } > "$STAGE/.env"
 chmod -R u+rwX "$STAGE/storage"
-chmod u+rwx "$STAGE/public/Assets/images/owner"
+chmod u+rwx "$STAGE/public/Assets/images/owner" "$STAGE/public/Assets/images/user"
 tar -czf "$RELEASE/admin-$ADMIN_DOMAIN.tar.gz" -C "$STAGE" .
 rm -rf "$STAGE"
 

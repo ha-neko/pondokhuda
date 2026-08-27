@@ -114,6 +114,8 @@ $koneksi = mysqli_connect($host, $user, $pass, $daba);
 
 if( !$koneksi)
 {
+	header('Content-Type: application/json');
+	echo json_encode(array('daftarpenyewa' => 'koneks database gagal'));
 	return;
 }
 
@@ -189,15 +191,37 @@ if($foto == "0")
 }
 else
 {
-    // if(move_uploaded_file($file_tmp, $target_file_to_move))
-    if(file_put_contents("/home/pondokhu/public_html/Assets/images/user/" . $kode . ".jpg",base64_decode($foto)))
-    {
-        $alamatfoto = $USER_IMAGE_FOLDER . $kode . ".jpg";
-        $isFoto = true;
-    }
-    else
-    {
-        echo json_encode(array('daftarpenyewa' => "upload gagal"));
+    $decoded = base64_decode($foto, true);
+    $imageInfo = $decoded !== false && function_exists('getimagesizefromstring')
+        ? @getimagesizefromstring($decoded) : false;
+    $extensions = array(
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/gif' => 'gif',
+        'image/webp' => 'webp',
+    );
+    $mime = $imageInfo && isset($imageInfo['mime']) ? $imageInfo['mime'] : '';
+    if ($decoded === false || !isset($extensions[$mime])) {
+        echo json_encode(array('daftarpenyewa' => 'foto tidak valid'));
+    } else {
+        try {
+            $userDir = ph_public_asset_root() . '/images/user';
+            if (!is_dir($userDir)) {
+                @mkdir($userDir, 0755, true);
+            }
+            $extension = $extensions[$mime];
+            $target = $userDir . '/' . $kode . '.' . $extension;
+            if (is_dir($userDir) && is_writable($userDir) && file_put_contents($target, $decoded, LOCK_EX) !== false) {
+                $alamatfoto = $USER_IMAGE_FOLDER . $kode . '.' . $extension;
+                $isFoto = true;
+            } else {
+                echo json_encode(array('daftarpenyewa' => 'upload foto gagal: direktori tidak dapat ditulis'));
+                error_log('pondokhuda penyewa photo directory is not writable');
+            }
+        } catch (RuntimeException $ex) {
+            echo json_encode(array('daftarpenyewa' => 'upload foto gagal: ' . $ex->getMessage()));
+            error_log('pondokhuda penyewa photo upload failed: ' . $ex->getMessage());
+        }
     }
 }
 
@@ -293,15 +317,37 @@ if(isset($noktp2))
     }
     else
     {
-        // if(move_uploaded_file($file_tmp, $target_file_to_move))
-        if(file_put_contents("/home/pondokhu/public_html/Assets/images/user/" . $kode2 . ".jpg",base64_decode($foto2)))
-        {
-            $alamatfoto = $USER_IMAGE_FOLDER . $kode2 . ".jpg";
-            $isFoto = true;
-        }
-        else
-        {
-            echo json_encode(array('daftarpenyewa' => "upload foto penyewa kedua gagal"));
+        $decoded2 = base64_decode($foto2, true);
+        $imageInfo2 = $decoded2 !== false && function_exists('getimagesizefromstring')
+            ? @getimagesizefromstring($decoded2) : false;
+        $extensions2 = array(
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/gif' => 'gif',
+            'image/webp' => 'webp',
+        );
+        $mime2 = $imageInfo2 && isset($imageInfo2['mime']) ? $imageInfo2['mime'] : '';
+        if ($decoded2 === false || !isset($extensions2[$mime2])) {
+            echo json_encode(array('daftarpenyewa' => 'foto penyewa kedua tidak valid'));
+        } else {
+            try {
+                $userDir2 = ph_public_asset_root() . '/images/user';
+                if (!is_dir($userDir2)) {
+                    @mkdir($userDir2, 0755, true);
+                }
+                $extension2 = $extensions2[$mime2];
+                $target2 = $userDir2 . '/' . $kode2 . '.' . $extension2;
+                if (is_dir($userDir2) && is_writable($userDir2) && file_put_contents($target2, $decoded2, LOCK_EX) !== false) {
+                    $alamatfoto = $USER_IMAGE_FOLDER . $kode2 . '.' . $extension2;
+                    $isFoto = true;
+                } else {
+                    echo json_encode(array('daftarpenyewa' => 'upload foto penyewa kedua gagal: direktori tidak dapat ditulis'));
+                    error_log('pondokhuda penyewa2 photo directory is not writable');
+                }
+            } catch (RuntimeException $ex) {
+                echo json_encode(array('daftarpenyewa' => 'upload foto penyewa kedua gagal: ' . $ex->getMessage()));
+                error_log('pondokhuda penyewa2 photo upload failed: ' . $ex->getMessage());
+            }
         }
     }
     
