@@ -40,7 +40,10 @@ const paths: Record<IconName, React.ReactNode> = {
     <path d="M7 10V7a5 5 0 0 1 10 0v3h1a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h1zm2 0h6V7a3 3 0 0 0-6 0v3zm3 5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" />
   ),
   logout: (
-    <path d="M10 4v2h7v12h-7v2h9V4h-9zm-4.3 5l-1.4 1.4L6.9 13H14v2H6.9l2.6 2.6-1.4 1.4L2.7 14l3.4-3.4-.4-.6z" />
+    <>
+      <path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M14 8l4 4-4 4m4-4H9" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </>
   ),
   chevronRight: <path d="M9.3 6.7L14.6 12l-5.3 5.3 1.4 1.4 6.7-6.7-6.7-6.7-1.4 1.4z" />,
   chevronLeft: <path d="M14.7 6.7L9.4 12l5.3 5.3-1.4 1.4-6.7-6.7 6.7-6.7 1.4 1.4z" />,

@@ -1,257 +1,137 @@
 <?php
 
-// ------------------tambah satu array assosiatif untuk get nama kategori
+include "kon.php";
 
-include ("kon.php");
+header('Content-Type: application/json; charset=UTF-8');
 
-$user_log = $_POST['_kode'];
-$pin = $_POST['_pin'];
-$akses = "entah";
+$userLog = isset($_POST['_kode']) ? trim($_POST['_kode']) : '';
+$pin = isset($_POST['_pin']) ? trim($_POST['_pin']) : '';
 
-$koneksi = mysqli_connect($host, $user, $pass, $daba);
-
-if( !$koneksi)
-{
-    header('Content-Type: application/json');
+if (!$koneksi) {
+    http_response_code(500);
     echo json_encode(array('getdatakeluhan' => 'koneksi database gagal'));
     return;
 }
 
-$query;
-$numrows = 0;
-
-if( (substr($user_log, 0, 1) == "p" || substr($user_log, 0, 1) == "u") &&
-(substr($user_log, 1,1) == "a" || substr($user_log, 1, 1) == "b"))
-{
-    $query = "SELECT * FROM tb_penyewa WHERE kode = '$user_log' AND nomorpin = '$pin'";
-    $numrows = mysqli_num_rows(mysqli_query($koneksi, $query));
-    $akses = "penyewa";
-}
-else if((substr($user_log, 0, 1) == "o" && substr($user_log, 7, 1) == "w"))
-{
-    $query = "SELECT * FROM tb_owner WHERE kode = '$user_log' AND pin = '$pin'";
-    $numrows = mysqli_num_rows(mysqli_query($koneksi, $query));
-    $akses = "owner";
-}
-else if((substr($user_log, 0, 1) == "a" && substr($user_log, 6, 1) == "d"))
-{
-    $query = "SELECT * FROM tb_admin WHERE kode = '$user_log' AND pin = '$pin'";
-    $numrows = mysqli_num_rows(mysqli_query($koneksi, $query));
-    $akses = "admin";
+$akses = '';
+$authQuery = '';
+if ((substr($userLog, 0, 1) === 'p' || substr($userLog, 0, 1) === 'u')
+    && (substr($userLog, 1, 1) === 'a' || substr($userLog, 1, 1) === 'b')) {
+    $akses = 'penyewa';
+    $authQuery = "SELECT kode FROM tb_penyewa WHERE kode = '$userLog' AND nomorpin = '$pin'";
+} elseif (substr($userLog, 0, 1) === 'o' && substr($userLog, 7, 1) === 'w') {
+    $akses = 'owner';
+    $authQuery = "SELECT kode FROM tb_owner WHERE kode = '$userLog' AND pin = '$pin'";
+} elseif (substr($userLog, 0, 1) === 'a' && substr($userLog, 6, 1) === 'd') {
+    $akses = 'admin';
+    $authQuery = "SELECT kode FROM tb_admin WHERE kode = '$userLog' AND pin = '$pin'";
 }
 
-if( $numrows == 1)
-{
-    $query_chat = "";
-    
-    if( $akses == "penyewa")
-    {
-        // ada kondisi untuk menentukan query dimana penyewa, admin, owner   
-        $query_chat = "SELECT * FROM tb_keluhan_chat WHERE kode_user = '$user_log' ORDER BY date_time ASC";
+try {
+    if ($authQuery === '' || mysqli_num_rows(mysqli_query($koneksi, $authQuery)) !== 1) {
+        http_response_code(401);
+        echo json_encode(array('getdatakeluhan' => 'tidak ada data member valid'));
+        return;
     }
-    else if( $akses == "owner" || $akses == "admin")
-    {
-        $query_chat = "SELECT * FROM tb_keluhan_chat ORDER BY date_time ASC";
-    }
-    $result0 = mysqli_query($koneksi, $query_chat);
-    
-    $chatuser = array();    // isi chat2 dari user $user_log untuk setiap keluhan yang ada
-    $updatekeluhanperstatus = array();
-    $fotofotoperkeluhan = array();
-    
-    $hasil = array();
-    
-    if( mysqli_num_rows($result0) > 0)
-    {
-        // echo "num: " . mysqli_num_rows($result0);
-        while($rows = mysqli_fetch_assoc($result0))
-        {
-            $chatuser[] = array(
-                "kodchat" => $rows['idchatkeluhan'],
-                "kodkeluhan" => $rows['kode_keluhan'],
-                "koduser" => $rows['kode_user'],
-                "keyuser" => $rows['key_user'],
-                "dttime" => $rows['date_time'],
-                "msg" => $rows['message']
-                );
-        }
-        
-        // $chatuser = json_encode(array("chat" => $chatuser));
-        // $chatuser = json_encode(array($chatuser));
-        // echo "size: " . sizeof($chatuser);
-    }
-    else
-    {
-        $chatuser[] = null;
-    }
-    
-    // ------------------------------------------------------------
-    // query untuk get foto-foto -------------------------------------------------------
-    $queryGetFoto = "SELECT * FROM tb_keluhan_foto";
-    $resultGetFoto = mysqli_query($koneksi, $queryGetFoto);
-    
-    if( mysqli_num_rows($resultGetFoto) > 0)
-    {
-        while($rows3 = mysqli_fetch_assoc($resultGetFoto))
-        {
-            $fotofotoperkeluhan[] = array(
-                "kode" => $rows3['id'],
-                "url" => $rows3['urlfoto']
-                );
-        }
-    }
-    else
-    {
-        $fotofotoperkeluhan[] = null;
-    }
-    // --------------------------------------------------------------
-    
-    // ------------------------------------------------------------
-    // query untuk get status keluhan-------------------------------------------------------
-    $queryGetStatus = "SELECT * FROM tb_keluhan_updatetgl";
-    $resultGetStatus = mysqli_query($koneksi, $queryGetStatus);
-    if( mysqli_num_rows($resultGetStatus) > 0)
-    {
-        while($rows3 = mysqli_fetch_assoc($resultGetStatus))
-        {
-            $updatekeluhanperstatus[] = array(
-                "kode" => $rows3['kode'],
-                "status" => $rows3['status'],
-                "tgl" => $rows3['tglupdate']
-                );
-        }
-    }
-    else
-    {
-        $updatekeluhanperstatus[] = null;
-    }
-    // --------------------------------------------------------------
-    
-    // ------------------------------------------------------------
-    // query untuk get keluhan yang tampil, isikan dengan array TglUpdateKeluhan, FOTO-FOTO, dan CHAT
-    // ada kondisi untuk menentukan query dimana penyewa, admin, owner
-    
-    if( $akses == "penyewa")
-    {
-        $query = "SELECT tb_keluhan_list.id, tb_keluhan_list.judul, tb_keluhan_kategori.kategori_keluhan AS kategori, tb_keluhan_list.uraian, tb_keluhan_list.tgl, tb_penyewa.nokamar AS nokamar, tb_penyewa.nama AS nama, tb_penyewa.nohp AS HP, tb_keluhan_list.user FROM tb_keluhan_list INNER JOIN tb_keluhan_kategori ON tb_keluhan_kategori.kode_keluhan = tb_keluhan_list.kategori INNER JOIN tb_penyewa ON tb_penyewa.kode = tb_keluhan_list.user WHERE user = '$user_log'";
-    }
-    else if( $akses == "owner" || $akses == "admin")
-    {
-        $query = "SELECT tb_keluhan_list.id, tb_keluhan_list.judul, tb_keluhan_kategori.kategori_keluhan AS kategori, tb_keluhan_list.uraian, tb_keluhan_list.tgl, tb_penyewa.nokamar AS nokamar, tb_penyewa.nama AS nama, tb_penyewa.nohp AS HP, tb_keluhan_list.user FROM tb_keluhan_list INNER JOIN tb_keluhan_kategori ON tb_keluhan_kategori.kode_keluhan = tb_keluhan_list.kategori INNER JOIN tb_penyewa ON tb_penyewa.kode = tb_keluhan_list.user";
-    }
-    
+
+    $where = $akses === 'penyewa' ? "WHERE l.user = '$userLog'" : '';
+    $query = "SELECT
+                  l.id,
+                  l.judul,
+                  k.kategori_keluhan AS kategori,
+                  l.uraian,
+                  l.tgl,
+                  l.user,
+                  p.nama,
+                  p.nohp AS HP,
+                  COALESCE((
+                      SELECT kamar.nokamar
+                      FROM tb_penyewa_kamar pk
+                      INNER JOIN tb_sewa_kamar sewa ON sewa.kode_sewa = pk.kode_sewa
+                      INNER JOIN tb_kamar kamar ON kamar.id = sewa.kode_kamar
+                      WHERE pk.kode_penyewa = p.kode
+                        AND sewa.tanggal_selesai IS NULL
+                      ORDER BY sewa.kode_sewa DESC
+                      LIMIT 1
+                  ), '') AS nokamar
+              FROM tb_keluhan_list l
+              INNER JOIN tb_keluhan_kategori k ON k.kode_keluhan = l.kategori
+              INNER JOIN tb_penyewa p ON p.kode = l.user
+              $where
+              ORDER BY l.tgl DESC";
+
     $result = mysqli_query($koneksi, $query);
-    
-    if( mysqli_num_rows($result) > 0)
-    {
-        while($rows1 = mysqli_fetch_assoc($result))
-        {   
-            $chatsetiapkeluhan = array();
-            $fotosetiapkeluhan = array();
-            $statussetiapkeluhan = array();
-            
-            // get data FOTO
-            foreach($fotofotoperkeluhan as $fot => $has2)
-            {
-                $fotowithkode = array();
-                if($has2['kode'] == $rows1['id'])
-                {
-                    $fotowithkode = array(
-                        "id" => $has2['kode'],
-                        "link" => $has2['url']
-                        );
-                        
-                    array_push($fotosetiapkeluhan, $fotowithkode);
-                }
-            }
-            
-            // get data STATUS
-            foreach($updatekeluhanperstatus as $upd => $has3)
-            {
-                $tglwithkode = array();
-                if($has3['kode'] == $rows1['id'])
-                {
-                    $tglwithkode = array(
-                        "id" => $has3['kode'],
-                        "status" => $has3['status'],
-                        "tgl" => $has3['tgl']
-                        );
-                        
-                    array_push($statussetiapkeluhan, $tglwithkode);
-                }
-            }
-            
-            // get data CHAT
-            foreach($chatuser as $cu => $has)
-            {
-                $chatuserwithkode = array();
-                // echo "\nbandingin antara rows1: " . $rows1['kode'] . ", dengan has: " . $has['kodberita'];
-                $h;
-                // echo "kodekeluhan: " . $has['kodkeluhan'] . ", key_user: " . $has['keyuser'] . " id: " . $rows1['id'] . "\n";
-                
-                if( $has['kodkeluhan'] == $rows1['id'])
-                {
-                    $h = "..masuk ke array";
-                    $chatuserwithkode = array(
-                        "kodchat" => $has['kodchat'],
-                        "kodkeluhan" => $has['kodkeluhan'],
-                        "koduser" => $has['koduser'],
-                        "keyuser" => $has['keyuser'],
-                        "dttime" => $has['dttime'],
-                        "msg" =>  $has['msg']
-                        );
-                        
-                    array_push($chatsetiapkeluhan, $chatuserwithkode);    
-                }
-                else
-                {
-                    $h = "..tidak masuk array";
-                }
-            }
-            
-            // push array A ke $hasil, "chat" => $chatuserwithkode
-            // Masuk
-            $hasil[] = array(
-                "kode" => $rows1['id'],
-                "judul" => $rows1['judul'],
-                "kategori" => $rows1['kategori'],
-                "uraian" => $rows1['uraian'],
-                "tgl" => $rows1['tgl'],
-                "user" => $rows1['user'],
-                "nokamar" => $rows1['nokamar'],
-                "nama" => $rows1['nama'],
-                "hp" => $rows1['HP'],
-                "chat" => $chatsetiapkeluhan,
-                "foto" => $fotosetiapkeluhan,
-                "status" => $statussetiapkeluhan
-                );
+    $complaints = array();
+
+    $chatHasComplaintId = mysqli_num_rows(
+        mysqli_query($koneksi, "SHOW COLUMNS FROM tb_keluhan_chat LIKE 'kode_keluhan'")
+    ) > 0;
+
+    while ($row = mysqli_fetch_assoc($result)) {
+        $id = (int) $row['id'];
+        $statuses = array();
+        $statusResult = mysqli_query(
+            $koneksi,
+            "SELECT kode, status, tglupdate FROM tb_keluhan_updatetgl
+             WHERE kode = $id ORDER BY tglupdate ASC, id ASC"
+        );
+        while ($status = mysqli_fetch_assoc($statusResult)) {
+            $statuses[] = array(
+                'id' => $status['kode'],
+                'status' => $status['status'],
+                'tgl' => $status['tglupdate'],
+            );
         }
-        
-        // $test = array();
-        // foreach($hasil as $has => $nilai)
-        // {
-        //     foreach($nilai as $n)
-        //     {
-        //         echo "aa: " . $has . " ---> " . $nilai . " ----> " . $n . "\n";
-        //     }
-            
-        // }
-        // echo json_encode($test);
-        
-        // echo "ysm: " . $hasil[0]['judul'];
-        
-        $hasil = json_encode(array('keluhan' => $hasil));
-        //echo $hasil;
+
+        $photos = array();
+        $photoResult = mysqli_query(
+            $koneksi,
+            "SELECT id, urlfoto FROM tb_keluhan_foto WHERE id = $id"
+        );
+        while ($photo = mysqli_fetch_assoc($photoResult)) {
+            $photos[] = array('id' => $photo['id'], 'link' => $photo['urlfoto']);
+        }
+
+        $chats = array();
+        if ($chatHasComplaintId) {
+            $chatResult = mysqli_query(
+                $koneksi,
+                "SELECT idchatkeluhan, kode_keluhan, kode_user, key_user, date_time, message
+                 FROM tb_keluhan_chat WHERE kode_keluhan = $id ORDER BY date_time ASC"
+            );
+            while ($chat = mysqli_fetch_assoc($chatResult)) {
+                $chats[] = array(
+                    'kodchat' => $chat['idchatkeluhan'],
+                    'kodkeluhan' => $chat['kode_keluhan'],
+                    'koduser' => $chat['kode_user'],
+                    'keyuser' => $chat['key_user'],
+                    'dttime' => $chat['date_time'],
+                    'msg' => $chat['message'],
+                );
+            }
+        }
+
+        $complaints[] = array(
+            'kode' => $row['id'],
+            'judul' => $row['judul'],
+            'kategori' => $row['kategori'],
+            'uraian' => $row['uraian'],
+            'tgl' => $row['tgl'],
+            'user' => $row['user'],
+            'nokamar' => $row['nokamar'],
+            'nama' => $row['nama'],
+            'hp' => $row['HP'],
+            'chat' => $chats,
+            'foto' => $photos,
+            'status' => $statuses,
+        );
     }
-    else
-    {
-        $hasil = json_encode(array('keluhan' => "tidak ada data keluhan"));
-    }
-    
-    echo $hasil;
+
+    echo json_encode(array(
+        'keluhan' => $complaints ? $complaints : 'tidak ada data keluhan',
+    ));
+} catch (Throwable $e) {
+    error_log('keluhan_getdata3 failed: ' . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(array('getdatakeluhan' => 'gagal mengambil data keluhan'));
 }
-else
-{
-    echo json_encode(array('getdatakeluhan' => "tidak ada data member valid"));
-}
-?>

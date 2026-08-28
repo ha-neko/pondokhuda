@@ -8,7 +8,7 @@ $penyewa = $_POST['_penyewa'];
 $judul = $_POST['_judul'];
 $kategori = $_POST['_kategori'];
 $uraian = $_POST['_uraian'];
-$foto = $_POST['_foto'];
+$foto = isset($_POST['_foto']) ? $_POST['_foto'] : null;
 
 $tgl = date('Y-m-d H:i:s');
 
@@ -120,7 +120,7 @@ if( $resultqueryinsertlistkeluhan)
                         ph_store_base64_asset("images/keluhan/" . $idinput . ".jpg", $foto);
                     }
                     
-                    echo json_encode(array('insertkeluhanbaru' => "inputkeluhansukes"));
+                    echo json_encode(array('insertkeluhanbaru' => "inputkeluhansukses"));
                 }
                 else
                 {
