@@ -66,7 +66,7 @@ if($du == "on")
         $urlfoto = $USER_IMAGE_FOLDER . $kode . '.jpg';
         $query = "UPDATE tb_penyewa SET nama='$nama',tgllahir='$tgllahir',jk='$jk',nohp='$nohp',email='$email', urlfoto='$urlfoto',namaortu='$namaortu',nohportu='$nohportu',alamat='$alamat',kelurahan='$kelurahan',kecamatan='$kecamatan',kotakab='$kotakab',provinsi='$provinsi',kodepos='$kodepos',tempatkuliahkerja='$tempatkuliahkerja',jurusankuliah='$jurkuliah',status='$status' WHERE kode='$kode'";
         
-        file_put_contents("/home/pondokhu/public_html/Assets/images/user/" . $kode . ".jpg",base64_decode($foto));
+        ph_store_base64_asset("images/user/" . $kode . ".jpg", $foto);
     }
 }
 else 
@@ -80,7 +80,7 @@ else
         $urlfoto = $USER_IMAGE_FOLDER . $kode . '.jpg';
         $query = "UPDATE tb_penyewa SET nama='$nama',tgllahir='$tgllahir',jk='$jk',nohp='$nohp',email='$email', urlfoto='$urlfoto',namaortu='$namaortu',nohportu='$nohportu',alamat='$alamat',tempatkuliahkerja='$tempatkuliahkerja',jurusankuliah='$jurkuliah',status='$status' WHERE kode='$kode'";
         
-        file_put_contents("/home/pondokhu/public_html/Assets/images/user/" . $kode . ".jpg",base64_decode($foto));
+        ph_store_base64_asset("images/user/" . $kode . ".jpg", $foto);
     }
 }
 

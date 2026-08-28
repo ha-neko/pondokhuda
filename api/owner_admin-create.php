@@ -54,7 +54,7 @@ $isUpload = false;
 
 if($foto != "0")
 {
-    if(file_put_contents("/home/pondokhu/public_html/Assets/images/admin/" . $kode . ".jpg",base64_decode($foto)))
+    if(ph_store_base64_asset("images/admin/" . $kode . ".jpg", $foto))
     {
         $isUpload = true;
         $urlfoto = $IMAGE_FOLDER . $kode . ".jpg";

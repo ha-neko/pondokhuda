@@ -26,9 +26,7 @@ $ceklogo = false;
 $USER_IMAGE_FOLDER = "/Assets/images/logo/";
 if($logo != "noimage")
 {
-    unlink("../Assets/images/logo/" . $kodekost . ".png");
-    
-    if(file_put_contents("/home/pondokhu/public_html/Assets/images/logo/" . $kodekost . ".png",base64_decode($logo)))
+    if(ph_store_base64_asset("images/logo/" . $kodekost . ".png", $logo))
     {
         $ceklogo = true;
         $alamatlogo = $USER_IMAGE_FOLDER . $kodekost . ".png";

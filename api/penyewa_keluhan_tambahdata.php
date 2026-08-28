@@ -117,7 +117,7 @@ if( $resultqueryinsertlistkeluhan)
                 {
                     if( $foto != null)
                     {
-                        file_put_contents("/home/pondokhu/public_html/Assets/images/keluhan/" . $idinput . ".jpg", base64_decode($foto));
+                        ph_store_base64_asset("images/keluhan/" . $idinput . ".jpg", $foto);
                     }
                     
                     echo json_encode(array('insertkeluhanbaru' => "inputkeluhansukes"));

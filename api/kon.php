@@ -176,6 +176,35 @@ function ph_public_asset_root()
     throw new RuntimeException('public asset directory is missing');
 }
 
+/** Decode and store an uploaded image below the shared public Assets folder. */
+function ph_store_base64_asset($relativePath, $encoded)
+{
+    $relativePath = ltrim(str_replace('\\', '/', (string) $relativePath), '/');
+    if ($relativePath === '' || strpos($relativePath, '../') !== false) {
+        return false;
+    }
+
+    $data = base64_decode((string) $encoded, true);
+    if ($data === false) {
+        return false;
+    }
+
+    try {
+        $target = ph_public_asset_root() . '/' . $relativePath;
+    } catch (RuntimeException $e) {
+        error_log('pondokhuda upload failed: ' . $e->getMessage());
+        return false;
+    }
+
+    $directory = dirname($target);
+    if (!is_dir($directory) && !mkdir($directory, 0755, true) && !is_dir($directory)) {
+        error_log('pondokhuda upload failed: cannot create ' . $directory);
+        return false;
+    }
+
+    return file_put_contents($target, $data, LOCK_EX) !== false;
+}
+
 /* ------------------------------------------------------------------ */
 /* connection (also used for escaping)                                 */
 /* ------------------------------------------------------------------ */

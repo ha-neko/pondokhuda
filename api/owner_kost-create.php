@@ -46,8 +46,8 @@ if($resultinsertkost)
             $alamatlogo = $USER_IMAGE_FOLDER . $kodekost . ".png";
             $queryupdatelogo = "UPDATE tb_kost SET logo = '$alamatlogo' WHERE kode_kost='$kodekost'";
             
-            file_put_contents("/home/pondokhu/public_html/Assets/images/logo/" . $kodekost . ".png",base64_decode($logo));
-            $resultupdatelogo = mysqli_query($koneksi, $queryupdatelogo);
+            $logoUploaded = ph_store_base64_asset("images/logo/" . $kodekost . ".png", $logo);
+            $resultupdatelogo = $logoUploaded && mysqli_query($koneksi, $queryupdatelogo);
             if($resultupdatelogo)
             {
                 $log = CreateLogOwner($koneksi, $namaowner.' menambahkan kost dengan nama '.$namakost, $kodeowner, $kodekost);

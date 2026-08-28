@@ -4,6 +4,9 @@ web/.env.*
 config/config-db*.php
 config/config.local.php
 api/config-db.php
+app/.env
+app/.env.*
+!app/.env.example
 
 # ===== laravel runtime =====
 web/vendor/
@@ -39,3 +42,4 @@ api/_quarantine/
 # cPanel deploy artifacts
 deploy/prod.env
 deploy/release/
+deploy/*.tar.gz

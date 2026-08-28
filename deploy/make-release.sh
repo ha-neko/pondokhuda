@@ -38,30 +38,48 @@ fi
 
 copy_api_tree() {
     if command -v rsync >/dev/null 2>&1; then
-        rsync -a --exclude 'config-db.php' "$ROOT/api/" "$1/"
+        rsync -a \
+            --exclude 'config-db.php' \
+            --exclude '_quarantine/' \
+            --exclude '.well-known/' \
+            --exclude 'error_log' \
+            --exclude '*.log' \
+            "$ROOT/api/" "$1/"
     else
         cp -a "$ROOT/api/." "$1/"
         rm -f "$1/config-db.php"
+        rm -rf "$1/_quarantine" "$1/.well-known"
+        rm -f "$1/error_log" "$1"/*.log
     fi
 }
 
 copy_admin_tree() {
     if command -v rsync >/dev/null 2>&1; then
         rsync -a \
-            --exclude '.env' \
+            --exclude '.env*' \
             --exclude 'storage/framework/views/*.php' \
             --exclude 'storage/framework/sessions/*' \
             --exclude 'storage/logs/*.log' \
+            --exclude 'public/docs/' \
+            --exclude 'tests/' \
             "$ROOT/web/" "$1/"
     else
         cp -a "$ROOT/web/." "$1/"
-        rm -f "$1/.env" "$1"/storage/framework/views/*.php \
+        rm -f "$1"/.env* "$1"/storage/framework/views/*.php \
             "$1"/storage/framework/sessions/* "$1"/storage/logs/*.log
+        rm -rf "$1/public/docs" "$1/tests"
     fi
 }
 
 rm -rf "$RELEASE"
 mkdir -p "$RELEASE"
+
+[[ -f "$ROOT/web/vendor/autoload.php" ]] || {
+    echo "error: web/vendor is missing. Run composer install --no-dev --optimize-autoloader first."
+    exit 1
+}
+[[ -x "$PYTHON" ]] || { echo "error: python interpreter not found"; exit 1; }
+command -v tar >/dev/null 2>&1 || { echo "error: tar not found"; exit 1; }
 
 echo "==> [1/3] api -> api-$API_DOMAIN.tar.gz"
 STAGE="$RELEASE/.stage-api"
@@ -120,7 +138,12 @@ STAGE="$RELEASE/.stage-laravel"
 mkdir -p "$STAGE"
 copy_admin_tree "$STAGE"
 mkdir -p "$STAGE/storage/framework/"{views,sessions,cache} "$STAGE/storage/logs"
-mkdir -p "$STAGE/public/Assets/images/owner" "$STAGE/public/Assets/images/user"
+    mkdir -p \
+        "$STAGE/public/Assets/images/owner" \
+        "$STAGE/public/Assets/images/user" \
+        "$STAGE/public/Assets/images/admin" \
+        "$STAGE/public/Assets/images/logo" \
+        "$STAGE/public/Assets/images/keluhan"
 if [[ -n "$PHP" && -x "$PHP" ]]; then
     APP_KEY=$("$PHP" "$STAGE/artisan" key:generate --show --no-ansi)
 else
@@ -144,7 +167,7 @@ fi
     echo "API_TOKEN=$API_TOKEN"
 } > "$STAGE/.env"
 chmod -R u+rwX "$STAGE/storage"
-chmod u+rwx "$STAGE/public/Assets/images/owner" "$STAGE/public/Assets/images/user"
+chmod u+rwx "$STAGE/public/Assets/images/"{owner,user,admin,logo,keluhan}
 tar -czf "$RELEASE/admin-$ADMIN_DOMAIN.tar.gz" -C "$STAGE" .
 rm -rf "$STAGE"
 
