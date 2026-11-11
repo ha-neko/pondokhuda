@@ -4,9 +4,8 @@ import { useSessionContext } from '../lib/session-context'
 import { apiPembayaran, apiPembayaranSilent } from '../lib/normalizers'
 import { updateSession } from '../lib/session'
 import { daysLabel, money, waLink } from '../lib/format'
-import { AlertBanner, Card, IconButton, PageHeader, SectionHeader, statusTone } from '../components/Ui'
+import { AlertBanner, Button, Card, PageHeader, SectionHeader, statusTone } from '../components/Ui'
 import { Icon, type IconName } from '../components/Icon'
-import { Button } from '../components/Ui'
 import { DASHBOARD_TOUR_KEY, DashboardTour } from '../components/DashboardTour'
 
 const actions: { to: string; label: string; sub: string; icon: IconName; tone: string }[] = [
@@ -72,13 +71,16 @@ export default function Dashboard() {
               <h2 className="mt-1 text-xl font-semibold tracking-[-.03em]">{b?.statusbayar || 'Status tagihan'}</h2>
               {b && <p className="mt-1 text-xs font-medium text-on-primary/80">{daysLabel(b.sisaharibayar)}</p>}
             </div>
-            <IconButton
-              icon="refresh"
-              label="Muat ulang pembayaran"
+            <button
+              type="button"
+              aria-label="Muat ulang pembayaran"
               onClick={() => refresh()}
               disabled={refreshing}
-              className={`bg-white/12 text-on-primary hover:bg-white/20 ${refreshing ? 'animate-spin' : ''}`}
-            />
+              className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border border-white/50 bg-white px-3 text-xs font-bold text-[#17351c] shadow-[0_5px_16px_rgba(0,0,0,.18)] transition hover:bg-white/90 active:scale-95 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-white/60 disabled:opacity-70"
+            >
+              <Icon name="refresh" size={17} className={refreshing ? 'animate-spin' : ''} />
+              <span>{refreshing ? 'Memuat' : 'Perbarui'}</span>
+            </button>
           </div>
 
           {b && (
