@@ -5,6 +5,14 @@ import { useSessionContext } from '../lib/session-context'
 import { saveSession } from '../lib/session'
 import { AlertBanner, Button, Field } from '../components/Ui'
 import { Icon } from '../components/Icon'
+import { GuidedTour, shouldShowTour, type TourStep } from '../components/DashboardTour'
+
+const TOUR_KEY = 'pondok-huda-tour-login-v1'
+const tourSteps: TourStep[] = [
+  { target: '[data-tour="login-code"]', icon: 'person', title: 'Masukkan kode penyewa', description: 'Gunakan kode akun yang diberikan oleh admin kost. Contohnya: pa0001.' },
+  { target: '[data-tour="login-pin"]', icon: 'lock', title: 'Masukkan PIN', description: 'Ketik PIN yang terdiri dari tepat 6 angka. Tekan Lihat jika ingin memeriksa angka yang dimasukkan.' },
+  { target: '[data-tour="login-submit"]', icon: 'chevronRight', title: 'Masuk ke aplikasi', description: 'Setelah kode dan PIN terisi, tekan tombol ini untuk membuka akun penghuni Anda.' },
+]
 
 export default function Login() {
   const nav = useNavigate()
@@ -14,6 +22,7 @@ export default function Login() {
   const [showPin, setShowPin] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showTour, setShowTour] = useState(() => shouldShowTour(TOUR_KEY))
 
   async function submit(e: FormEvent) {
     e.preventDefault()
@@ -57,6 +66,9 @@ export default function Login() {
             <p className="text-base font-semibold tracking-[-.01em]">Pondok Huda</p>
             <p className="text-xs text-white/55">Ruang nyaman untuk penghuni</p>
           </div>
+          <button type="button" onClick={() => setShowTour(true)} className="ml-auto flex min-h-10 items-center gap-1.5 rounded-full border border-white/15 bg-white/8 px-3 text-xs font-semibold text-white/80 hover:bg-white/12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
+            <Icon name="info" size={16} /> Panduan
+          </button>
         </div>
 
         <div className="mt-9 px-1">
@@ -88,6 +100,7 @@ export default function Login() {
               autoCapitalize="none"
               autoComplete="username"
               inputMode="text"
+              data-tour="login-code"
             />
 
             <div className="relative">
@@ -104,6 +117,7 @@ export default function Login() {
                 maxLength={6}
                 className="pr-20 tracking-[.35em]"
                 hint="PIN terdiri dari tepat 6 digit."
+                data-tour="login-pin"
               />
               <button
                 type="button"
@@ -117,7 +131,7 @@ export default function Login() {
 
             {error && <AlertBanner>{error}</AlertBanner>}
 
-            <Button type="submit" size="lg" loading={loading} className="mt-1 w-full">
+            <Button data-tour="login-submit" type="submit" size="lg" loading={loading} className="mt-1 w-full">
               Masuk ke aplikasi
             </Button>
           </form>
@@ -127,6 +141,7 @@ export default function Login() {
           </div>
         </div>
       </div>
+      {showTour && <GuidedTour steps={tourSteps} storageKey={TOUR_KEY} onClose={() => setShowTour(false)} />}
     </div>
   )
 }

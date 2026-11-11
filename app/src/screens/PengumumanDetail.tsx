@@ -5,6 +5,14 @@ import { apiPengumuman, apiPengumumanChat } from '../lib/normalizers'
 import { AlertBanner, Empty, IconButton, LoadingState, PageHeader, SectionHeader } from '../components/Ui'
 import { Icon } from '../components/Icon'
 import type { ChatRow, Pengumuman } from '../lib/types'
+import { GuidedTour, shouldShowTour, type TourStep } from '../components/DashboardTour'
+
+const TOUR_KEY = 'pondok-huda-tour-detail-pengumuman-v1'
+const tourSteps: TourStep[] = [
+  { target: '[data-tour="notice-content"]', icon: 'notice', title: 'Isi pengumuman', description: 'Baca judul, tanggal terbit, dan informasi lengkap yang dikirim oleh admin kost.' },
+  { target: '[data-tour="notice-discussion"]', icon: 'comment', title: 'Diskusi penghuni', description: 'Pertanyaan dan tanggapan tentang pengumuman ditampilkan pada bagian diskusi.' },
+  { target: '[data-tour="notice-comment"]', icon: 'send', title: 'Kirim pertanyaan', description: 'Tulis komentar atau pertanyaan di sini, lalu tekan tombol kirim agar admin dan penghuni lain dapat membacanya.' },
+]
 
 interface LocalChat extends ChatRow { _pending?: boolean }
 
@@ -18,6 +26,7 @@ export default function PengumumanDetail() {
   const [sendErr, setSendErr] = useState('')
   const [msg, setMsg] = useState('')
   const [sending, setSending] = useState(false)
+  const [showTour, setShowTour] = useState(() => shouldShowTour(TOUR_KEY))
 
   useEffect(() => {
     if (!session || !kode) return
@@ -60,13 +69,13 @@ export default function PengumumanDetail() {
 
   return (
     <div>
-      <PageHeader title="Detail pengumuman" onBack={() => nav(-1)} />
+      <PageHeader title="Detail pengumuman" onBack={() => nav(-1)} right={<IconButton icon="info" label="Panduan detail pengumuman" onClick={() => setShowTour(true)} />} />
       <div className="page-gutter content-stack pb-3">
         {!item && !err && <LoadingState label="Memuat pengumuman" />}
         {err && !item && <AlertBanner>{err}</AlertBanner>}
         {item && (
           <>
-            <article className="rounded-[1.2rem] border border-outline-variant/35 bg-surface-lowest p-5 shadow-[0_7px_22px_rgba(15,45,42,.055)]">
+            <article data-tour="notice-content" className="rounded-[1.2rem] border border-outline-variant/35 bg-surface-lowest p-5 shadow-[0_7px_22px_rgba(15,45,42,.055)]">
               <div className="flex items-center gap-3">
                 <span className="flex size-10 items-center justify-center rounded-[.85rem] bg-primary text-on-primary">
                   <Icon name="notice" size={20} />
@@ -80,11 +89,12 @@ export default function PengumumanDetail() {
               <p className="mt-4 whitespace-pre-line text-sm leading-7 text-on-surface-variant">{item.berita}</p>
             </article>
 
-            <SectionHeader title="Diskusi" sub={`${chats.length} komentar`} />
-            {chats.length === 0 ? (
-              <Empty title="Belum ada komentar" text="Mulai diskusi jika ada hal yang ingin ditanyakan." icon="comment" />
-            ) : (
-              <ul className="flex flex-col gap-2.5">
+            <div data-tour="notice-discussion" className="flex flex-col gap-2.5">
+              <SectionHeader title="Diskusi" sub={`${chats.length} komentar`} />
+              {chats.length === 0 ? (
+                <Empty title="Belum ada komentar" text="Mulai diskusi jika ada hal yang ingin ditanyakan." icon="comment" />
+              ) : (
+                <ul className="flex flex-col gap-2.5">
                 {chats.map((chat, index) => {
                   const mine = chat.koduser === session.kode
                   return (
@@ -99,12 +109,13 @@ export default function PengumumanDetail() {
                     </li>
                   )
                 })}
-              </ul>
-            )}
+                </ul>
+              )}
+            </div>
 
             {sendErr && <AlertBanner>{sendErr}</AlertBanner>}
 
-            <form onSubmit={send} className="sticky bottom-2 z-10 mt-1 flex items-center gap-2 rounded-[1.1rem] border border-outline-variant/60 bg-surface-lowest/94 p-2 pl-4 shadow-[0_8px_26px_rgba(8,39,37,.13)] backdrop-blur-xl">
+            <form data-tour="notice-comment" onSubmit={send} className="sticky bottom-2 z-10 mt-1 flex items-center gap-2 rounded-[1.1rem] border border-outline-variant/60 bg-surface-lowest/94 p-2 pl-4 shadow-[0_8px_26px_rgba(8,39,37,.13)] backdrop-blur-xl">
               <label htmlFor="announcement-comment" className="sr-only">Tulis komentar</label>
               <input
                 id="announcement-comment"
@@ -124,6 +135,7 @@ export default function PengumumanDetail() {
           </>
         )}
       </div>
+      {showTour && item && <GuidedTour steps={tourSteps} storageKey={TOUR_KEY} onClose={() => setShowTour(false)} />}
     </div>
   )
 }

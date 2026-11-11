@@ -4,7 +4,7 @@ import { Icon, type IconName } from './Icon'
 
 export const DASHBOARD_TOUR_KEY = 'pondok-huda-dashboard-tour-v1'
 
-type TourStep = {
+export type TourStep = {
   target: string
   icon: IconName
   title: string
@@ -12,7 +12,7 @@ type TourStep = {
   action?: string
 }
 
-const steps: TourStep[] = [
+const dashboardSteps: TourStep[] = [
   {
     target: '[data-tour="status"]',
     icon: 'wallet',
@@ -57,14 +57,14 @@ function viewportSize() {
   }
 }
 
-export function DashboardTour({ onClose }: { onClose: () => void }) {
+export function GuidedTour({ steps, storageKey, onClose }: { steps: TourStep[]; storageKey: string; onClose: () => void }) {
   const [step, setStep] = useState(0)
   const [box, setBox] = useState<Box | null>(null)
   const current = steps[step]
 
   function complete() {
     try {
-      localStorage.setItem(DASHBOARD_TOUR_KEY, 'done')
+      localStorage.setItem(storageKey, 'done')
     } catch {
       // The tour can still close when browser storage is unavailable.
     }
@@ -89,7 +89,7 @@ export function DashboardTour({ onClose }: { onClose: () => void }) {
         left,
         top,
         width: Math.min(viewport.width - left - 8, rect.width + gap * 2),
-        height: Math.min(viewport.height - top - 8, rect.height + gap * 2),
+        height: Math.min(viewport.height - top - 8, rect.height + gap * 2, 280),
       })
     }
 
@@ -183,4 +183,16 @@ export function DashboardTour({ onClose }: { onClose: () => void }) {
       </section>
     </div>
   )
+}
+
+export function DashboardTour({ onClose }: { onClose: () => void }) {
+  return <GuidedTour steps={dashboardSteps} storageKey={DASHBOARD_TOUR_KEY} onClose={onClose} />
+}
+
+export function shouldShowTour(storageKey: string) {
+  try {
+    return localStorage.getItem(storageKey) !== 'done'
+  } catch {
+    return true
+  }
 }

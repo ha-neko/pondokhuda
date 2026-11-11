@@ -2,14 +2,22 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { useSessionContext } from '../lib/session-context'
 import { apiKeluhanList } from '../lib/normalizers'
-import { AlertBanner, Badge, Empty, LoadingState, PageHeader, SectionHeader, statusTone } from '../components/Ui'
+import { AlertBanner, Badge, Empty, IconButton, LoadingState, PageHeader, SectionHeader, statusTone } from '../components/Ui'
 import { Icon } from '../components/Icon'
 import type { Keluhan as KeluhanType } from '../lib/types'
+import { GuidedTour, shouldShowTour, type TourStep } from '../components/DashboardTour'
+
+const TOUR_KEY = 'pondok-huda-tour-keluhan-v1'
+const tourSteps: TourStep[] = [
+  { target: '[data-tour="complaint-new"]', icon: 'edit', title: 'Buat keluhan baru', description: 'Tekan tombol Baru untuk melaporkan kerusakan, kebersihan, keamanan, atau kendala lainnya.', action: 'Buat keluhan' },
+  { target: '[data-tour="complaint-list"]', icon: 'comment', title: 'Pantau laporan', description: 'Laporan Anda beserta kategori, status penanganan, dan jumlah tanggapan admin ditampilkan di sini.' },
+]
 
 export default function Keluhan() {
   const { session } = useSessionContext()
   const [list, setList] = useState<KeluhanType[] | null>(null)
   const [err, setErr] = useState('')
+  const [showTour, setShowTour] = useState(() => shouldShowTour(TOUR_KEY))
 
   async function load() {
     if (!session) return
@@ -41,12 +49,15 @@ export default function Keluhan() {
         title="Keluhan"
         sub={session.profile.namakost}
         right={
-          <Link to="/keluhan/baru" className="inline-flex min-h-10 items-center gap-1.5 rounded-[.85rem] bg-primary px-3.5 text-xs font-semibold text-on-primary shadow-sm focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/30">
-            <Icon name="edit" size={15} /> Baru
-          </Link>
+          <div className="flex items-center gap-1">
+            <IconButton icon="info" label="Panduan keluhan" onClick={() => setShowTour(true)} />
+            <Link data-tour="complaint-new" to="/keluhan/baru" className="inline-flex min-h-10 items-center gap-1.5 rounded-[.85rem] bg-primary px-3.5 text-xs font-semibold text-on-primary shadow-sm focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/30">
+              <Icon name="edit" size={15} /> Baru
+            </Link>
+          </div>
         }
       />
-      <div className="page-gutter content-stack">
+      <div data-tour="complaint-list" className="page-gutter content-stack">
         <SectionHeader title="Laporan Anda" sub="Pantau progres kendala yang sudah disampaikan" />
         {!list && !err && <LoadingState label="Memuat keluhan" />}
         {err && <AlertBanner action={<button onClick={load} className="font-bold underline">Coba lagi</button>}>{err}</AlertBanner>}
@@ -91,6 +102,7 @@ export default function Keluhan() {
           </ul>
         )}
       </div>
+      {showTour && list && <GuidedTour steps={tourSteps} storageKey={TOUR_KEY} onClose={() => setShowTour(false)} />}
     </div>
   )
 }

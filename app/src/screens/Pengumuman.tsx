@@ -2,14 +2,22 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { useSessionContext } from '../lib/session-context'
 import { apiPengumuman } from '../lib/normalizers'
-import { AlertBanner, Badge, Empty, LoadingState, PageHeader, SectionHeader } from '../components/Ui'
+import { AlertBanner, Badge, Empty, IconButton, LoadingState, PageHeader, SectionHeader } from '../components/Ui'
 import { Icon } from '../components/Icon'
 import type { Pengumuman as PengumumanType } from '../lib/types'
+import { GuidedTour, shouldShowTour, type TourStep } from '../components/DashboardTour'
+
+const TOUR_KEY = 'pondok-huda-tour-pengumuman-v1'
+const tourSteps: TourStep[] = [
+  { target: '[data-tour="notice-list"]', icon: 'notice', title: 'Daftar pengumuman', description: 'Kabar terbaru dari pengelola kost muncul di sini. Pengumuman paling baru berada di bagian atas.' },
+  { target: '[data-tour="notice-item"]', icon: 'chevronRight', title: 'Buka informasi lengkap', description: 'Tekan salah satu pengumuman untuk membaca isi lengkap dan melihat diskusi penghuni.', action: 'Buka pengumuman' },
+]
 
 export default function Pengumuman() {
   const { session } = useSessionContext()
   const [list, setList] = useState<PengumumanType[] | null>(null)
   const [err, setErr] = useState('')
+  const [showTour, setShowTour] = useState(() => shouldShowTour(TOUR_KEY))
 
   async function load() {
     if (!session) return
@@ -32,9 +40,9 @@ export default function Pengumuman() {
 
   return (
     <div>
-      <PageHeader title="Pengumuman" sub={session.profile.namakost} />
+      <PageHeader title="Pengumuman" sub={session.profile.namakost} right={<IconButton icon="info" label="Panduan pengumuman" onClick={() => setShowTour(true)} />} />
       <div className="page-gutter content-stack">
-        <SectionHeader title="Kabar dari kost" sub="Informasi terbaru untuk seluruh penghuni" />
+        <div data-tour="notice-list"><SectionHeader title="Kabar dari kost" sub="Informasi terbaru untuk seluruh penghuni" /></div>
         {!list && !err && <LoadingState label="Memuat pengumuman" />}
         {err && <AlertBanner action={<button onClick={load} className="font-bold underline">Coba lagi</button>}>{err}</AlertBanner>}
         {list && list.length === 0 && <Empty title="Belum ada pengumuman" text="Kabar baru dari admin akan tampil di sini." icon="notice" />}
@@ -44,6 +52,7 @@ export default function Pengumuman() {
               <li key={item.kode}>
                 <Link
                   to={`/info/${item.kode}`}
+                  data-tour={index === 0 ? 'notice-item' : undefined}
                   className="group block rounded-[1.1rem] border border-outline-variant/35 bg-surface-lowest p-4 transition duration-200 hover:bg-surface-low active:scale-[.995] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/25"
                 >
                   <div className="flex gap-3.5">
@@ -69,6 +78,7 @@ export default function Pengumuman() {
           </ul>
         )}
       </div>
+      {showTour && list && <GuidedTour steps={list.length > 0 ? tourSteps : tourSteps.slice(0, 1)} storageKey={TOUR_KEY} onClose={() => setShowTour(false)} />}
     </div>
   )
 }

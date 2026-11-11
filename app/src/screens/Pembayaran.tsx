@@ -3,12 +3,20 @@ import { useSessionContext } from '../lib/session-context'
 import { apiPembayaran, apiPembayaranSilent } from '../lib/normalizers'
 import { updateSession } from '../lib/session'
 import { money, stripRupiah } from '../lib/format'
-import { AlertBanner, Badge, Card, Empty, LoadingState, PageHeader, SectionHeader, statusTone } from '../components/Ui'
+import { AlertBanner, Badge, Card, Empty, IconButton, LoadingState, PageHeader, SectionHeader, statusTone } from '../components/Ui'
+import { GuidedTour, shouldShowTour, type TourStep } from '../components/DashboardTour'
+
+const TOUR_KEY = 'pondok-huda-tour-pembayaran-v1'
+const tourSteps: TourStep[] = [
+  { target: '[data-tour="payment-summary"]', icon: 'wallet', title: 'Ringkasan pembayaran', description: 'Periksa status periode ini, total tagihan, jumlah yang sudah dibayar, sisa pembayaran, dan tanggal jatuh tempo.' },
+  { target: '[data-tour="payment-history"]', icon: 'calendar', title: 'Riwayat transaksi', description: 'Semua pembayaran terdahulu tercatat di sini, termasuk tanggal, metode, denda, diskon, dan statusnya.' },
+]
 
 export default function Pembayaran() {
   const { session, setSession } = useSessionContext()
   const [loading, setLoading] = useState(!session?.bayar)
   const [err, setErr] = useState('')
+  const [showTour, setShowTour] = useState(() => shouldShowTour(TOUR_KEY))
 
   async function load(silent = false) {
     if (!session) return
@@ -39,7 +47,7 @@ export default function Pembayaran() {
 
   return (
     <div>
-      <PageHeader title="Pembayaran" sub={session.profile.namakost} />
+      <PageHeader title="Pembayaran" sub={session.profile.namakost} right={<IconButton icon="info" label="Panduan pembayaran" onClick={() => setShowTour(true)} />} />
       <div className="page-gutter content-stack">
         {loading ? (
           <LoadingState label="Memuat riwayat pembayaran" />
@@ -49,7 +57,7 @@ export default function Pembayaran() {
           <Empty title="Pembayaran belum tersedia" text="Hubungi admin kost jika data belum muncul." icon="wallet" />
         ) : (
           <>
-            <section className="relative overflow-hidden rounded-[1.35rem] bg-on-surface px-4.5 py-4.5 text-surface shadow-[0_12px_34px_rgba(8,25,24,.16)]">
+            <section data-tour="payment-summary" className="relative overflow-hidden rounded-[1.35rem] bg-on-surface px-4.5 py-4.5 text-surface shadow-[0_12px_34px_rgba(8,25,24,.16)]">
               <div className="absolute -right-12 -top-14 size-44 rounded-full bg-primary/25 blur-2xl" />
               <div className="relative flex items-start justify-between gap-3">
                 <div>
@@ -66,11 +74,12 @@ export default function Pembayaran() {
               </div>
             </section>
 
-            <SectionHeader title="Riwayat pembayaran" sub={`${history.filter((i) => i.kode_bayar !== 'current').length} transaksi tercatat`} />
-            {history.length === 0 ? (
-              <Empty text="Belum ada transaksi yang tercatat pada akun ini." icon="wallet" />
-            ) : (
-              <ul className="relative flex flex-col gap-3 before:absolute before:bottom-7 before:left-[1.1rem] before:top-7 before:w-px before:bg-outline-variant/70">
+            <div data-tour="payment-history" className="flex flex-col gap-3">
+              <SectionHeader title="Riwayat pembayaran" sub={`${history.filter((i) => i.kode_bayar !== 'current').length} transaksi tercatat`} />
+              {history.length === 0 ? (
+                <Empty text="Belum ada transaksi yang tercatat pada akun ini." icon="wallet" />
+              ) : (
+                <ul className="relative flex flex-col gap-3 before:absolute before:bottom-7 before:left-[1.1rem] before:top-7 before:w-px before:bg-outline-variant/70">
                 {history.map((item, index) => (
                   <li key={item.kode_bayar ?? index} className="relative pl-11">
                     <span className={`absolute left-2.5 top-6 z-10 size-[1.05rem] rounded-full border-[3px] border-surface ${statusTone(item.statusbayar) === 'success' ? 'bg-success' : 'bg-error'}`} />
@@ -102,11 +111,13 @@ export default function Pembayaran() {
                     </Card>
                   </li>
                 ))}
-              </ul>
-            )}
+                </ul>
+              )}
+            </div>
           </>
         )}
       </div>
+      {showTour && !loading && Boolean(bayar) && <GuidedTour steps={tourSteps} storageKey={TOUR_KEY} onClose={() => setShowTour(false)} />}
     </div>
   )
 }

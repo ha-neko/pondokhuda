@@ -5,8 +5,16 @@ import { apiKeluhanKategori, apiKeluhanTambah } from '../lib/normalizers'
 import { fileToBase64Jpeg } from '../lib/format'
 import { AlertBanner, Button, Card, Field, IconButton, PageHeader, SectionHeader, TextFieldArea } from '../components/Ui'
 import { Icon } from '../components/Icon'
+import { GuidedTour, shouldShowTour, type TourStep } from '../components/DashboardTour'
 
 const FALLBACK_KATEGORI = ['Fasilitas', 'Kebersihan', 'Keamanan', 'Lainnya']
+const TOUR_KEY = 'pondok-huda-tour-form-keluhan-v1'
+const tourSteps: TourStep[] = [
+  { target: '[data-tour="complaint-category"]', icon: 'info', title: 'Pilih kategori', description: 'Pilih kategori yang paling sesuai agar laporan diteruskan dan ditangani dengan tepat.' },
+  { target: '[data-tour="complaint-description"]', icon: 'edit', title: 'Jelaskan kendala', description: 'Beri judul singkat, lalu jelaskan lokasi, waktu, dan kondisi masalah secara lengkap.' },
+  { target: '[data-tour="complaint-photo"]', icon: 'camera', title: 'Tambahkan foto', description: 'Foto bersifat opsional, tetapi dapat membantu admin memahami dan menangani kendala lebih cepat.' },
+  { target: '[data-tour="complaint-submit"]', icon: 'send', title: 'Kirim laporan', description: 'Periksa kembali informasi Anda, kemudian tekan Kirim keluhan. Progresnya dapat dipantau di halaman Keluhan.' },
+]
 
 export default function KeluhanForm() {
   const nav = useNavigate()
@@ -21,6 +29,7 @@ export default function KeluhanForm() {
   const [fieldErr, setFieldErr] = useState<{ judul?: string; uraian?: string }>({})
   const [sending, setSending] = useState(false)
   const [processingPhoto, setProcessingPhoto] = useState(false)
+  const [showTour, setShowTour] = useState(() => shouldShowTour(TOUR_KEY))
   const fileRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -82,11 +91,12 @@ export default function KeluhanForm() {
 
   return (
     <div>
-      <PageHeader title="Keluhan baru" sub={`Kamar ${session.profile.nomorkamar}`} onBack={() => nav(-1)} />
+      <PageHeader title="Keluhan baru" sub={`Kamar ${session.profile.nomorkamar}`} onBack={() => nav(-1)} right={<IconButton icon="info" label="Panduan membuat keluhan" onClick={() => setShowTour(true)} />} />
       <form onSubmit={submit} className="page-gutter content-stack">
-        <Card variant="elevated">
-          <SectionHeader title="Apa yang terjadi?" sub="Pilih kategori yang paling sesuai" />
-          <div className="mt-4 flex flex-wrap gap-2">
+        <div data-tour="complaint-category">
+          <Card variant="elevated">
+            <SectionHeader title="Apa yang terjadi?" sub="Pilih kategori yang paling sesuai" />
+            <div className="mt-4 flex flex-wrap gap-2">
             {kategoriList.map((item) => (
               <button
                 key={item}
@@ -98,18 +108,20 @@ export default function KeluhanForm() {
                 {item}
               </button>
             ))}
-          </div>
-        </Card>
+            </div>
+          </Card>
+        </div>
 
-        <Card variant="outlined" className="flex flex-col gap-4">
-          <Field
+        <div data-tour="complaint-description">
+          <Card variant="outlined" className="flex flex-col gap-4">
+            <Field
             label="Judul keluhan"
             value={judul}
             onChange={(e) => { setJudul(e.target.value); setFieldErr((v) => ({ ...v, judul: undefined })) }}
             placeholder="Contoh: Air kamar mandi macet"
             error={fieldErr.judul}
           />
-          <TextFieldArea
+            <TextFieldArea
             label="Ceritakan kendalanya"
             value={uraian}
             onChange={(e) => { setUraian(e.target.value); setFieldErr((v) => ({ ...v, uraian: undefined })) }}
@@ -117,11 +129,13 @@ export default function KeluhanForm() {
             rows={5}
             error={fieldErr.uraian}
             hint="Semakin jelas informasinya, semakin cepat admin membantu."
-          />
-        </Card>
+            />
+          </Card>
+        </div>
 
-        <Card variant="outlined">
-          <SectionHeader title="Foto pendukung" sub="Opsional · gambar akan dikompres otomatis" />
+        <div data-tour="complaint-photo">
+          <Card variant="outlined">
+            <SectionHeader title="Foto pendukung" sub="Opsional · gambar akan dikompres otomatis" />
           <input ref={fileRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => onPick(e.target.files?.[0])} />
           {foto ? (
             <div className="mt-4 flex items-center gap-3 rounded-[.9rem] bg-surface-low p-2.5">
@@ -145,13 +159,15 @@ export default function KeluhanForm() {
               {processingPhoto ? 'Memproses foto…' : 'Ambil atau pilih foto'}
             </button>
           )}
-        </Card>
+          </Card>
+        </div>
 
         {err && <AlertBanner>{err}</AlertBanner>}
-        <div className="sticky bottom-2 z-10 rounded-[1.05rem] bg-surface/92 p-2 backdrop-blur-xl">
+        <div data-tour="complaint-submit" className="sticky bottom-2 z-10 rounded-[1.05rem] bg-surface/92 p-2 backdrop-blur-xl">
           <Button type="submit" size="lg" loading={sending} className="w-full">Kirim keluhan</Button>
         </div>
       </form>
+      {showTour && <GuidedTour steps={tourSteps} storageKey={TOUR_KEY} onClose={() => setShowTour(false)} />}
     </div>
   )
 }
