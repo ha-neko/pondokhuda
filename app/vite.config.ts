@@ -11,15 +11,22 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.png', 'brand-logo-white.png', 'brand-logo-black.png'],
       manifest: {
+        id: '/',
         name: 'Pondok Huda',
         short_name: 'Pondok Huda',
         description: 'Aplikasi penghuni kost Pondok Huda',
         lang: 'id',
-        theme_color: '#00696d',
-        background_color: '#f4fbf9',
+        theme_color: '#2e7d32',
+        background_color: '#f6faf3',
         display: 'standalone',
         orientation: 'portrait',
         start_url: '/',
+        scope: '/',
+        categories: ['lifestyle', 'finance'],
+        shortcuts: [
+          { name: 'Pembayaran', short_name: 'Bayar', url: '/bayar', icons: [{ src: 'icons/icon-192.png', sizes: '192x192' }] },
+          { name: 'Keluhan', short_name: 'Keluhan', url: '/keluhan', icons: [{ src: 'icons/icon-192.png', sizes: '192x192' }] }
+        ],
         icons: [
           { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },

@@ -21,7 +21,7 @@ export function AppShell() {
         <Outlet />
       </main>
       {!hideNav && session && (
-        <nav aria-label="Navigasi utama" className="pointer-events-none fixed inset-x-0 bottom-0 z-30 px-3 pb-[max(.65rem,env(safe-area-inset-bottom))]">
+        <nav data-tour="navigation" aria-label="Navigasi utama" className="pointer-events-none fixed inset-x-0 bottom-0 z-30 px-3 pb-[max(.65rem,env(safe-area-inset-bottom))]">
           <div className="pointer-events-auto mx-auto grid max-w-[616px] grid-cols-5 items-center rounded-[1.15rem] border border-outline-variant/45 bg-surface-lowest/94 px-1 py-1 shadow-[0_10px_32px_rgba(8,39,37,.15)] backdrop-blur-xl">
             {tabs.map((t) => (
               <NavLink

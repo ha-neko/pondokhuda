@@ -183,3 +183,11 @@ button, a { touch-action: manipulation; }
 .animate-ph-in {
   animation: ph-fade-in 0.22s ease-out both;
 }
+
+@keyframes ph-dialog-in {
+  from { opacity: 0; transform: translateY(20px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-ph-dialog-in {
+  animation: ph-dialog-in .24s cubic-bezier(.2, .8, .2, 1) both;
+}

@@ -9,6 +9,7 @@ import PengumumanDetail from './screens/PengumumanDetail'
 import Keluhan from './screens/Keluhan'
 import KeluhanForm from './screens/KeluhanForm'
 import Profil from './screens/Profil'
+import { TutorialProvider } from './lib/tutorial-context'
 
 function Guard({ children }: { children: React.ReactNode }) {
   const { session } = useSessionContext()
@@ -24,28 +25,30 @@ function LoginRedirect() {
 
 export default function App() {
   return (
-    <SessionProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<LoginRedirect />} />
-          <Route
-            element={
-              <Guard>
-                <AppShell />
-              </Guard>
-            }
-          >
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/bayar" element={<Pembayaran />} />
-            <Route path="/info" element={<Pengumuman />} />
-            <Route path="/info/:kode" element={<PengumumanDetail />} />
-            <Route path="/keluhan" element={<Keluhan />} />
-            <Route path="/keluhan/baru" element={<KeluhanForm />} />
-            <Route path="/saya" element={<Profil />} />
-          </Route>
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </SessionProvider>
+    <TutorialProvider>
+      <SessionProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<LoginRedirect />} />
+            <Route
+              element={
+                <Guard>
+                  <AppShell />
+                </Guard>
+              }
+            >
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/bayar" element={<Pembayaran />} />
+              <Route path="/info" element={<Pengumuman />} />
+              <Route path="/info/:kode" element={<PengumumanDetail />} />
+              <Route path="/keluhan" element={<Keluhan />} />
+              <Route path="/keluhan/baru" element={<KeluhanForm />} />
+              <Route path="/saya" element={<Profil />} />
+            </Route>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </SessionProvider>
+    </TutorialProvider>
   )
 }

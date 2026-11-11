@@ -6,6 +6,8 @@ import { updateSession } from '../lib/session'
 import { daysLabel, money, waLink } from '../lib/format'
 import { AlertBanner, Card, IconButton, PageHeader, SectionHeader, statusTone } from '../components/Ui'
 import { Icon, type IconName } from '../components/Icon'
+import { Button } from '../components/Ui'
+import { DASHBOARD_TOUR_KEY, DashboardTour } from '../components/DashboardTour'
 
 const actions: { to: string; label: string; sub: string; icon: IconName; tone: string }[] = [
   { to: '/bayar', label: 'Pembayaran', sub: 'Lihat riwayat', icon: 'wallet', tone: 'bg-primary-container text-on-primary-container' },
@@ -17,6 +19,13 @@ export default function Dashboard() {
   const { session, setSession } = useSessionContext()
   const [refreshing, setRefreshing] = useState(false)
   const [err, setErr] = useState('')
+  const [showTour, setShowTour] = useState(() => {
+    try {
+      return localStorage.getItem(DASHBOARD_TOUR_KEY) !== 'done'
+    } catch {
+      return true
+    }
+  })
 
   async function refresh(silent = false) {
     if (!session || refreshing) return
@@ -48,9 +57,13 @@ export default function Dashboard() {
 
   return (
     <div>
-      <PageHeader title={p.namakost || 'Pondok Huda'} sub={`Kamar ${p.nomorkamar} · ${p.nama}`} />
+      <PageHeader
+        title={p.namakost || 'Pondok Huda'}
+        sub={`Kamar ${p.nomorkamar} · ${p.nama}`}
+        right={<Button type="button" size="sm" variant="tonal" icon="info" onClick={() => setShowTour(true)}>Panduan</Button>}
+      />
       <div className="page-gutter content-stack">
-        <section className="relative overflow-hidden rounded-[1.35rem] bg-primary px-4.5 py-4.5 text-on-primary shadow-[0_12px_34px_color-mix(in_srgb,var(--ph-primary)_22%,transparent)]">
+        <section data-tour="status" className="relative overflow-hidden rounded-[1.35rem] bg-primary px-4.5 py-4.5 text-on-primary shadow-[0_12px_34px_color-mix(in_srgb,var(--ph-primary)_22%,transparent)]">
           <div className="pointer-events-none absolute -right-14 -top-20 size-52 rounded-full border-[30px] border-white/6" />
 
           <div className="relative flex items-start justify-between gap-3">
@@ -97,6 +110,7 @@ export default function Dashboard() {
             <Link
               key={a.to}
               to={a.to}
+              data-tour={a.to === '/bayar' ? 'payment' : a.to === '/info' ? 'notice' : 'complaint'}
               className="group rounded-[1rem] border border-outline-variant/35 bg-surface-lowest p-2.5 sm:p-3 transition duration-200 hover:bg-surface-low active:scale-[.98] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/25"
             >
               <span className={`flex size-9 items-center justify-center rounded-[.8rem] ${a.tone}`}>
@@ -154,6 +168,7 @@ export default function Dashboard() {
           </>
         )}
       </div>
+      {showTour && <DashboardTour onClose={() => setShowTour(false)} />}
     </div>
   )
 }

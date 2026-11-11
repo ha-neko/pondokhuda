@@ -7,6 +7,7 @@ import { waLink } from '../lib/format'
 import { AlertBanner, Button, Card, Field, PageHeader, SectionHeader } from '../components/Ui'
 import { Icon } from '../components/Icon'
 import type { ThemeMode } from '../lib/session'
+import { useTutorial } from '../lib/tutorial-context'
 
 const themes: { value: ThemeMode; label: string; icon: 'sun' | 'moon' | 'monitor' }[] = [
   { value: 'light', label: 'Terang', icon: 'sun' },
@@ -17,6 +18,7 @@ const themes: { value: ThemeMode; label: string; icon: 'sun' | 'moon' | 'monitor
 export default function Profil() {
   const nav = useNavigate()
   const { session, setSession, theme, setTheme } = useSessionContext()
+  const { openTutorial } = useTutorial()
   const [imageBroken, setImageBroken] = useState(false)
   const [pinLama, setPinLama] = useState('')
   const [pinBaru, setPinBaru] = useState('')
@@ -104,6 +106,22 @@ export default function Profil() {
             </button>
           ))}
         </div>
+
+        <SectionHeader title="Bantuan" sub="Pelajari kembali cara memakai aplikasi" />
+        <button
+          type="button"
+          onClick={openTutorial}
+          className="flex min-h-16 w-full items-center gap-3 rounded-[1.15rem] border border-outline-variant bg-surface-lowest px-4 text-left transition hover:bg-surface-low active:scale-[.995] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/25"
+        >
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-container text-on-primary-container">
+            <Icon name="info" size={20} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-bold text-on-surface">Panduan penggunaan</span>
+            <span className="block text-xs text-on-surface-variant">Buka tutorial dari awal</span>
+          </span>
+          <Icon name="chevronRight" size={18} className="text-outline" />
+        </button>
 
         <SectionHeader title="Keamanan akun" sub="Perbarui PIN secara berkala" />
         <Card variant="elevated">
