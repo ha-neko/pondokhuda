@@ -144,7 +144,7 @@ def screen_shell(name, height, body):
         f'<!doctype html><html lang="id"><head><meta charset="utf-8">'
         f'<link rel="stylesheet" href="app.css"><style>'
         f'html,body{{margin:0}}body{{width:390px;height:{height}px;overflow:hidden;position:relative}}</style>'
-        f'</head><body>{body}</body></html>'
+        f'</head><body style="zoom:{SCALE}">{body}</body></html>'
     )
 
 
@@ -589,18 +589,28 @@ profil_body = f'''
 SCREENS['profil'] = (1360, profil_body)
 
 # ---------------------------------------------------------------- build ----
+# Firefox 159 headless ignores layout.css.devPixelsPerPx, so density is
+# achieved with html{zoom:SCALE} and a SCALE× larger window — identical
+# CSS layout, 2× pixel density.
+SCALE = 2
+
+
+def firefox_shot(png, url, css_w, css_h):
+    subprocess.run(
+        [FIREFOX, '--headless', '--screenshot', png,
+         f'--window-size={int(css_w * SCALE)},{int(css_h * SCALE)}', url],
+        check=True, timeout=90,
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        env={**os.environ, 'HOME': os.environ.get('HOME', '/home/leafy')},
+    )
+
+
 def write_and_shot(name, height, html):
     path = os.path.join(OUT, f'shot-{name}.html')
     with open(path, 'w', encoding='utf-8') as fh:
         fh.write(screen_shell(name, height, html))
     png = os.path.join(OUT, f'shot-{name}.png')
-    subprocess.run(
-        [FIREFOX, '--headless', '--screenshot', png,
-         f'--window-size=390,{height}', 'file://' + path],
-        check=True, timeout=90,
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-        env={**os.environ, 'HOME': os.environ.get('HOME', '/home/leafy')},
-    )
+    firefox_shot(png, 'file://' + path, 390, height)
     return png
 
 
@@ -664,7 +674,7 @@ def page_html(chapter, body_html, number, total):
       .tip{{background:{SOFT};border:1px solid {LINE};border-radius:12px;padding:12px 16px;
         font-size:12.5px;line-height:1.55;color:{MUTED};margin-top:14px}}
       .tip b{{color:{INK}}}
-    </style></head><body>
+    </style></head><body style="zoom:2">
     <div class="band"><span class="dot"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 3l8 6.5V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1V9.5L12 3z"/></svg></span><span class="name">Pondok Huda</span><span class="chap">{chapter}</span></div>
     <div class="content">{body_html}</div>
     <div class="foot"><span>Panduan Aplikasi Penghuni · PWA &amp; APK</span><span>halaman {number} dari {total}</span></div>
@@ -694,7 +704,7 @@ def build_pages():
       .chips{{display:flex;gap:10px;margin-top:34px}}
       .chip{{border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:7px 18px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.92)}}
       .ver{{position:absolute;bottom:54px;left:0;right:0;text-align:center;font-size:12.5px;color:rgba(255,255,255,.65)}}
-    </style></head><body>
+    </style></head><body style="zoom:2">
     <div class="wrap">
       <div class="logo"><img src="{LOGO}" style="width:84px;height:84px"></div>
       <h1>Panduan Aplikasi Penghuni</h1>
@@ -979,12 +989,7 @@ def shot_page(idx, html):
     with open(path, 'w', encoding='utf-8') as fh:
         fh.write(html)
     png = os.path.join(OUT, f'page-{idx:02d}.png')
-    subprocess.run(
-        [FIREFOX, '--headless', '--screenshot', png,
-         f'--window-size={PAGE_W},{PAGE_H}', 'file://' + path],
-        check=True, timeout=90,
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-    )
+    firefox_shot(png, 'file://' + path, PAGE_W, PAGE_H)
     return png
 
 
@@ -993,8 +998,11 @@ def assemble(shots):
     page_pngs = [shot_page(i + 1, html) for i, html in enumerate(PAGES)]
     pages = [Image.open(p).convert('RGB') for p in page_pngs]
     os.makedirs(os.path.dirname(DEST), exist_ok=True)
+    # PNGs are captured at SCALE× the 96-dpi layout; telling Pillow the
+    # effective DPI keeps the physical page size A4 while storing
+    # SCALE× pixel density — sharp when zoomed or printed.
     pages[0].save(
-        DEST, save_all=True, append_images=pages[1:], resolution=96.0,
+        DEST, save_all=True, append_images=pages[1:], resolution=96.0 * SCALE,
         title='Panduan Aplikasi Penghuni Pondok Huda', author='Pondok Huda',
     )
     size_kb = os.path.getsize(DEST) // 1024
