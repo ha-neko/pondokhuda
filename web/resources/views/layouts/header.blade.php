@@ -18,6 +18,22 @@
     <!-- Favicon-->
     <link rel="icon" href="{{ asset('Assets/images/logo/default-logo-black.png') }}" type="image/png">
 
+    <!-- PWA -->
+    <link rel="manifest" href="{{ asset('manifest.webmanifest') }}">
+    <meta name="theme-color" content="#2e7d32">
+    <meta name="application-name" content="Pondok Huda">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Pondok Huda">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="{{ asset('icons/icon-192.png') }}">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('{{ asset('sw.js') }}').catch(function () {});
+            });
+        }
+    </script>
+
     <!-- Bootstrap Core Css -->
     <link href="{{{ URL::asset('adminbsb/plugins/bootstrap/css/bootstrap.css')}}}" rel="stylesheet">
 
